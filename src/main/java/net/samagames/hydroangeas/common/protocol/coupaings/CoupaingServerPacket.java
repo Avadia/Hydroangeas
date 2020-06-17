@@ -19,9 +19,7 @@ import net.samagames.hydroangeas.common.packets.AbstractPacket;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class CoupaingServerPacket extends AbstractPacket
-{
-
+public class CoupaingServerPacket extends AbstractPacket {
     private String game;
 
     private String map;
@@ -32,38 +30,31 @@ public class CoupaingServerPacket extends AbstractPacket
     private JsonElement options;
     private int weight;
 
-    public CoupaingServerPacket()
-    {
+    public CoupaingServerPacket() {
 
     }
 
-    public String getGame()
-    {
+    public String getGame() {
         return game;
     }
 
-    public String getMap()
-    {
+    public String getMap() {
         return map;
     }
 
-    public int getMinSlot()
-    {
+    public int getMinSlot() {
         return minSlot;
     }
 
-    public int getMaxSlot()
-    {
+    public int getMaxSlot() {
         return maxSlot;
     }
 
-    public JsonElement getOptions()
-    {
+    public JsonElement getOptions() {
         return options;
     }
 
-    public int getWeight()
-    {
+    public int getWeight() {
         return weight;
     }
 }

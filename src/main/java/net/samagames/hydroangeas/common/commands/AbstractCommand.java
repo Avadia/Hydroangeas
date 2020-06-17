@@ -16,20 +16,16 @@ package net.samagames.hydroangeas.common.commands;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public abstract class AbstractCommand
-{
-
+public abstract class AbstractCommand {
     protected String command;
 
-    public AbstractCommand(String command)
-    {
+    public AbstractCommand(String command) {
         this.command = command;
     }
 
     public abstract boolean execute(String[] args);
 
-    public String getCommand()
-    {
+    public String getCommand() {
         return command;
     }
 

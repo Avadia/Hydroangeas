@@ -20,23 +20,18 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ByeFromClientPacket extends AbstractPacket
-{
-
+public class ByeFromClientPacket extends AbstractPacket {
     private UUID uuid;
 
-    public ByeFromClientPacket(UUID uuid)
-    {
+    public ByeFromClientPacket(UUID uuid) {
         this.uuid = uuid;
     }
 
-    public ByeFromClientPacket()
-    {
+    public ByeFromClientPacket() {
 
     }
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return uuid;
     }
 }

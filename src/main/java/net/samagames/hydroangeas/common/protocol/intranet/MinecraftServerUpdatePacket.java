@@ -21,9 +21,7 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MinecraftServerUpdatePacket extends AbstractPacket
-{
-
+public class MinecraftServerUpdatePacket extends AbstractPacket {
     private UType action;
 
     private UUID uuid;
@@ -33,8 +31,7 @@ public class MinecraftServerUpdatePacket extends AbstractPacket
     private int maxWeight;
 
 
-    public MinecraftServerUpdatePacket(HydroangeasClient instance, String serverName, UType action)
-    {
+    public MinecraftServerUpdatePacket(HydroangeasClient instance, String serverName, UType action) {
         this.uuid = instance.getClientUUID();
         this.newWeight = instance.getActualWeight();
         this.maxWeight = instance.getMaxWeight();
@@ -43,38 +40,31 @@ public class MinecraftServerUpdatePacket extends AbstractPacket
         this.action = action;
     }
 
-    public MinecraftServerUpdatePacket()
-    {
+    public MinecraftServerUpdatePacket() {
 
     }
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return uuid;
     }
 
-    public String getServerName()
-    {
+    public String getServerName() {
         return serverName;
     }
 
-    public UType getAction()
-    {
+    public UType getAction() {
         return action;
     }
 
-    public int getNewWeight()
-    {
+    public int getNewWeight() {
         return newWeight;
     }
 
-    public int getMaxWeight()
-    {
+    public int getMaxWeight() {
         return maxWeight;
     }
 
-    public enum UType
-    {
+    public enum UType {
         START, END
     }
 }

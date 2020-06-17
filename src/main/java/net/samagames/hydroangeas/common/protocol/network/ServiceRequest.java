@@ -21,7 +21,6 @@ import java.util.UUID;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class ServiceRequest extends AbstractPacket {
-
     private UUID reqId;
 
     private String target;

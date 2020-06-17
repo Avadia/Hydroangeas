@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /*
@@ -23,42 +24,32 @@ import java.util.Base64;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class NetworkUtils
-{
-    private NetworkUtils()
-    {
+public class NetworkUtils {
+    private NetworkUtils() {
 
     }
 
     public static String readURL(String rawURL) throws IOException {
-        try
-        {
-            URL url = new URL(rawURL);
-            URLConnection urlConnection = url.openConnection();
+        URL url = new URL(rawURL);
+        URLConnection urlConnection = url.openConnection();
 
-            if (url.getUserInfo() != null) {
-                String basicAuth = "Basic " + new String(Base64.getEncoder().encode(url.getUserInfo().getBytes()));
-                urlConnection.setRequestProperty("Authorization", basicAuth);
-            }
-
-            InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
-            String inputLine = in.readLine();
-            in.close();
-            inputStream.close();
-
-            return inputLine;
-        } catch (IOException e)
-        {
-            throw e;
+        if (url.getUserInfo() != null) {
+            String basicAuth = "Basic " + new String(Base64.getEncoder().encode(url.getUserInfo().getBytes()));
+            urlConnection.setRequestProperty("Authorization", basicAuth);
         }
+
+        InputStream inputStream = urlConnection.getInputStream();
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
+        String inputLine = in.readLine();
+        in.close();
+        inputStream.close();
+
+        return inputLine;
     }
 
-    public static void copyURLToFile(String rawURL, File destination)
-    {
-        try
-        {
+    public static void copyURLToFile(String rawURL, File destination) {
+        try {
             URL url = new URL(rawURL);
             URLConnection urlConnection = url.openConnection();
 
@@ -70,16 +61,13 @@ public class NetworkUtils
             InputStream inputStream = urlConnection.getInputStream();
             FileUtils.copyInputStreamToFile(inputStream, destination);
             //Inputstream closed in finally
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void copyURLToFile(URL url, File destination)
-    {
-        try
-        {
+    public static void copyURLToFile(URL url, File destination) {
+        try {
             URLConnection urlConnection = url.openConnection();
 
             if (url.getUserInfo() != null) {
@@ -90,18 +78,15 @@ public class NetworkUtils
             InputStream inputStream = urlConnection.getInputStream();
             FileUtils.copyInputStreamToFile(inputStream, destination);
             //Inputstream closed in finally
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static String readFullURL(String rawURL)
-    {
-        try
-        {
+    public static String readFullURL(String rawURL) {
+        try {
             URL url = new URL(rawURL);
-            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
 
             StringBuilder builder = new StringBuilder();
 
@@ -113,8 +98,7 @@ public class NetworkUtils
             in.close();
 
             return builder.toString();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -46,8 +47,7 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HydroangeasClient extends Hydroangeas
-{
+public class HydroangeasClient extends Hydroangeas {
     private String templatesDomain;
     private int maxWeight;
     private File serverFolder;
@@ -62,20 +62,19 @@ public class HydroangeasClient extends Hydroangeas
     private ResourceManager resourceManager;
     private LogManager logManager;
 
-    private DockerAPI dockerAPI;
+    private final DockerAPI dockerAPI;
     private ServerAliveWatchDog serverAliveWatchDog;
 
     private JsonObject dockerConfig;
 
-    public HydroangeasClient(OptionSet options) throws IOException
-    {
+    public HydroangeasClient(OptionSet options) throws IOException {
         super(options);
         dockerAPI = new DockerAPI();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
-    public void enable()
-    {
+    public void enable() {
         this.log(Level.INFO, "Starting Hydroangeas client...");
 
         this.loadConfig();
@@ -84,12 +83,10 @@ public class HydroangeasClient extends Hydroangeas
 
         logManager = new LogManager(MiscUtils.getJarFolder());
 
-        try
-        {
+        try {
             FileUtils.forceDelete(serverFolder);
             FileUtils.forceMkdir(serverFolder);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -110,23 +107,23 @@ public class HydroangeasClient extends Hydroangeas
         this.serverAliveWatchDog = new ServerAliveWatchDog(this);
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "deprecation"})
     @Override
-    public void loadConfig()
-    {
+    public void loadConfig() {
         super.loadConfig();
 
         JsonElement parsed = null;
         try {
             File f = new File("DockerConfig.json");
             f.createNewFile();
-            InputStreamReader reader = new InputStreamReader(new FileInputStream(f), "UTF-8");
+            InputStreamReader reader = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8);
             parsed = new JsonParser().parse(reader);
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if(parsed == null)
+        if (parsed == null)
             dockerConfig = new JsonObject();
         else
             dockerConfig = parsed.getAsJsonObject();
@@ -138,48 +135,40 @@ public class HydroangeasClient extends Hydroangeas
         this.maxWeight = this.configuration.getJsonConfiguration().get("max-weight").getAsInt();
         this.serverFolder = new File(MiscUtils.getJarFolder(), "servers");
 
-        try{
+        try {
             this.restrictionMode = RestrictionMode.valueFrom(configuration.getJsonConfiguration().get("RestrictionMode").getAsString());
             getLogger().info("Server restriction is set to: " + restrictionMode.getMode());
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             this.restrictionMode = RestrictionMode.NONE;
             getLogger().warning("Restriction mode not set ! Default: none");
         }
 
-        try{
-            for(JsonElement data : configuration.getJsonConfiguration().get("Whitelist").getAsJsonArray())
-            {
+        try {
+            for (JsonElement data : configuration.getJsonConfiguration().get("Whitelist").getAsJsonArray()) {
                 String templateID = data.getAsString();
-                if(templateID != null)
-                {
+                if (templateID != null) {
                     whitelist.add(templateID);
                     getLogger().info("Adding to whitelist: " + templateID);
                 }
             }
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             getLogger().info("No whitelist load !");
         }
 
-        try{
-            for(JsonElement data : configuration.getJsonConfiguration().get("Blacklist").getAsJsonArray())
-            {
+        try {
+            for (JsonElement data : configuration.getJsonConfiguration().get("Blacklist").getAsJsonArray()) {
                 String templateID = data.getAsString();
-                if(templateID != null)
-                {
+                if (templateID != null) {
                     blacklist.add(templateID);
                     getLogger().info("Adding to blacklist: " + templateID);
                 }
             }
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             getLogger().info("No blacklist load !");
         }
 
         try {
-            if(lifeThread != null)
-            {
+            if (lifeThread != null) {
                 lifeThread.sendData(true);
             }
         } catch (InterruptedException e) {
@@ -189,74 +178,59 @@ public class HydroangeasClient extends Hydroangeas
     }
 
     @Override
-    public void disable()
-    {
+    public void disable() {
         connectionManager.sendPacket(new ByeFromClientPacket(getUUID()));
         this.serverManager.stopAll();
         this.serverAliveWatchDog.disable();
     }
 
-    public UUID getClientUUID()
-    {
+    public UUID getClientUUID() {
         return getUUID();
     }
 
-    public int getMaxWeight()
-    {
+    public int getMaxWeight() {
         return this.maxWeight;
     }
 
-    public int getActualWeight()
-    {
+    public int getActualWeight() {
         return serverManager.getWeightOfAllServers();
     }
 
-    public String getSimpleTemplatesDomain()
-    {
+    public String getSimpleTemplatesDomain() {
         return this.templatesDomain;
     }
 
-    public String getTemplatesDomain()
-    {
+    public String getTemplatesDomain() {
         return this.templatesDomain + "static/templates/";
     }
 
-    public File getServerFolder()
-    {
+    public File getServerFolder() {
         return this.serverFolder;
     }
 
-    public LifeThread getLifeThread()
-    {
+    public LifeThread getLifeThread() {
         return this.lifeThread;
     }
 
-    public ServerManager getServerManager()
-    {
+    public ServerManager getServerManager() {
         return this.serverManager;
     }
 
-    public String getIP()
-    {
-        try
-        {
+    public String getIP() {
+        try {
             return getInternalIpv4();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             return "0.0.0.0";
         }
     }
 
-    private final String getInternalIpv4() throws IOException
-    {
+    @SuppressWarnings("rawtypes")
+    private String getInternalIpv4() throws IOException {
         NetworkInterface i = NetworkInterface.getByName("eth0");
-        for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements(); )
-        {
+        for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements(); ) {
             InetAddress addr = (InetAddress) en2.nextElement();
-            if (!addr.isLoopbackAddress())
-            {
-                if (addr instanceof Inet4Address)
-                {
+            if (!addr.isLoopbackAddress()) {
+                if (addr instanceof Inet4Address) {
                     return addr.getHostAddress();
                 }
             }
@@ -265,23 +239,19 @@ public class HydroangeasClient extends Hydroangeas
         return inet == null ? "0.0.0.0" : inet.getHostAddress();
     }
 
-    public ClientConnectionManager getConnectionManager()
-    {
+    public ClientConnectionManager getConnectionManager() {
         return connectionManager;
     }
 
-    public ResourceManager getResourceManager()
-    {
+    public ResourceManager getResourceManager() {
         return this.resourceManager;
     }
 
-    public List<String> getWhitelist()
-    {
+    public List<String> getWhitelist() {
         return whitelist;
     }
 
-    public List<String> getBlacklist()
-    {
+    public List<String> getBlacklist() {
         return blacklist;
     }
 

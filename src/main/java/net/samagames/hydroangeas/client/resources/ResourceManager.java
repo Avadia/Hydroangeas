@@ -17,8 +17,9 @@ import org.rauschig.jarchivelib.ArchiverFactory;
 import org.rauschig.jarchivelib.FileType;
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
 /*
@@ -37,25 +38,21 @@ import java.util.zip.GZIPInputStream;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ResourceManager
-{
+public class ResourceManager {
     private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
     private final HydroangeasClient instance;
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
-    public ResourceManager(HydroangeasClient instance)
-    {
+    public ResourceManager(HydroangeasClient instance) {
         this.instance = instance;
 
         this.cacheManager = new CacheManager(instance);
     }
 
-    public void downloadServer(MinecraftServerC server, File serverPath) throws IOException
-    {
+    public void downloadServer(MinecraftServerC server, File serverPath) throws IOException {
         String existURL = this.instance.getTemplatesDomain() + "servers/exist.php?game=" + server.getGame();
 
-        if (!Boolean.parseBoolean(NetworkUtils.readURL(existURL)))
-        {
+        if (!Boolean.parseBoolean(NetworkUtils.readURL(existURL))) {
             throw new IllegalStateException("Server template don't exist!");
         }
 
@@ -67,12 +64,10 @@ public class ResourceManager
         archiver.extract(dest, serverPath.getAbsoluteFile());
     }
 
-    public void downloadMap(MinecraftServerC server, File serverPath) throws IOException
-    {
+    public void downloadMap(MinecraftServerC server, File serverPath) throws IOException {
         String existURL = this.instance.getTemplatesDomain() + "maps/exist.php?game=" + server.getGame() + "&map=" + server.getMap().replaceAll(" ", "_");
 
-        if (!Boolean.parseBoolean(NetworkUtils.readURL(existURL)))
-        {
+        if (!Boolean.parseBoolean(NetworkUtils.readURL(existURL))) {
             throw new IllegalStateException("Server's map don't exist! (" + existURL + ")");
         }
 
@@ -84,55 +79,35 @@ public class ResourceManager
         archiver.extract(dest, serverPath.getAbsoluteFile());
     }
 
-    public void downloadDependencies(MinecraftServerC server, File serverPath) throws IOException
-    {
+    public void downloadDependencies(MinecraftServerC server, File serverPath) throws IOException {
         File dependenciesFile = new File(serverPath, "dependencies.json");
 
-        InputStreamReader fileReader = null;
-        try
-        {
-            fileReader = new InputStreamReader(new FileInputStream(dependenciesFile), "UTF-8");
-            List<ServerDependency> dependencies = GSON.fromJson(fileReader, new TypeToken<List<ServerDependency>>()
-            {
+        try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(dependenciesFile), StandardCharsets.UTF_8)) {
+            List<ServerDependency> dependencies = GSON.fromJson(fileReader, new TypeToken<List<ServerDependency>>() {
             }.getType());
-            for (ServerDependency dependency : dependencies)
-            {
+            for (ServerDependency dependency : dependencies) {
                 this.downloadDependency(server, dependency, serverPath);
-            }
-        } finally
-        {
-            try
-            {
-                if (fileReader != null)
-                    fileReader.close();
-            } catch (IOException e)
-            {
-
             }
         }
     }
 
-    public void downloadDependency(MinecraftServerC server, ServerDependency dependency, File serverPath) throws IOException
-    {
+    public void downloadDependency(MinecraftServerC server, ServerDependency dependency, File serverPath) throws IOException {
         String existURL = this.instance.getTemplatesDomain() + "dependencies/exist.php?name=" + dependency.getName() + "&version=" + dependency.getVersion() + "&ext=" + dependency.getExt();
         File pluginsPath = new File(serverPath, "plugins");
 
         if (!pluginsPath.exists())
             FileUtils.forceMkdir(pluginsPath);
 
-        if (!Boolean.parseBoolean(NetworkUtils.readURL(existURL)))
-        {
+        if (!Boolean.parseBoolean(NetworkUtils.readURL(existURL))) {
             throw new IllegalStateException("Servers' dependency '" + dependency.getName() + "' don't exist!");
         }
 
         File dest;
-        if (dependency.getType().equals("server") && !dependency.isExtractable())
-        {
+        if (dependency.getType().equals("server") && !dependency.isExtractable()) {
             dest = new File(serverPath, "spigot.jar");
             if (dest.exists())
                 FileUtils.deleteQuietly(dest);
-        } else
-        {
+        } else {
             dest = new File(pluginsPath, dependency.getName() + "-" + dependency.getVersion() + "." + dependency.getExt());
         }
 
@@ -142,19 +117,18 @@ public class ResourceManager
             ArchiverFactory.createArchiver(FileType.get(dest)).extract(dest, pluginsPath.getAbsoluteFile());
     }
 
-    public void patchServer(MinecraftServerC server, File serverPath, boolean isCoupaingServer) throws Exception
-    {
-        FileOutputStream outputStream = null;
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void patchServer(MinecraftServerC server, File serverPath, boolean isCoupaingServer) throws Exception {
+        FileOutputStream outputStream;
 
-        try
-        {
+        try {
             // Generate API configuration
             File apiConfiguration = new File(serverPath, "plugins" + File.separator + "SamaGamesAPI" + File.separator + "config.yml");
             FileUtils.deleteQuietly(apiConfiguration);
             FileUtils.forceMkdir(apiConfiguration.getParentFile());
             apiConfiguration.createNewFile();
             outputStream = new FileOutputStream(apiConfiguration);
-            outputStream.write(("bungeename: " + server.getServerName()).getBytes(Charset.forName("UTF-8")));
+            outputStream.write(("bungeename: " + server.getServerName()).getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
             outputStream.close();
 
@@ -162,33 +136,31 @@ public class ResourceManager
             File credentialsFile = new File(serverPath, "data.yml");
             FileUtils.deleteQuietly(credentialsFile);
             outputStream = new FileOutputStream(credentialsFile);
-            outputStream.write(("redis-bungee-ip: " + Hydroangeas.getInstance().getConfiguration().redisIp).getBytes(Charset.forName("UTF-8")));
+            outputStream.write(("redis-bungee-ip: " + Hydroangeas.getInstance().getConfiguration().redisIp).getBytes(StandardCharsets.UTF_8));
             outputStream.write(System.getProperty("line.separator").getBytes());
-            outputStream.write(("redis-bungee-port: " + Hydroangeas.getInstance().getConfiguration().redisPort).getBytes(Charset.forName("UTF-8")));
+            outputStream.write(("redis-bungee-port: " + Hydroangeas.getInstance().getConfiguration().redisPort).getBytes(StandardCharsets.UTF_8));
             outputStream.write(System.getProperty("line.separator").getBytes());
-            outputStream.write(("redis-bungee-password: " + Hydroangeas.getInstance().getConfiguration().redisPassword).getBytes(Charset.forName("UTF-8")));
-            outputStream.write(System.getProperty("line.separator").getBytes());
-
-            outputStream.write(("sql-url: " + Hydroangeas.getInstance().getConfiguration().sqlURL).getBytes(Charset.forName("UTF-8")));
-            outputStream.write(System.getProperty("line.separator").getBytes());
-            outputStream.write(("sql-user: " + Hydroangeas.getInstance().getConfiguration().sqlUser).getBytes(Charset.forName("UTF-8")));
-            outputStream.write(System.getProperty("line.separator").getBytes());
-            outputStream.write(("sql-pass: " + Hydroangeas.getInstance().getConfiguration().sqlPassword).getBytes(Charset.forName("UTF-8")));
+            outputStream.write(("redis-bungee-password: " + Hydroangeas.getInstance().getConfiguration().redisPassword).getBytes(StandardCharsets.UTF_8));
             outputStream.write(System.getProperty("line.separator").getBytes());
 
-            outputStream.write(("data-url: " + this.instance.getSimpleTemplatesDomain()).getBytes(Charset.forName("UTF-8")));
+            outputStream.write(("sql-url: " + Hydroangeas.getInstance().getConfiguration().sqlURL).getBytes(StandardCharsets.UTF_8));
+            outputStream.write(System.getProperty("line.separator").getBytes());
+            outputStream.write(("sql-user: " + Hydroangeas.getInstance().getConfiguration().sqlUser).getBytes(StandardCharsets.UTF_8));
+            outputStream.write(System.getProperty("line.separator").getBytes());
+            outputStream.write(("sql-pass: " + Hydroangeas.getInstance().getConfiguration().sqlPassword).getBytes(StandardCharsets.UTF_8));
+            outputStream.write(System.getProperty("line.separator").getBytes());
+
+            outputStream.write(("data-url: " + this.instance.getSimpleTemplatesDomain()).getBytes(StandardCharsets.UTF_8));
             outputStream.write(System.getProperty("line.separator").getBytes());
             outputStream.flush();
             outputStream.close();
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         this.instance.getLinuxBridge().sed("%serverPort%", String.valueOf(server.getPort()), new File(serverPath, "server.properties").getAbsolutePath());
         this.instance.getLinuxBridge().sed("%serverIp%", instance.getAsClient().getIP(), new File(serverPath, "server.properties").getAbsolutePath());
         this.instance.getLinuxBridge().sed("%serverName%", server.getServerName(), new File(serverPath, "scripts.txt").getAbsolutePath());
-
 
 
         JsonObject rootJson = new JsonObject();
@@ -200,81 +172,74 @@ public class ResourceManager
         rootJson.add("options", server.getOptions());
 
         File gameFile = new File(serverPath, "game.json");
-        if (!gameFile.createNewFile())
-        {
+        if (!gameFile.createNewFile()) {
             throw new Exception("Erreur creation game.json");
         }
-        FileOutputStream fOut = new FileOutputStream(gameFile);
-        try
-        {
-            fOut.write(new Gson().toJson(rootJson).getBytes(Charset.forName("UTF-8")));
+        try (FileOutputStream fOut = new FileOutputStream(gameFile)) {
+            fOut.write(new Gson().toJson(rootJson).getBytes(StandardCharsets.UTF_8));
             fOut.flush();
-        } finally
-        {
-            fOut.close();
         }
     }
 
-    public void extract(File dir ) throws IOException {
-        File listDir[] = dir.listFiles();
-        if (listDir.length!=0){
-            for (File i:listDir){
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void extract(File dir) throws IOException {
+        File[] listDir = dir.listFiles();
+        if (Objects.requireNonNull(listDir).length != 0) {
+            for (File i : listDir) {
         /*  Warning! this will try and extract all files in the directory
             if other files exist, a for loop needs to go here to check that
             the file (i) is an archive file before proceeding */
-                if (i.isDirectory()){
+                if (i.isDirectory()) {
                     break;
                 }
                 String fileName = i.toString();
-                String tarFileName = fileName +".tar";
-                FileInputStream instream= new FileInputStream(fileName);
-                GZIPInputStream ginstream =new GZIPInputStream(instream);
+                String tarFileName = fileName + ".tar";
+                FileInputStream instream = new FileInputStream(fileName);
+                GZIPInputStream ginstream = new GZIPInputStream(instream);
                 FileOutputStream outstream = new FileOutputStream(tarFileName);
                 byte[] buf = new byte[1024];
                 int len;
-                while ((len = ginstream.read(buf)) > 0)
-                {
+                while ((len = ginstream.read(buf)) > 0) {
                     outstream.write(buf, 0, len);
                 }
                 ginstream.close();
                 outstream.close();
                 //There should now be tar files in the directory
                 //extract specific files from tar
-                TarArchiveInputStream myTarFile=new TarArchiveInputStream(new FileInputStream(tarFileName));
-                TarArchiveEntry entry = null;
+                TarArchiveInputStream myTarFile = new TarArchiveInputStream(new FileInputStream(tarFileName));
+                TarArchiveEntry entry;
                 int offset;
-                FileOutputStream outputFile=null;
+                FileOutputStream outputFile;
                 //read every single entry in TAR file
                 while ((entry = myTarFile.getNextTarEntry()) != null) {
                     //the following two lines remove the .tar.gz extension for the folder name
                     fileName = i.getName().substring(0, i.getName().lastIndexOf('.'));
                     fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-                    File outputDir =  new File(i.getParent() + "/" + fileName + "/" + entry.getName());
-                    if(! outputDir.getParentFile().exists()){
+                    File outputDir = new File(i.getParent() + "/" + fileName + "/" + entry.getName());
+                    if (!outputDir.getParentFile().exists()) {
                         outputDir.getParentFile().mkdirs();
                     }
                     //if the entry in the tar is a directory, it needs to be created, only files can be extracted
-                    if(entry.isDirectory()){
+                    if (entry.isDirectory()) {
                         outputDir.mkdirs();
-                    }else{
+                    } else {
                         byte[] content = new byte[(int) entry.getSize()];
-                        offset=0;
+                        offset = 0;
                         myTarFile.read(content, offset, content.length - offset);
-                        outputFile=new FileOutputStream(outputDir);
-                        IOUtils.write(content,outputFile);
+                        outputFile = new FileOutputStream(outputDir);
+                        IOUtils.write(content, outputFile);
                         outputFile.close();
                     }
                 }
                 //close and delete the tar files, leaving the original .tar.gz and the extracted folders
                 myTarFile.close();
-                File tarFile =  new File(tarFileName);
+                File tarFile = new File(tarFileName);
                 tarFile.delete();
             }
         }
     }
 
-    public CacheManager getCacheManager()
-    {
+    public CacheManager getCacheManager() {
         return cacheManager;
     }
 }

@@ -19,7 +19,10 @@ import net.samagames.hydroangeas.utils.ModMessage;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -39,8 +42,7 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HydroangeasServer extends Hydroangeas
-{
+public class HydroangeasServer extends Hydroangeas {
     public ServerConnectionManager connectionManager;
     private ClientManager clientManager;
     private AlgorithmicMachine algorithmicMachine;
@@ -54,24 +56,21 @@ public class HydroangeasServer extends Hydroangeas
 
     private Timer resetTimer;
 
-    public HydroangeasServer(OptionSet options) throws IOException
-    {
+    public HydroangeasServer(OptionSet options) throws IOException {
         super(options);
     }
 
+    @SuppressWarnings({"MagicConstant", "deprecation"})
     @Override
-    public void enable()
-    {
+    public void enable() {
         this.log(Level.INFO, "Starting Hydroangeas server...");
 
         this.connectionManager = new ServerConnectionManager(this);
 
         this.redisSubscriber.registerReceiver("global@hydroangeas-server", data -> {
-            try
-            {
+            try {
                 connectionManager.getPacket(data);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -110,71 +109,58 @@ public class HydroangeasServer extends Hydroangeas
     }
 
     @Override
-    public void disable()
-    {
+    public void disable() {
         queueManager.disable();
         resetTimer.cancel();
         ModMessage.sendMessage(InstanceType.SERVER, "Arrêt demandé ! Attention, le network ne sera plus géré !");
     }
 
-    public void resetStats()
-    {
+    public void resetStats() {
         getLogger().info("ATTENTION");
         getLogger().info("Suppression des stats du jour.");
-        for(AbstractGameTemplate template : getTemplateManager().getTemplates())
-        {
-            try{
+        for (AbstractGameTemplate template : getTemplateManager().getTemplates()) {
+            try {
                 template.resetStats();
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 getLogger().severe("Cannot reset stats for template: " + template.getId());
             }
         }
 
-        for(Queue queue : getQueueManager().getQueues())
-        {
-            try{
+        for (Queue queue : getQueueManager().getQueues()) {
+            try {
                 queue.resetStats();
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 getLogger().severe("Cannot reset stats for queue: " + queue.getName());
             }
         }
 
     }
 
-    public UUID getServerUUID()
-    {
+    public UUID getServerUUID() {
         return getUUID();
     }
 
-    public ServerConnectionManager getConnectionManager()
-    {
+    public ServerConnectionManager getConnectionManager() {
         return connectionManager;
     }
 
-    public ClientManager getClientManager()
-    {
+    public ClientManager getClientManager() {
         return this.clientManager;
     }
 
-    public AlgorithmicMachine getAlgorithmicMachine()
-    {
+    public AlgorithmicMachine getAlgorithmicMachine() {
         return this.algorithmicMachine;
     }
 
-    public QueueManager getQueueManager()
-    {
+    public QueueManager getQueueManager() {
         return queueManager;
     }
 
-    public TemplateManager getTemplateManager()
-    {
+    public TemplateManager getTemplateManager() {
         return templateManager;
     }
 
-    public HubBalancer getHubBalancer()
-    {
+    public HubBalancer getHubBalancer() {
         return hubBalancer;
     }
 

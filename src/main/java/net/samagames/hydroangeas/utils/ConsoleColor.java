@@ -16,8 +16,7 @@ package net.samagames.hydroangeas.utils;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public enum  ConsoleColor {
-
+public enum ConsoleColor {
     RESET("\u001B[0m"),
     BLACK("\u001B[30m"),
     RED("\u001B[31m"),
@@ -30,14 +29,12 @@ public enum  ConsoleColor {
 
     private final String toString;
 
-    ConsoleColor(String code)
-    {
+    ConsoleColor(String code) {
         toString = code;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return toString;
     }
 }

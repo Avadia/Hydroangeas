@@ -33,8 +33,7 @@ import static net.samagames.hydroangeas.Hydroangeas.getLogger;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MinecraftServerC extends MinecraftServer
-{
+public class MinecraftServerC extends MinecraftServer {
     private final HydroangeasClient instance;
 
     private final File serverFolder;
@@ -47,8 +46,7 @@ public class MinecraftServerC extends MinecraftServer
 
     public MinecraftServerC(HydroangeasClient instance,
                             MinecraftServerSyncPacket serverInfos,
-                            int port)
-    {
+                            int port) {
         super(serverInfos.getMinecraftUUID(),
                 serverInfos.getGame(),
                 serverInfos.getMap(),
@@ -56,7 +54,7 @@ public class MinecraftServerC extends MinecraftServer
                 serverInfos.getMaxSlot(),
                 serverInfos.getOptions(),
                 serverInfos.getStartupOptions()
-                );
+        );
         this.instance = instance;
 
         this.coupaingServer = serverInfos.isCoupaingServer();
@@ -68,12 +66,10 @@ public class MinecraftServerC extends MinecraftServer
         this.timeToLive = serverInfos.getTimeToLive();
 
         this.serverFolder = new File(this.instance.getServerFolder(), serverInfos.getServerName());
-        try
-        {
+        try {
             FileDeleteStrategy.FORCE.delete(serverFolder);
             FileUtils.forceDeleteOnExit(serverFolder);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             getLogger().warning(serverFolder + " will not be able to be deleted during JVM shutdown!");
         }
         this.port = port;
@@ -81,42 +77,33 @@ public class MinecraftServerC extends MinecraftServer
         this.weight = serverInfos.getWeight();
     }
 
-    public boolean makeServer()
-    {
-        try
-        {
+    public boolean makeServer() {
+        try {
             FileUtils.forceMkdir(serverFolder);
             this.instance.getResourceManager().downloadServer(this, this.serverFolder);
             this.instance.getResourceManager().downloadMap(this, this.serverFolder);
             this.instance.getResourceManager().downloadDependencies(this, this.serverFolder);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             this.instance.log(Level.SEVERE, "Can't make the server " + getServerName() + "!");
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
             e.printStackTrace();
-            try
-            {
+            try {
                 FileDeleteStrategy.FORCE.delete(serverFolder);
                 FileUtils.forceDeleteOnExit(serverFolder);
-            } catch (IOException e1)
-            {
+            } catch (IOException e1) {
                 e1.printStackTrace();
             }
             return false;
         }
 
-        try
-        {
+        try {
             this.instance.getResourceManager().patchServer(this, this.serverFolder, isCoupaingServer());
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.PATCH));
             e.printStackTrace();
-            try
-            {
+            try {
                 FileUtils.forceDelete(serverFolder);
-            } catch (IOException e1)
-            {
+            } catch (IOException e1) {
                 e1.printStackTrace();
             }
             return false;
@@ -125,10 +112,8 @@ public class MinecraftServerC extends MinecraftServer
         return true;
     }
 
-    public boolean startServer()
-    {
-        try
-        {
+    public boolean startServer() {
+        try {
             JsonObject startupOptionsObj = startupOptions.getAsJsonObject();
             String maxRAM = startupOptionsObj.get("maxRAM").getAsString();
 
@@ -155,28 +140,25 @@ public class MinecraftServerC extends MinecraftServer
                             "-XX:+UseLargePagesInMetaspace",
                             "-Djava.net.preferIPv4Stack=true",
                             "-Dcom.sun.management.jmxremote",
-                            "-Dcom.sun.management.jmxremote.port=" + (getPort()+1),
+                            "-Dcom.sun.management.jmxremote.port=" + (getPort() + 1),
                             "-Dcom.sun.management.jmxremote.local.only=false",
                             "-Dcom.sun.management.jmxremote.authenticate=false",
                             "-Dcom.sun.management.jmxremote.ssl=false",
-                            "-jar", serverFolder.getAbsolutePath()+"/spigot.jar", "nogui"},
+                            "-jar", serverFolder.getAbsolutePath() + "/spigot.jar", "nogui"},
                     maxRAM
             );
             Hydroangeas.getLogger().info(container.createContainer());
 
             getLogger().info("Starting server " + getServerName());
 
-            remoteControl = new RemoteControl(this, "blackmesa", (getPort()+1));
-        } catch (Exception e)
-        {
+            remoteControl = new RemoteControl(this, "blackmesa", (getPort() + 1));
+        } catch (Exception e) {
             this.instance.log(Level.SEVERE, "Can't start the server " + getServerName() + "!");
             e.printStackTrace();
-            try
-            {
+            try {
                 FileDeleteStrategy.FORCE.delete(serverFolder);
                 FileUtils.forceDelete(serverFolder);
-            } catch (IOException e1)
-            {
+            } catch (IOException ignored) {
             }
 
             return false;
@@ -185,15 +167,12 @@ public class MinecraftServerC extends MinecraftServer
         return true;
     }
 
-    public boolean stopServer()
-    {
-        try
-        {
-            try{
+    public boolean stopServer() {
+        try {
+            try {
                 if (remoteControl != null)
                     remoteControl.disconnect();
-            }catch (Exception ignored)
-            {
+            } catch (Exception ignored) {
 
             }
 
@@ -201,30 +180,25 @@ public class MinecraftServerC extends MinecraftServer
             Hydroangeas.getInstance().getAsClient().getLogManager().saveLog(getServerName(), getTemplateID());
             container.removeContainer();
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             this.instance.log(Level.SEVERE, "Can't stop the server " + getServerName() + "!");
             e.printStackTrace();
             return false;
-        }finally {
-            try
-            {
+        } finally {
+            try {
                 FileDeleteStrategy.FORCE.delete(serverFolder);
                 FileUtils.forceDelete(serverFolder);
-            } catch (IOException e1)
-            {
+            } catch (IOException ignored) {
             }
         }
         return true;
     }
 
-    public File getServerFolder()
-    {
+    public File getServerFolder() {
         return this.serverFolder;
     }
 
-    public HydroangeasClient getInstance()
-    {
+    public HydroangeasClient getInstance() {
         return instance;
     }
 
@@ -232,8 +206,7 @@ public class MinecraftServerC extends MinecraftServer
         return lastHeartbeat;
     }
 
-    public void doHeartbeat()
-    {
+    public void doHeartbeat() {
         this.lastHeartbeat = System.currentTimeMillis();
     }
 
@@ -241,9 +214,7 @@ public class MinecraftServerC extends MinecraftServer
         return container;
     }
 
-    public RemoteControl getRemoteControl()
-    {
+    public RemoteControl getRemoteControl() {
         return remoteControl;
     }
-
 }

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
 /*
@@ -28,8 +29,7 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class Configuration
-{
+public class Configuration {
     private final Hydroangeas instance;
     public String redisIp;
     public String redisPassword;
@@ -39,51 +39,34 @@ public class Configuration
     public String sqlPassword;
     private JsonObject jsonConfiguration;
 
-    public Configuration(Hydroangeas instance, OptionSet options)
-    {
+    public Configuration(Hydroangeas instance, OptionSet options) {
         this.instance = instance;
 
         if (options.has("d"))
             this.createDefaultConfiguration();
 
-        try
-        {
+        try {
             this.loadConfiguration(options.valueOf("c").toString());
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void loadConfiguration(String path) throws IOException
-    {
+    @SuppressWarnings("deprecation")
+    public void loadConfiguration(String path) throws IOException {
         this.instance.log(Level.INFO, "Configuration file is: " + path);
         File configurationFile = new File(path);
 
-        if (!configurationFile.exists())
-        {
+        if (!configurationFile.exists()) {
             this.instance.log(Level.SEVERE, "Configuration file don't exist!");
             System.exit(4);
         }
 
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(configurationFile), "UTF-8");
-        try
-        {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(configurationFile), StandardCharsets.UTF_8)) {
             this.jsonConfiguration = new JsonParser().parse(reader).getAsJsonObject();
-        } finally
-        {
-            try
-            {
-                reader.close();
-            } catch (IOException e)
-            {
-
-            }
-
         }
 
-        if (!validateJson(jsonConfiguration))
-        {
+        if (!validateJson(jsonConfiguration)) {
             this.instance.log(Level.SEVERE, "Configuration file isn't valid! Please just modify the default configuration file!");
             System.exit(5);
         }
@@ -96,14 +79,11 @@ public class Configuration
         this.sqlPassword = jsonConfiguration.get("sql-password").getAsString();
     }
 
-    public void createDefaultConfiguration()
-    {
-        try
-        {
+    public void createDefaultConfiguration() {
+        try {
             File destinationFile = new File(MiscUtils.getJarFolder(), "config.json");
             FileUtils.copyURLToFile(Configuration.class.getResource("/config.json"), destinationFile);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -111,16 +91,14 @@ public class Configuration
         System.exit(3);
     }
 
-    public JsonObject getJsonConfiguration()
-    {
+    public JsonObject getJsonConfiguration() {
         return this.jsonConfiguration;
     }
 
-    public boolean validateJson(JsonObject object)
-    {
+    public boolean validateJson(JsonObject object) {
         boolean flag = true;
 
-        /** Common **/
+        /* Common **/
         if (!object.has("redis-ip")) flag = false;
         if (!object.has("redis-port")) flag = false;
         if (!object.has("redis-password")) flag = false;
@@ -129,7 +107,7 @@ public class Configuration
         if (!object.has("sql-password")) flag = false;
         if (!object.has("web-domain")) flag = false;
 
-        /** Client **/
+        /* Client **/
         if (!object.has("max-weight")) flag = false;
 
         return flag;

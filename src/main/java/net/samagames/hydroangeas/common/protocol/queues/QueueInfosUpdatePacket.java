@@ -19,9 +19,7 @@ import net.samagames.hydroangeas.server.waitingqueue.QPlayer;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class QueueInfosUpdatePacket extends AbstractPacket
-{
-
+public class QueueInfosUpdatePacket extends AbstractPacket {
     private Type type;
 
     private String game;
@@ -45,56 +43,46 @@ public class QueueInfosUpdatePacket extends AbstractPacket
     //target
     private QPlayer player;
 
-    public QueueInfosUpdatePacket()
-    {
+    public QueueInfosUpdatePacket() {
     }
 
-    public QueueInfosUpdatePacket(QPlayer player, Type type, String game, String map)
-    {
+    public QueueInfosUpdatePacket(QPlayer player, Type type, String game, String map) {
         this(player, type);
         this.game = game;
         this.map = map;
     }
 
-    public QueueInfosUpdatePacket(QPlayer player, Type type, String templateId)
-    {
+    public QueueInfosUpdatePacket(QPlayer player, Type type, String templateId) {
         this(player, type);
         this.templateId = templateId;
     }
 
-    public QueueInfosUpdatePacket(QPlayer player, Type type)
-    {
+    public QueueInfosUpdatePacket(QPlayer player, Type type) {
         this.player = player;
         this.type = type;
     }
 
-    public Type getType()
-    {
+    public Type getType() {
         return type;
     }
 
-    public boolean isSuccess()
-    {
+    public boolean isSuccess() {
         return success;
     }
 
-    public String getErrorMessage()
-    {
+    public String getErrorMessage() {
         return errorMessage;
     }
 
-    public String getGame()
-    {
+    public String getGame() {
         return game;
     }
 
-    public String getMap()
-    {
+    public String getMap() {
         return map;
     }
 
-    public QPlayer getPlayer()
-    {
+    public QPlayer getPlayer() {
         return player;
     }
 
@@ -170,8 +158,7 @@ public class QueueInfosUpdatePacket extends AbstractPacket
         this.groupSize = groupSize;
     }
 
-    public enum Type
-    {
+    public enum Type {
         ADD, REMOVE, INFO
     }
 }

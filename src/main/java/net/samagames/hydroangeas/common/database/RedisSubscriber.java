@@ -25,28 +25,24 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class RedisSubscriber extends JedisPubSub
-{
+public class RedisSubscriber extends JedisPubSub {
     private final Hydroangeas instance;
     private final HashMap<String, HashSet<PacketReceiver>> packetsReceivers;
     private boolean continueLoop;
 
-    public RedisSubscriber(Hydroangeas instance)
-    {
+    @SuppressWarnings("BusyWait")
+    public RedisSubscriber(Hydroangeas instance) {
         this.instance = instance;
         this.packetsReceivers = new HashMap<>();
         this.continueLoop = true;
 
         new Thread(() ->
         {
-            while (this.continueLoop)
-            {
+            while (this.continueLoop) {
                 Jedis jedis = this.instance.getDatabaseConnector().getJedisPool().getResource();
-                try
-                {
+                try {
                     jedis.psubscribe(this, "*");
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 this.instance.log(Level.INFO, "Disconnected from database.");
@@ -56,13 +52,10 @@ public class RedisSubscriber extends JedisPubSub
 
         this.instance.log(Level.INFO, "Subscribing PubSub...");
 
-        while (!this.isSubscribed())
-        {
-            try
-            {
+        while (!this.isSubscribed()) {
+            try {
                 Thread.sleep(100);
-            } catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -70,15 +63,13 @@ public class RedisSubscriber extends JedisPubSub
         this.instance.log(Level.INFO, "PubSub subscribed.");
     }
 
-    public void disable()
-    {
+    public void disable() {
         this.continueLoop = false;
         this.unsubscribe();
         this.punsubscribe();
     }
 
-    public void registerReceiver(String channel, PacketReceiver receiver)
-    {
+    public void registerReceiver(String channel, PacketReceiver receiver) {
         HashSet<PacketReceiver> receivers = this.packetsReceivers.get(channel);
 
         if (receivers == null)
@@ -91,16 +82,14 @@ public class RedisSubscriber extends JedisPubSub
         this.instance.log(Level.INFO, "Registered receiver '" + receiver.getClass().getSimpleName() + "' on channel '" + channel + "'");
     }
 
-    public void send(String channel, String packet)
-    {
+    public void send(String channel, String packet) {
         Jedis jedis = this.instance.getDatabaseConnector().getJedisPool().getResource();
         jedis.publish(channel, packet);
         jedis.close();
     }
 
     @Override
-    public void onMessage(String channel, String message)
-    {
+    public void onMessage(String channel, String message) {
         HashSet<PacketReceiver> receivers = this.packetsReceivers.get(channel);
 
         if (receivers != null)

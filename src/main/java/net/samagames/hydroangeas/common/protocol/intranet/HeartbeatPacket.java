@@ -20,25 +20,19 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HeartbeatPacket extends AbstractPacket
-{
-
+public class HeartbeatPacket extends AbstractPacket {
     private UUID uuid;
-    private boolean online = true;
+    private final boolean online = true;
 
-    public HeartbeatPacket(UUID uuid)
-    {
+    public HeartbeatPacket(UUID uuid) {
         this.uuid = uuid;
     }
 
-    public HeartbeatPacket()
-    {
+    public HeartbeatPacket() {
 
     }
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return uuid;
     }
-
 }

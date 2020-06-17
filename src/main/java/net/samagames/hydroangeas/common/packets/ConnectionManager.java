@@ -26,16 +26,13 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public abstract class ConnectionManager
-{
-
+public abstract class ConnectionManager {
     public AbstractPacket[] packets = new AbstractPacket[256];
 
     protected Gson gson;
     protected Hydroangeas hydroangeas;
 
-    protected ConnectionManager(Hydroangeas hydroangeas)
-    {
+    protected ConnectionManager(Hydroangeas hydroangeas) {
         //Intranet
         packets[0] = new HeartbeatPacket();
         packets[1] = new HelloFromClientPacket();
@@ -66,44 +63,36 @@ public abstract class ConnectionManager
         gson = new Gson();
     }
 
-    public void getPacket(String packet)
-    {
+    public void getPacket(String packet) {
         String id;
-        try
-        {
+        try {
             id = packet.split(":")[0];
-            if (id == null || packets[Integer.parseInt(id)] == null)
-            {
+            if (id == null || packets[Integer.parseInt(id)] == null) {
                 hydroangeas.log(Level.SEVERE, "Error bad packet ID in the channel");
                 return;
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             hydroangeas.log(Level.SEVERE, "Error packet no ID in the channel");
             return;
         }
 
-        packet = packet.substring(id.length() + 1, packet.length());
+        packet = packet.substring(id.length() + 1);
 
         final String finalPacket = packet;
         final String finalID = id;
         final ConnectionManager manager = this;
         new Thread(() -> {
-            try
-            {
-                manager.handler(Integer.valueOf(finalID), finalPacket);
-            } catch (Exception e)
-            {
+            try {
+                manager.handler(Integer.parseInt(finalID), finalPacket);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
-    protected int packetId(AbstractPacket p)
-    {
-        for (int i = 0; i < packets.length; i++)
-        {
+    protected int packetId(AbstractPacket p) {
+        for (int i = 0; i < packets.length; i++) {
             if (packets[i] == null)
                 continue;
             if (packets[i].getClass().equals(p.getClass()))
@@ -112,29 +101,23 @@ public abstract class ConnectionManager
         return -1;
     }
 
-    public void sendPacket(String channel, AbstractPacket data)
-    {
+    public void sendPacket(String channel, AbstractPacket data) {
         int i = packetId(data);
-        if (i < 0)
-        {
+        if (i < 0) {
             hydroangeas.log(Level.SEVERE, "Bad packet ID: " + i);
             return;
-        } else if (channel == null)
-        {
+        } else if (channel == null) {
             hydroangeas.log(Level.SEVERE, "Channel null !");
             return;
         }
-        try
-        {
+        try {
             sendPacket(channel, i + ":" + gson.toJson(data));
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void sendPacket(String channel, String rawPacket)
-    {
+    public void sendPacket(String channel, String rawPacket) {
         hydroangeas.getRedisSubscriber().send(channel, rawPacket);
     }
 

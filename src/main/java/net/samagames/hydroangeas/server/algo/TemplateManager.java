@@ -3,6 +3,7 @@ package net.samagames.hydroangeas.server.algo;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.server.HydroangeasServer;
 import net.samagames.hydroangeas.server.games.AbstractGameTemplate;
 import net.samagames.hydroangeas.server.games.PackageGameTemplate;
@@ -11,7 +12,11 @@ import net.samagames.hydroangeas.server.waitingqueue.Queue;
 import net.samagames.hydroangeas.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,14 +37,11 @@ import java.util.stream.Collectors;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class TemplateManager
-{
-
+public class TemplateManager {
     private List<AbstractGameTemplate> templates;
-    private HydroangeasServer instance;
+    private final HydroangeasServer instance;
 
-    public TemplateManager(HydroangeasServer instance)
-    {
+    public TemplateManager(HydroangeasServer instance) {
 
         this.instance = instance;
 
@@ -48,111 +50,88 @@ public class TemplateManager
         loadQueues();
     }
 
-    public void loadQueues()
-    {
-        instance.getLogger().info("Ajout des queues pour chaque Template:");
+    public void loadQueues() {
+        Hydroangeas.getLogger().info("Ajout des queues pour chaque Template:");
 
-        for (AbstractGameTemplate template : templates)
-        {
+        for (AbstractGameTemplate template : templates) {
             Queue queue = instance.getQueueManager().getQueueByName(template.getId());
-            if (queue == null)
-            {
+            if (queue == null) {
                 instance.getQueueManager().addQueue(template);
-            }
-            else
-            {
+            } else {
                 queue.reload(template);
             }
 
-            instance.getLogger().info("ID: " + template.getId() + " Jeu: " + template.getGameName() + " Map: " + template.getMapName());
+            Hydroangeas.getLogger().info("ID: " + template.getId() + " Jeu: " + template.getGameName() + " Map: " + template.getMapName());
         }
     }
 
-    public List<AbstractGameTemplate> loadTemplates()
-    {
+    @SuppressWarnings("deprecation")
+    public List<AbstractGameTemplate> loadTemplates() {
         List<AbstractGameTemplate> result = new ArrayList<>();
         File directory = new File(MiscUtils.getApplicationDirectory(), "templates");
-        try
-        {
+        try {
             File[] files = directory.listFiles();
             if (files == null) // Internal IO Exception
                 throw new IOException("Internal IO Exception during listing of templates directory!");
-            for (File file : files)
-            {
-                if (file.isFile() && file.getName().endsWith(".json"))
-                {
-                    try
-                    {
-                        JsonElement data = new JsonParser().parse(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".json")) {
+                    try {
+                        JsonElement data = new JsonParser().parse(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
                         if (data == null)
                             throw new JsonParseException("JSON object return null");
-                        if (data.getAsJsonObject().getAsJsonPrimitive("Type") != null && data.getAsJsonObject().getAsJsonPrimitive("Type").getAsString().equals("Package"))
-                        {
+                        if (data.getAsJsonObject().getAsJsonPrimitive("Type") != null && data.getAsJsonObject().getAsJsonPrimitive("Type").getAsString().equals("Package")) {
                             result.add(new PackageGameTemplate(FilenameUtils.removeExtension(file.getName()), data));
-                        } else
-                        {
+                        } else {
                             result.add(new SimpleGameTemplate(FilenameUtils.removeExtension(file.getName()), data));
                         }
-                    } catch (JsonParseException | UnsupportedEncodingException e)
-                    {
-                        instance.getLogger().severe("Invalid template " + file.getName());
+                    } catch (JsonParseException e) {
+                        Hydroangeas.getLogger().severe("Invalid template " + file.getName());
                         e.printStackTrace();
                     }
                 }
             }
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         return result;
     }
 
-    public void reload()
-    {
+    public void reload() {
         templates.clear();
         templates = loadTemplates();
         loadQueues();
     }
 
-    public AbstractGameTemplate getTemplateByID(String id)
-    {
-        for (AbstractGameTemplate template : templates)
-        {
-            if (template.getId().equalsIgnoreCase(id))
-            {
+    public AbstractGameTemplate getTemplateByID(String id) {
+        for (AbstractGameTemplate template : templates) {
+            if (template.getId().equalsIgnoreCase(id)) {
                 return template;
             }
         }
         return null;
     }
 
-    public AbstractGameTemplate getTemplateByGameAndMap(String game, String map)
-    {
-        for (AbstractGameTemplate template : templates)
-        {
-            if (template.getGameName().equalsIgnoreCase(game) && template.getMapName().equalsIgnoreCase(map))
-            {
+    public AbstractGameTemplate getTemplateByGameAndMap(String game, String map) {
+        for (AbstractGameTemplate template : templates) {
+            if (template.getGameName().equalsIgnoreCase(game) && template.getMapName().equalsIgnoreCase(map)) {
                 return template;
             }
         }
         return null;
     }
 
-    public List<AbstractGameTemplate> getTemplatesByGame(String game)
-    {
+    public List<AbstractGameTemplate> getTemplatesByGame(String game) {
         return templates.stream().filter(template -> template.getGameName().equalsIgnoreCase(game)).collect(Collectors.toList());
     }
 
-    public List<AbstractGameTemplate> getTemplates()
-    {
+    public List<AbstractGameTemplate> getTemplates() {
         return templates;
     }
 
-    public List<String> getListTemplate()
-    {
+    public List<String> getListTemplate() {
         List<String> tmp = new ArrayList<>();
-        templates.stream().forEach((template -> tmp.add(template.getId())));
+        templates.forEach((template -> tmp.add(template.getId())));
         return tmp;
     }
 }

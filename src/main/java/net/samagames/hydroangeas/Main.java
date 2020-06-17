@@ -26,12 +26,9 @@ import java.util.Collections;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class Main
-{
-    public static void main(String[] args)
-    {
-        OptionParser parser = new OptionParser()
-        {
+public class Main {
+    public static void main(String[] args) {
+        OptionParser parser = new OptionParser() {
             {
                 acceptsAll(Arrays.asList("?", "help"), "Show the help");
                 acceptsAll(Collections.singletonList("client"), "Be the client");
@@ -46,17 +43,13 @@ public class Main
             }
         };
 
-        try
-        {
+        try {
             OptionSet options = parser.parse(args);
 
-            if (options == null || !options.hasOptions() || options.has("?"))
-            {
-                try
-                {
+            if (options == null || !options.hasOptions() || options.has("?")) {
+                try {
                     parser.printHelpOn(System.out);
-                } catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     System.err.println(ex.getLocalizedMessage());
                 }
 
@@ -64,24 +57,20 @@ public class Main
                 return;
             }
 
-            if (options.has("version"))
-            {
+            if (options.has("version")) {
                 System.exit(0);
                 return;
             }
 
-            if (!options.has("c") && !options.has("d"))
-            {
+            if (!options.has("c") && !options.has("d")) {
                 System.err.println("You most provide a configuration file!");
                 System.exit(-1);
             }
 
-            if (!options.has("client") && !options.has("server"))
-            {
+            if (!options.has("client") && !options.has("server")) {
                 System.err.println("You must start Hydroangeas as a client or a server!");
                 System.exit(6);
-            } else if (options.has("client") && options.has("server"))
-            {
+            } else if (options.has("client") && options.has("server")) {
                 System.err.println("Hydroangeas can't be a client AND a server!");
                 System.exit(7);
             }
@@ -93,23 +82,18 @@ public class Main
             else //if (options.has("client"))
                 hydroangeas = new HydroangeasClient(options);
 
-            while (hydroangeas.isRunning)
-            {
+            while (hydroangeas.isRunning) {
                 String line = null;
-                try
-                {
+                try {
                     line = hydroangeas.getConsoleReader().readLine(">");
-                } catch (IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if (line != null)
-                {
+                if (line != null) {
                     hydroangeas.getCommandManager().inputCommand(line);
                 }
             }
-        } catch (OptionException | IOException ex)
-        {
+        } catch (OptionException | IOException ex) {
             System.err.println(ex.getLocalizedMessage());
             System.exit(42);
         }

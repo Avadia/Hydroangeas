@@ -24,19 +24,16 @@ import java.util.UUID;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class HostGameManager {
+    private final HydroangeasServer instance;
 
-    private HydroangeasServer instance;
+    // private HashMap<UUID, MinecraftServerS> servers = new HashMap<UUID, MinecraftServerS>();
 
-   // private HashMap<UUID, MinecraftServerS> servers = new HashMap<UUID, MinecraftServerS>();
-
-    public HostGameManager(HydroangeasServer instance)
-    {
+    public HostGameManager(HydroangeasServer instance) {
         this.instance = instance;
     }
 
-    public MinecraftServerS orderServer(UUID asker, SimpleGameTemplate template)
-    {
-        if(instance.getQueueManager().getQueueByTemplate(template.getId()) != null)
+    public MinecraftServerS orderServer(UUID asker, SimpleGameTemplate template) {
+        if (instance.getQueueManager().getQueueByTemplate(template.getId()) != null)
             return null;
 
         Queue queue = instance.getQueueManager().addQueue(template);
@@ -50,23 +47,17 @@ public class HostGameManager {
         return minecraftServerS;
     }
 
-    public boolean removeServer(String name)
-    {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean removeServer(String name) {
         MinecraftServerS s = instance.getClientManager().getServerByName(name);
 
-        if(s != null)
-        {
+        if (s != null) {
             Queue queue = instance.getQueueManager().getQueueByTemplate(s.getTemplateID());
-            if(queue != null)
-            {
+            if (queue != null) {
                 instance.getQueueManager().removeQueue(queue);
                 return true;
             }
         }
         return false;
     }
-
-
-
-
 }

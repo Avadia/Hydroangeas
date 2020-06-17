@@ -24,143 +24,114 @@ import java.util.stream.Collectors;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class QGroup
-{
-
+public class QGroup {
     private QPlayer leader;
 
-    private List<QPlayer> players = new ArrayList<>();
+    private final List<QPlayer> players = new ArrayList<>();
 
     private int priority;
 
-    public QGroup(QPlayer player)
-    {
+    public QGroup(QPlayer player) {
         this.leader = player;
         players.add(player);
         calculatePriority();
     }
 
-    public QGroup(List<QPlayer> players)
-    {
+    public QGroup(List<QPlayer> players) {
         this(players.get(0), players);
     }
 
-    public QGroup(QPlayer leader, List<QPlayer> players)
-    {
+    public QGroup(QPlayer leader, List<QPlayer> players) {
         this.leader = leader;
         priority = leader.getPriority();
         this.players.addAll(players);
         calculatePriority();
     }
 
-    public void calculatePriority()
-    {
+    public void calculatePriority() {
         //Celui qui a la plus grosse prioritée la donne au groupe
-        for (QPlayer qPlayer : players)
-        {
+        for (QPlayer qPlayer : players) {
             priority = Math.min(qPlayer.getPriority(), priority);
         }
     }
 
-    public int getPriority()
-    {
+    public int getPriority() {
         return priority;
     }
 
-    public boolean contains(UUID uuid)
-    {
-        for (QPlayer qp : players)
-        {
-            if (qp.getUUID().equals(uuid))
-            {
+    public boolean contains(UUID uuid) {
+        for (QPlayer qp : players) {
+            if (qp.getUUID().equals(uuid)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean contains(QPlayer qp)
-    {
+    public boolean contains(QPlayer qp) {
         return players.contains(qp);
     }
 
-    public QPlayer getPlayerByUUID(UUID player)
-    {
-        for (QPlayer p : players)
-        {
-            if (p.getUUID().equals(player))
-            {
+    public QPlayer getPlayerByUUID(UUID player) {
+        for (QPlayer p : players) {
+            if (p.getUUID().equals(player)) {
                 return p;
             }
         }
         return null;
     }
 
-    public boolean addPlayer(QPlayer player)
-    {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean addPlayer(QPlayer player) {
         if (contains(player.getUUID()))
             return false;
-        try
-        {
+        try {
             return players.add(player);
-        } finally
-        {
+        } finally {
             calculatePriority();
         }
     }
 
-    public boolean removeQPlayer(UUID player)
-    {
+    public boolean removeQPlayer(UUID player) {
         return removeQPlayer(getPlayerByUUID(player));
     }
 
-    public boolean removeQPlayer(QPlayer player)
-    {
+    public boolean removeQPlayer(QPlayer player) {
         if (leader != null && player.getUUID().equals(leader.getUUID()))
             leader = null;
 
-        try
-        {
+        try {
             return players.remove(player);
-        } finally
-        {
+        } finally {
             calculatePriority();
         }
     }
 
-    public List<UUID> getPlayers()
-    {
+    public List<UUID> getPlayers() {
         return players.stream().map(QPlayer::getUUID).collect(Collectors.toList());
     }
 
-    public List<QPlayer> getQPlayers()
-    {
+    public List<QPlayer> getQPlayers() {
         return players;
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return players.size();
     }
 
-    public QPlayer getLeader()
-    {
+    public QPlayer getLeader() {
         return leader;
     }
 
     @Deprecated
-    public void sendTo(String serverName)
-    {
-        for (QPlayer player : players)
-        {
+    public void sendTo(String serverName) {
+        for (QPlayer player : players) {
             GameConnector.sendPlayerToServer(serverName, player.getUUID());
         }
     }
 
-    public void sendTo(MinecraftServerS serverS)
-    {
-        for (QPlayer player : players)
-        {
+    public void sendTo(MinecraftServerS serverS) {
+        for (QPlayer player : players) {
             serverS.sendPlayer(player.getUUID());
         }
     }

@@ -22,9 +22,7 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HelloFromClientPacket extends AbstractPacket
-{
-
+public class HelloFromClientPacket extends AbstractPacket {
     private UUID uuid;
     private String ip;
     private int maxWeight;
@@ -36,12 +34,10 @@ public class HelloFromClientPacket extends AbstractPacket
     private List<String> whitelist;
     private List<String> blacklist;
 
-    public HelloFromClientPacket()
-    {
+    public HelloFromClientPacket() {
     }
 
-    public HelloFromClientPacket(HydroangeasClient instance)
-    {
+    public HelloFromClientPacket(HydroangeasClient instance) {
         this(instance.getClientUUID(),
                 instance.getIP(),
                 instance.getRestrictionMode(),
@@ -52,8 +48,7 @@ public class HelloFromClientPacket extends AbstractPacket
                 instance.getBlacklist());
     }
 
-    public HelloFromClientPacket(UUID uuid, String ip, HydroangeasClient.RestrictionMode mode, int maxWeight, int actualWeight, long timestamp, List<String> whitelist, List<String> blacklist)
-    {
+    public HelloFromClientPacket(UUID uuid, String ip, HydroangeasClient.RestrictionMode mode, int maxWeight, int actualWeight, long timestamp, List<String> whitelist, List<String> blacklist) {
         this.uuid = uuid;
         this.ip = ip;
         this.mode = mode;
@@ -65,28 +60,23 @@ public class HelloFromClientPacket extends AbstractPacket
         this.blacklist = blacklist;
     }
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return uuid;
     }
 
-    public String getIp()
-    {
+    public String getIp() {
         return ip;
     }
 
-    public int getMaxWeight()
-    {
+    public int getMaxWeight() {
         return maxWeight;
     }
 
-    public int getActualWeight()
-    {
+    public int getActualWeight() {
         return actualWeight;
     }
 
-    public long getTimestamp()
-    {
+    public long getTimestamp() {
         return timestamp;
     }
 

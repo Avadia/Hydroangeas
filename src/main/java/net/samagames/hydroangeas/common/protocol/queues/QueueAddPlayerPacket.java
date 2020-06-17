@@ -18,31 +18,25 @@ import net.samagames.hydroangeas.server.waitingqueue.QPlayer;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class QueueAddPlayerPacket extends QueuePacket
-{
-
+public class QueueAddPlayerPacket extends QueuePacket {
     private QPlayer player;
 
-    public QueueAddPlayerPacket()
-    {
+    public QueueAddPlayerPacket() {
     }
 
-    public QueueAddPlayerPacket(TypeQueue typeQueue, String game, String map, QPlayer player)
-    {
+    public QueueAddPlayerPacket(TypeQueue typeQueue, String game, String map, QPlayer player) {
         super(typeQueue, game, map);
 
         this.player = player;
     }
 
-    public QueueAddPlayerPacket(TypeQueue typeQueue, String templateID, QPlayer player)
-    {
+    public QueueAddPlayerPacket(TypeQueue typeQueue, String templateID, QPlayer player) {
         super(typeQueue, templateID);
 
         this.player = player;
     }
 
-    public QPlayer getPlayer()
-    {
+    public QPlayer getPlayer() {
         return player;
     }
 }

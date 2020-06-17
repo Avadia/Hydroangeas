@@ -16,46 +16,38 @@ package net.samagames.hydroangeas.utils;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class JsonModMessage
-{
+public class JsonModMessage {
     protected String sender;
     protected ChatColor senderPrefix;
     protected String message;
 
-    public JsonModMessage(String sender, ChatColor senderPrefix, String message)
-    {
+    public JsonModMessage(String sender, ChatColor senderPrefix, String message) {
         this.sender = sender;
         this.senderPrefix = senderPrefix;
         this.message = message;
     }
 
-    public String getSender()
-    {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(String sender)
-    {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public ChatColor getSenderPrefix()
-    {
+    public ChatColor getSenderPrefix() {
         return senderPrefix;
     }
 
-    public void setSenderPrefix(ChatColor senderPrefix)
-    {
+    public void setSenderPrefix(ChatColor senderPrefix) {
         this.senderPrefix = senderPrefix;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
     }
 }

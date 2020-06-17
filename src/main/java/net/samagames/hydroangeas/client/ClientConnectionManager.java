@@ -4,7 +4,10 @@ import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.client.servers.MinecraftServerC;
 import net.samagames.hydroangeas.common.packets.AbstractPacket;
 import net.samagames.hydroangeas.common.packets.ConnectionManager;
-import net.samagames.hydroangeas.common.protocol.intranet.*;
+import net.samagames.hydroangeas.common.protocol.intranet.AskForClientActionPacket;
+import net.samagames.hydroangeas.common.protocol.intranet.AskForClientDataPacket;
+import net.samagames.hydroangeas.common.protocol.intranet.HeartbeatPacket;
+import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPacket;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,41 +27,32 @@ import java.util.concurrent.TimeUnit;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ClientConnectionManager extends ConnectionManager
-{
-
+public class ClientConnectionManager extends ConnectionManager {
     public HydroangeasClient instance;
 
-    public ClientConnectionManager(Hydroangeas hydroangeas)
-    {
+    public ClientConnectionManager(Hydroangeas hydroangeas) {
         super(hydroangeas);
 
         instance = hydroangeas.getAsClient();
     }
 
-    public void sendPacket(AbstractPacket packet)
-    {
+    public void sendPacket(AbstractPacket packet) {
         String channel = "global@hydroangeas-server";
         sendPacket(channel, packet);
     }
 
     @Override
-    public void handler(int id, String data)
-    {
+    public void handler(int id, String data) {
         Object spacket = gson.fromJson(data, packets[id].getClass());
 
-        if (spacket instanceof HeartbeatPacket)
-        {
+        if (spacket instanceof HeartbeatPacket) {
             HeartbeatPacket heartbeatPacket = (HeartbeatPacket) spacket;
             instance.getLifeThread().onServerHeartbeat(heartbeatPacket.getUUID());
-        } else if (spacket instanceof MinecraftServerSyncPacket)
-        {
+        } else if (spacket instanceof MinecraftServerSyncPacket) {
             MinecraftServerSyncPacket packet = (MinecraftServerSyncPacket) spacket;
 
             Hydroangeas.getInstance().getAsClient().getServerManager().newServer(packet);
-        }else if (spacket instanceof AskForClientDataPacket)
-        {
-            AskForClientDataPacket packet = (AskForClientDataPacket) spacket;
+        } else if (spacket instanceof AskForClientDataPacket) {
             instance.getScheduler().schedule(() -> {
                 try {
                     Hydroangeas.getInstance().getAsClient().getLifeThread().sendData(true);
@@ -66,16 +60,13 @@ public class ClientConnectionManager extends ConnectionManager
                     e.printStackTrace();
                 }
             }, 6, TimeUnit.SECONDS);
-        } else if (spacket instanceof AskForClientActionPacket)
-        {
+        } else if (spacket instanceof AskForClientActionPacket) {
             AskForClientActionPacket packet = (AskForClientActionPacket) spacket;
 
-            switch (packet.getCommand())
-            {
+            switch (packet.getCommand()) {
                 case SERVEREND:
                     MinecraftServerC server = instance.getServerManager().getServerByName(packet.getData());
-                    if(server != null)
-                    {
+                    if (server != null) {
                         server.stopServer();
                     }
                     break;

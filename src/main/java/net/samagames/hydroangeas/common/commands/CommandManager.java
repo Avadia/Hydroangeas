@@ -23,39 +23,31 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public abstract class CommandManager
-{
-
+public abstract class CommandManager {
     public Hydroangeas hydroangeas;
 
     public List<AbstractCommand> commands;
 
-    public CommandManager(Hydroangeas hydroangeas)
-    {
+    public CommandManager(Hydroangeas hydroangeas) {
         this.hydroangeas = hydroangeas;
         commands = new ArrayList<>();
     }
 
-    public void inputCommand(String data)
-    {
+    public void inputCommand(String data) {
 
         String[] args = data.split(" ");
         String command = args[0];
 
         args = Arrays.copyOfRange(args, 1, args.length);
 
-        if (command.equals("help"))
-        {
+        if (command.equals("help")) {
             showHelp();
             return;
         }
 
-        for (AbstractCommand command1 : commands)
-        {
-            if (command1.getCommand().equals(command))
-            {
-                if (!command1.execute(args))
-                {
+        for (AbstractCommand command1 : commands) {
+            if (command1.getCommand().equals(command)) {
+                if (!command1.execute(args)) {
                     hydroangeas.log(Level.WARNING, "Error while executing the command!");
                 }
                 return;
@@ -64,15 +56,12 @@ public abstract class CommandManager
         hydroangeas.log(Level.INFO, "Command doesn't exist !");
     }
 
-    public void showHelp()
-    {
+    public void showHelp() {
         //Please no lambda !
-        for(AbstractCommand command : commands)
-        {
+        for (AbstractCommand command : commands) {
             String help = command.getHelp();
-            if(help != null)
-            {
-                hydroangeas.getLogger().info(help);
+            if (help != null) {
+                Hydroangeas.getLogger().info(help);
             }
         }
     }

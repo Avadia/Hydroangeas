@@ -16,40 +16,34 @@ package net.samagames.hydroangeas.client.resources;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ServerDependency
-{
+public class ServerDependency {
     private String name;
     private String version;
     private String type;
     private String ext;
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return this.version;
     }
 
 
-    public String getType()
-    {
+    public String getType() {
         if (type == null)
             return "plugin";
         return type;
     }
 
-    public String getExt()
-    {
+    public String getExt() {
         if (ext == null)
             return "jar";
         return ext;
     }
 
-    public boolean isExtractable()
-    {
+    public boolean isExtractable() {
         return ext != null && !ext.equals("jar");
     }
 }

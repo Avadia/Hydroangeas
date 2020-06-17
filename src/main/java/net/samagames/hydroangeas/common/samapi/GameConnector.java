@@ -20,11 +20,8 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class GameConnector
-{
-
-    public static void sendPlayerToServer(String serverName, UUID playerId)
-    {
+public class GameConnector {
+    public static void sendPlayerToServer(String serverName, UUID playerId) {
         Hydroangeas.getInstance().getRedisSubscriber().send("join." + serverName, playerId.toString());
     }
 }

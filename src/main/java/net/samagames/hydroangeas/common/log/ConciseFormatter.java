@@ -23,15 +23,12 @@ import java.util.logging.LogRecord;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ConciseFormatter extends Formatter
-{
-
+public class ConciseFormatter extends Formatter {
     private final DateFormat date = new SimpleDateFormat(System.getProperty("net.samagames.log-date-format", "HH:mm:ss"));
 
     @Override
     @SuppressWarnings("ThrowableResultIgnored")
-    public String format(LogRecord record)
-    {
+    public String format(LogRecord record) {
         StringBuilder formatted = new StringBuilder();
 
         formatted.append(date.format(record.getMillis()));
@@ -40,8 +37,7 @@ public class ConciseFormatter extends Formatter
         formatted.append("] ");
         formatted.append(formatMessage(record));
         formatted.append('\n');
-        if (record.getThrown() != null)
-        {
+        if (record.getThrown() != null) {
             StringWriter writer = new StringWriter();
             record.getThrown().printStackTrace(new PrintWriter(writer));
             formatted.append(writer);

@@ -30,101 +30,92 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ServiceRequestReceiver implements PacketReceiver
-{
-
+public class ServiceRequestReceiver implements PacketReceiver {
     public HydroangeasServer instance;
-    private Gson gson;
+    private final Gson gson;
 
-    public ServiceRequestReceiver(HydroangeasServer instance)
-    {
+    public ServiceRequestReceiver(HydroangeasServer instance) {
         this.instance = instance;
         this.gson = new Gson();
     }
 
+    @SuppressWarnings({"deprecation", "CatchMayIgnoreException"})
     @Override
-    public void receive(String packet)
-    {
+    public void receive(String packet) {
         TemplateRequest data = gson.fromJson(packet, TemplateRequest.class);
 
         String target = data.getTarget();
 
-        if (!"hydroserver".equals(target))
-        {
+        if (!"hydroserver".equals(target)) {
             return;
         }
 
         JsonObject response = new JsonObject();
         response.addProperty("reqId", data.getReqId().toString());
 
-        if (data.getName().equals("order"))
-        {
-            try {
-                JsonObject parse = new JsonParser().parse(data.getOperation()).getAsJsonObject();
-                UUID asker = UUID.fromString(parse.get("uuid").getAsString());
-                SimpleGameTemplate simpleGameTemplate = new SimpleGameTemplate(parse.get("id").getAsString(), parse);
+        switch (data.getName()) {
+            case "order":
+                try {
+                    JsonObject parse = new JsonParser().parse(data.getOperation()).getAsJsonObject();
+                    UUID asker = UUID.fromString(parse.get("uuid").getAsString());
+                    SimpleGameTemplate simpleGameTemplate = new SimpleGameTemplate(parse.get("id").getAsString(), parse);
 
-                MinecraftServerS minecraftServerS = instance.getHostGameManager().orderServer(asker, simpleGameTemplate);
-                if (minecraftServerS != null)
-                {
-                    response.addProperty("code", 200);
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("id", minecraftServerS.getUUID().toString());
-                    jsonObject.addProperty("name", minecraftServerS.getServerName());
-                    jsonObject.addProperty("status", minecraftServerS.getStatus().toString());
-                    response.add("data", jsonObject);
-                }else {
-                    response.addProperty("code", 500);
-                    response.addProperty("data", "Cannot order the server.");
-                }
-            }catch (Exception ignored)
-            {
-                ignored.printStackTrace();
-                response.addProperty("code", 500);
-                response.addProperty("data", "Malformation template");
-            }
-
-        }else if (data.getName().equals("status"))
-        {
-            String serverName = data.getOperation();
-            MinecraftServerS serverByName = instance.getClientManager().getServerByName(serverName);
-            if (serverByName != null)
-            {
-                response.addProperty("code", 200);
-                JsonObject result = new JsonObject();
-                result.addProperty("status", serverByName.getStatus().toString());
-                result.addProperty("startedTime", System.currentTimeMillis() - serverByName.getStartedTime());
-                response.add("data", result);
-            }else {
-                response.addProperty("code", 404);
-                response.addProperty("data", "Server not found, maybe crashed.");
-            }
-        }else if(data.getName().equals("list"))
-        {
-            response.addProperty("code", 200);
-            List<HydroClient> clients = instance.getClientManager().getClients();
-            JsonArray result = new JsonArray();
-
-            for(HydroClient client : clients)
-            {
-                for (MinecraftServerS s : client.getServerManager().getServers())
-                {
-                    if(s.isCoupaingServer())
-                    {
+                    MinecraftServerS minecraftServerS = instance.getHostGameManager().orderServer(asker, simpleGameTemplate);
+                    if (minecraftServerS != null) {
+                        response.addProperty("code", 200);
                         JsonObject jsonObject = new JsonObject();
+                        jsonObject.addProperty("id", minecraftServerS.getUUID().toString());
+                        jsonObject.addProperty("name", minecraftServerS.getServerName());
+                        jsonObject.addProperty("status", minecraftServerS.getStatus().toString());
+                        response.add("data", jsonObject);
+                    } else {
+                        response.addProperty("code", 500);
+                        response.addProperty("data", "Cannot order the server.");
+                    }
+                } catch (Exception ignored) {
+                    ignored.printStackTrace();
+                    response.addProperty("code", 500);
+                    response.addProperty("data", "Malformation template");
+                }
 
-                        jsonObject.addProperty("name", s.getServerName());
-                        jsonObject.addProperty("uuid", s.getUUID().toString());
-                        jsonObject.addProperty("owner", s.getOwner().toString());
-                        jsonObject.addProperty("template", s.getTemplateID());
-                        jsonObject.addProperty("startedTime", System.currentTimeMillis() - s.getStartedTime());
-                        jsonObject.addProperty("status", s.getStatus().toString());
+                break;
+            case "status":
+                String serverName = data.getOperation();
+                MinecraftServerS serverByName = instance.getClientManager().getServerByName(serverName);
+                if (serverByName != null) {
+                    response.addProperty("code", 200);
+                    JsonObject result = new JsonObject();
+                    result.addProperty("status", serverByName.getStatus().toString());
+                    result.addProperty("startedTime", System.currentTimeMillis() - serverByName.getStartedTime());
+                    response.add("data", result);
+                } else {
+                    response.addProperty("code", 404);
+                    response.addProperty("data", "Server not found, maybe crashed.");
+                }
+                break;
+            case "list":
+                response.addProperty("code", 200);
+                List<HydroClient> clients = instance.getClientManager().getClients();
+                JsonArray result = new JsonArray();
 
-                        result.add(jsonObject);
+                for (HydroClient client : clients) {
+                    for (MinecraftServerS s : client.getServerManager().getServers()) {
+                        if (s.isCoupaingServer()) {
+                            JsonObject jsonObject = new JsonObject();
+
+                            jsonObject.addProperty("name", s.getServerName());
+                            jsonObject.addProperty("uuid", s.getUUID().toString());
+                            jsonObject.addProperty("owner", s.getOwner().toString());
+                            jsonObject.addProperty("template", s.getTemplateID());
+                            jsonObject.addProperty("startedTime", System.currentTimeMillis() - s.getStartedTime());
+                            jsonObject.addProperty("status", s.getStatus().toString());
+
+                            result.add(jsonObject);
+                        }
                     }
                 }
-            }
-            response.add("data", result);
+                response.add("data", result);
+                break;
         }
 
         instance.getConnectionManager().sendPacket("samaconnect.services.responses", response.toString());

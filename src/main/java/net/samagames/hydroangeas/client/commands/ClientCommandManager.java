@@ -20,13 +20,10 @@ import net.samagames.hydroangeas.common.commands.CommandManager;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ClientCommandManager extends CommandManager
-{
-
+public class ClientCommandManager extends CommandManager {
     public HydroangeasClient instance;
 
-    public ClientCommandManager(Hydroangeas hydroangeas)
-    {
+    public ClientCommandManager(Hydroangeas hydroangeas) {
         super(hydroangeas);
         instance = hydroangeas.getAsClient();
 

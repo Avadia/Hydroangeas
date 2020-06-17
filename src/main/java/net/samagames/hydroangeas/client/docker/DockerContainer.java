@@ -21,30 +21,28 @@ import java.io.File;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class DockerContainer {
-
-    private String name;
+    private final String name;
     private String id;
-    private String image;
+    private final String image;
 
-    private String[] command;
+    private final String[] command;
 
-    private int port;
-    private long allowedRam;
+    private final int port;
+    private final long allowedRam;
 
-    private File source;
+    private final File source;
 
-    private DockerAPI dockerAPI;
+    private final DockerAPI dockerAPI;
 
-    public DockerContainer(String name, File source, int port, String[] command, String allowedRam)
-    {
+    public DockerContainer(String name, File source, int port, String[] command, String allowedRam) {
 
         this.name = name;
         this.source = source;
         this.port = port;
         this.command = command;
         this.image = "frolvlad/alpine-oraclejdk8";
-        int coef = allowedRam.endsWith("M") ? 1024*1024 : 1024*1024*1024;
-        this.allowedRam = Long.valueOf(allowedRam.substring(0, allowedRam.length()-1))*coef;
+        int coef = allowedRam.endsWith("M") ? 1024 * 1024 : 1024 * 1024 * 1024;
+        this.allowedRam = Long.parseLong(allowedRam.substring(0, allowedRam.length() - 1)) * coef;
 
         dockerAPI = Hydroangeas.getInstance().getAsClient().getDockerAPI();
     }
@@ -64,34 +62,28 @@ public class DockerContainer {
         return this.id;
     }
 
-    public void stopContainer()
-    {
+    public void stopContainer() {
         dockerAPI.stopContainer(id);
     }
 
-    public void killContainer()
-    {
+    public void killContainer() {
         dockerAPI.killContainer(id);
     }
 
-    public void removeContainer()
-    {
-        try{
+    public void removeContainer() {
+        try {
             killContainer();
-        }catch (Exception e)
-        {
+        } catch (Exception ignored) {
         }
 
         dockerAPI.removeContainer(id);
     }
 
-    public boolean isRunning()
-    {
+    public boolean isRunning() {
         return dockerAPI.isRunning(id);
     }
 
-    public String getMapPort()
-    {
+    public String getMapPort() {
         return "";
     }
 

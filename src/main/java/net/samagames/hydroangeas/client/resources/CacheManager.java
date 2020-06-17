@@ -28,37 +28,30 @@ import java.security.NoSuchAlgorithmException;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class CacheManager
-{
+public class CacheManager {
+    private final HydroangeasClient instance;
 
-    private HydroangeasClient instance;
-
-    CacheManager(HydroangeasClient instance)
-    {
+    CacheManager(HydroangeasClient instance) {
         this.instance = instance;
     }
 
-    File getServerFiles(String game)
-    {
+    File getServerFiles(String game) {
         return getUrlCache("servers", game, ".tar.gz");
     }
 
-    File getMapFiles(String game, String map)
-    {
+    File getMapFiles(String game, String map) {
         String fileName = game + "_" + map;
 
         return getUrlCache("maps", fileName, ".tar.gz");
     }
 
-    File getDebFiles(ServerDependency dependency)
-    {
+    File getDebFiles(ServerDependency dependency) {
         String fileName = dependency.getName() + "-" + dependency.getVersion();
 
         return getUrlCache("dependencies", fileName, dependency.getExt());
     }
 
-    private File getUrlCache(String type, String fileName, String fileExt)
-    {
+    private File getUrlCache(String type, String fileName, String fileExt) {
         String checksumURL = this.instance.getTemplatesDomain() + type + "/checksum.php?file=" + fileName + "." + fileExt;
         String wgetURL = this.instance.getTemplatesDomain() + type + "/" + fileName + "." + fileExt;
         File cache = new File(this.instance.getServerFolder(), "cache/" + type + "/" + fileName + "." + fileExt);
@@ -66,35 +59,27 @@ public class CacheManager
         return getCache(wgetURL, checksumURL, cache);
     }
 
-    private File getCache(String wgetURL, String checksumURL, File cache)
-    {
-        if (!cache.exists())
-        {
+    private File getCache(String wgetURL, String checksumURL, File cache) {
+        if (!cache.exists()) {
             NetworkUtils.copyURLToFile(wgetURL, cache);
-        } else
-        {
-            try
-            {
+        } else {
+            try {
                 String remoteChecksum = NetworkUtils.readURL(checksumURL);
-                if (!remoteChecksum.equals(MiscUtils.getSHA1(cache)))
-                {
+                if (!remoteChecksum.equals(MiscUtils.getSHA1(cache))) {
                     NetworkUtils.copyURLToFile(wgetURL, cache);
                 }
-            } catch (NoSuchAlgorithmException | IOException e)
-            {
+            } catch (NoSuchAlgorithmException | IOException e) {
                 e.printStackTrace();
             }
         }
         return cache;
     }
 
-    public long getChecksum(File file) throws IOException
-    {
+    public long getChecksum(File file) throws IOException {
         return FileUtils.checksumCRC32(file);
     }
 
-    public void downloader(URL remoteFile, File archive, File dest) throws IOException
-    {
+    public void downloader(URL remoteFile, File archive, File dest) throws IOException {
         //TODO clear cache every day
         NetworkUtils.copyURLToFile(remoteFile, archive);
         Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");

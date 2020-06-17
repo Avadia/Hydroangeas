@@ -31,25 +31,26 @@ import java.util.Set;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class RemoteControl {
-
-    private HashMap<String, RemoteService> services = new HashMap<>();
+    private final HashMap<String, RemoteService> services = new HashMap<>();
 
     private JMXConnector jmxConnector;
     private MBeanServerConnection mBeanServer;
-    private RemoteListener remoteListener;
+    private final RemoteListener remoteListener;
 
     private boolean isConnected = false;
 
-    public RemoteControl(MinecraftServerC serverC, String host, int port)
-    {
+    @SuppressWarnings("BusyWait")
+    public RemoteControl(MinecraftServerC serverC, String host, int port) {
         remoteListener = new RemoteListener(this);
         new Thread(() -> {
-            try { Thread.sleep(5000); } catch (InterruptedException ignored) {} //Wait for container start
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+            } //Wait for container start
             int i = 0;
             while (!isConnected)//Try to connect
             {
-                if(i > 5)
-                {
+                if (i > 5) {
                     Hydroangeas.getLogger().info("Failed to connect at RMI shutdown: " + serverC.getServerName());
                     serverC.stopServer();
                     return;
@@ -69,18 +70,19 @@ public class RemoteControl {
                 }
                 i++;
             }
-            try { Thread.sleep(2000); } catch (InterruptedException ignored) {} //Wait for container start
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ignored) {
+            } //Wait for container start
             loadAllService(); //First load, listener will handle after that
         }).start();
     }
 
     //Get all registered services
-    private void loadAllService()
-    {
+    private void loadAllService() {
         try {
             Set<ObjectInstance> objectInstances = mBeanServer.queryMBeans(null, null);
-            for (ObjectInstance object : objectInstances)
-            {
+            for (ObjectInstance object : objectInstances) {
                 addService(object.getObjectName());
             }
         } catch (IOException e) {
@@ -88,8 +90,8 @@ public class RemoteControl {
         }
     }
 
-    boolean addService(ObjectName name)
-    {
+    @SuppressWarnings("UnusedReturnValue")
+    boolean addService(ObjectName name) {
         try {
             MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(name);
             RemoteService remoteService = new RemoteService(name, mBeanInfo);
@@ -101,14 +103,12 @@ public class RemoteControl {
         return true;
     }
 
-    boolean removeService(ObjectName name)
-    {
+    @SuppressWarnings("UnusedReturnValue")
+    boolean removeService(ObjectName name) {
         Iterator<RemoteService> values = services.values().iterator();
-        while (values.hasNext())
-        {
+        while (values.hasNext()) {
             RemoteService next = values.next();
-            if (next.getObjectName().equals(name))
-            {
+            if (next.getObjectName().equals(name)) {
                 values.remove();
                 break;
             }
@@ -116,18 +116,15 @@ public class RemoteControl {
         return true;
     }
 
-    public void removeService(String name)
-    {
+    public void removeService(String name) {
         services.remove(name);
     }
 
-    public RemoteService getService(String name)
-    {
+    public RemoteService getService(String name) {
         return services.get(name);
     }
 
-    public Collection<RemoteService> getServices()
-    {
+    public Collection<RemoteService> getServices() {
         return services.values();
     }
 
@@ -137,12 +134,12 @@ public class RemoteControl {
         return mBeanServer.invoke(remoteService.getObjectName(), operation, args, signatures);
     }
 
-    public boolean disconnect()
-    {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean disconnect() {
         try {
             jmxConnector.close();
             return true;
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
         return false;
     }

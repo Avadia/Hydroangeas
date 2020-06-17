@@ -16,9 +16,7 @@ package net.samagames.hydroangeas.server.data;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public enum Status
-{
-
+public enum Status {
     STARTING("starting", false),
     WAITING_FOR_PLAYERS("waitingForPlayers", true),
     READY_TO_START("readyToStart", true),
@@ -30,14 +28,12 @@ public enum Status
     private final String id;
     private final boolean allowJoin;
 
-    Status(String id, boolean allowJoin)
-    {
+    Status(String id, boolean allowJoin) {
         this.id = id;
         this.allowJoin = allowJoin;
     }
 
-    public static Status fromString(String str)
-    {
+    public static Status fromString(String str) {
         for (Status status : Status.values())
             if (status.getId().equals(str))
                 return status;
@@ -45,19 +41,16 @@ public enum Status
         return null;
     }
 
-    public boolean isAllowJoin()
-    {
+    public boolean isAllowJoin() {
         return allowJoin;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getId();
     }
 }

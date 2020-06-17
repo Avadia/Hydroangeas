@@ -23,32 +23,25 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class TemplateCommand extends AbstractCommand
-{
-
+public class TemplateCommand extends AbstractCommand {
     public HydroangeasServer instance;
 
-    public TemplateCommand(HydroangeasServer hydroangeasServer)
-    {
+    public TemplateCommand(HydroangeasServer hydroangeasServer) {
         super("order");
         this.instance = hydroangeasServer;
     }
 
     @Override
-    public boolean execute(String[] args)
-    {
-        if (args.length <= 0)
-        {
+    public boolean execute(String[] args) {
+        if (args.length <= 0) {
             List<String> listTemplate = instance.getTemplateManager().getListTemplate();
             StringBuilder builder = new StringBuilder("Templates: ");
             listTemplate.forEach((item) -> builder.append(item).append("\n"));
 
             instance.log(Level.INFO, builder.toString());
-        } else
-        {
+        } else {
             AbstractGameTemplate template = instance.getTemplateManager().getTemplateByID(args[0]);
-            if (template == null)
-            {
+            if (template == null) {
                 instance.log(Level.INFO, "Template not found!");
                 return false;
             }
@@ -60,8 +53,8 @@ public class TemplateCommand extends AbstractCommand
 
     @Override
     public String getHelp() {
-        return "- order <Optional: templatename>\n"+
-                "With no argument you see all available templates.\n"+
+        return "- order <Optional: templatename>\n" +
+                "With no argument you see all available templates.\n" +
                 "Add the desired template name to start a server with this template.";
     }
 }

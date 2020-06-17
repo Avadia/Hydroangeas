@@ -20,13 +20,11 @@ import javax.management.ObjectName;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class RemoteService {
-
     private ObjectName objectName;
     private MBeanInfo mBeanInfo;
     private String name;
 
-    public RemoteService(ObjectName objectName, MBeanInfo mBeanInfo)
-    {
+    public RemoteService(ObjectName objectName, MBeanInfo mBeanInfo) {
         this.objectName = objectName;
         setmBeanInfo(mBeanInfo);
     }
@@ -46,7 +44,7 @@ public class RemoteService {
     public void setmBeanInfo(MBeanInfo mBeanInfo) {
         this.mBeanInfo = mBeanInfo;
         String[] split = mBeanInfo.getClassName().split("\\.");
-        name = split[split.length-1];
+        name = split[split.length - 1];
     }
 
     public String getName() {

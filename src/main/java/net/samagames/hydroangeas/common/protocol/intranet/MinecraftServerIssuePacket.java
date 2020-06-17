@@ -20,21 +20,18 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MinecraftServerIssuePacket extends AbstractPacket
-{
+public class MinecraftServerIssuePacket extends AbstractPacket {
     private Type issueType;
     private String message;
     private UUID uuid;
     private String serverName;
 
-    public MinecraftServerIssuePacket(UUID uuid, String serverName, Type issueType)
-    {
+    public MinecraftServerIssuePacket(UUID uuid, String serverName, Type issueType) {
         this.uuid = uuid;
         this.serverName = serverName;
         this.issueType = issueType;
 
-        switch (issueType)
-        {
+        switch (issueType) {
             case MAKE:
                 this.message = "Impossible de créer le serveur '" + serverName + "'!";
                 break;
@@ -57,34 +54,28 @@ public class MinecraftServerIssuePacket extends AbstractPacket
         }
     }
 
-    public MinecraftServerIssuePacket()
-    {
+    public MinecraftServerIssuePacket() {
 
     }
 
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return uuid;
     }
 
-    public String getServerName()
-    {
+    public String getServerName() {
         return serverName;
     }
 
-    public Type getIssueType()
-    {
+    public Type getIssueType() {
         return this.issueType;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return this.message;
     }
 
-    public enum Type
-    {
+    public enum Type {
         MAKE, PATCH, START, STOP
     }
 }

@@ -21,20 +21,16 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ReloadCommand extends AbstractCommand
-{
-
+public class ReloadCommand extends AbstractCommand {
     public HydroangeasClient instance;
 
-    public ReloadCommand(HydroangeasClient hydroangeasClient)
-    {
+    public ReloadCommand(HydroangeasClient hydroangeasClient) {
         super("reload");
         this.instance = hydroangeasClient;
     }
 
     @Override
-    public boolean execute(String[] args)
-    {
+    public boolean execute(String[] args) {
         instance.log(Level.INFO, "Reloading..");
         instance.loadConfig();
 

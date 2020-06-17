@@ -1,5 +1,6 @@
 package net.samagames.hydroangeas.server.commands;
 
+import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.common.commands.AbstractCommand;
 import net.samagames.hydroangeas.server.HydroangeasServer;
 
@@ -19,27 +20,24 @@ import net.samagames.hydroangeas.server.HydroangeasServer;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class RefreshCommand extends AbstractCommand
-{
+public class RefreshCommand extends AbstractCommand {
     public HydroangeasServer instance;
 
-    public RefreshCommand(HydroangeasServer hydroangeasServer)
-    {
+    public RefreshCommand(HydroangeasServer hydroangeasServer) {
         super("refresh");
         this.instance = hydroangeasServer;
     }
 
     @Override
-    public boolean execute(String[] args)
-    {
-        instance.getLogger().info("Refreshing all clients..");
+    public boolean execute(String[] args) {
+        Hydroangeas.getLogger().info("Refreshing all clients..");
         instance.getClientManager().globalCheckData();
         return true;
     }
 
     @Override
     public String getHelp() {
-        return "- refresh\n"+
+        return "- refresh\n" +
                 "Ask to all client to resend their data to the server.";
     }
 }

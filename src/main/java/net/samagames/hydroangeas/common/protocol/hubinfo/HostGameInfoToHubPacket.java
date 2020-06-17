@@ -20,8 +20,7 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HostGameInfoToHubPacket extends AbstractPacket
-{
+public class HostGameInfoToHubPacket extends AbstractPacket {
     private UUID event;
     private UUID creator;
 

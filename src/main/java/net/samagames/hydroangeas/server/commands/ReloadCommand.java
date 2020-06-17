@@ -19,19 +19,16 @@ import net.samagames.hydroangeas.server.HydroangeasServer;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ReloadCommand extends AbstractCommand
-{
-
+public class ReloadCommand extends AbstractCommand {
     private final HydroangeasServer server;
-    public ReloadCommand(HydroangeasServer server)
-    {
+
+    public ReloadCommand(HydroangeasServer server) {
         super("reload");
         this.server = server;
     }
 
     @Override
-    public boolean execute(String[] args)
-    {
+    public boolean execute(String[] args) {
         server.getTemplateManager().reload();
         return true;
     }

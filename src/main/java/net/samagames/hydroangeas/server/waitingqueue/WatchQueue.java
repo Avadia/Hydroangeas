@@ -29,48 +29,43 @@ import java.util.concurrent.TimeUnit;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class WatchQueue {
+    private final HydroangeasServer instance;
+    private final Queue queue;
 
-    private HydroangeasServer instance;
-    private Queue queue;
-
+    @SuppressWarnings("rawtypes")
     private ScheduledFuture task;
 
     private boolean autoOrder = true;
 
     private long coolDown = 200;
 
-    WatchQueue(HydroangeasServer instance, Queue queue)
-    {
+    WatchQueue(HydroangeasServer instance, Queue queue) {
         this.instance = instance;
         this.queue = queue;
 
         startProcess();
     }
 
-    void startProcess()
-    {
-        if(isProcessing())
+    void startProcess() {
+        if (isProcessing())
             return;
 
         task = instance.getScheduler().scheduleAtFixedRate(this::process, 0, 800, TimeUnit.MILLISECONDS);
     }
 
-    boolean isProcessing()
-    {
+    boolean isProcessing() {
         return task != null && !task.isDone();
     }
 
-    private void process()
-    {
-        try{
+    private void process() {
+        try {
             AbstractGameTemplate template = queue.getTemplate();
 
             List<MinecraftServerS> servers = instance.getAlgorithmicMachine().getServerByTemplatesAndAvailable(template.getId());
 
             List<MinecraftServerS> availableServers = new ArrayList<>();
-            for(MinecraftServerS s : servers)
-            {
-                if((s.getStatus().equals(Status.WAITING_FOR_PLAYERS)
+            for (MinecraftServerS s : servers) {
+                if ((s.getStatus().equals(Status.WAITING_FOR_PLAYERS)
                         || s.getStatus().equals(Status.READY_TO_START))
                         && s.getMaxSlot() - s.getActualSlots() > 0)
                     availableServers.add(s);
@@ -81,7 +76,7 @@ public class WatchQueue {
 
             queue.getDataQueue().setLastServerStartNB(servers.size());
 
-            if(autoOrder) {
+            if (autoOrder) {
 
                 checkCooldown();
 
@@ -94,19 +89,16 @@ public class WatchQueue {
                     startTemplateServer();
                 }
             }
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void stop()
-    {
+    public void stop() {
         task.cancel(true);
     }
 
-    private void startTemplateServer()
-    {
+    private void startTemplateServer() {
         MinecraftServerS server = Hydroangeas.getInstance().getAsServer().getAlgorithmicMachine().orderTemplate(queue.getTemplate());
 
         //Server started let's proceed
@@ -123,17 +115,13 @@ public class WatchQueue {
         }
     }
 
-    private boolean hasNotEnoughServer(List<MinecraftServerS> servers)
-    {
+    private boolean hasNotEnoughServer(List<MinecraftServerS> servers) {
         boolean notEnServer = servers.isEmpty();
         //If already started check if there are all available(not full), if there are none start new one !
-        if(!notEnServer)
-        {
+        if (!notEnServer) {
             int numberOfAvailableServer = servers.size();
-            for(MinecraftServerS serverS : servers)
-            {
-                if(serverS.getMaxSlot() - serverS.getActualSlots() <= 0)
-                {
+            for (MinecraftServerS serverS : servers) {
+                if (serverS.getMaxSlot() - serverS.getActualSlots() <= 0) {
                     numberOfAvailableServer--;
                 }
             }
@@ -142,12 +130,10 @@ public class WatchQueue {
         return notEnServer;
     }
 
-    private void checkCooldown()
-    {
-        try{
+    private void checkCooldown() {
+        try {
             Thread.sleep(coolDown);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             //skip
         }
         coolDown = 0;//Security in case of forgot

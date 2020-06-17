@@ -33,7 +33,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class MinecraftPingUtil {
-
     public static byte PACKET_HANDSHAKE = 0x00, PACKET_STATUSREQUEST = 0x00,
             PACKET_PING = 0x01;
     public static int PROTOCOL_VERSION = 4;
@@ -74,9 +73,9 @@ public class MinecraftPingUtil {
     }
 
     /**
+     * @throws IOException Exception
      * @author thinkofdeath
      * See: https://gist.github.com/thinkofdeath/e975ddee04e9c87faf22
-     * @throws IOException 
      */
     public static void writeVarInt(DataOutputStream out, int paramInt) throws IOException {
         while (true) {
@@ -89,5 +88,4 @@ public class MinecraftPingUtil {
             paramInt >>>= 7;
         }
     }
-
 }

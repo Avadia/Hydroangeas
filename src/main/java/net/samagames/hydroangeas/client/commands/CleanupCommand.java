@@ -1,5 +1,6 @@
 package net.samagames.hydroangeas.client.commands;
 
+import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.client.HydroangeasClient;
 import net.samagames.hydroangeas.client.servers.MinecraftServerC;
 import net.samagames.hydroangeas.common.commands.AbstractCommand;
@@ -7,6 +8,7 @@ import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerUpdateP
 import org.apache.commons.io.FileDeleteStrategy;
 
 import java.io.File;
+import java.util.Objects;
 
 /*
  * This file is part of Hydroangeas.
@@ -24,42 +26,35 @@ import java.io.File;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class CleanupCommand extends AbstractCommand
-{
-
+public class CleanupCommand extends AbstractCommand {
     public HydroangeasClient instance;
 
-    public CleanupCommand(HydroangeasClient hydroangeasClient)
-    {
+    public CleanupCommand(HydroangeasClient hydroangeasClient) {
         super("cleanup");
         this.instance = hydroangeasClient;
     }
 
     @Override
-    public boolean execute(String[] args)
-    {
-        instance.getLogger().info("Checking servers...");
+    public boolean execute(String[] args) {
+        Hydroangeas.getLogger().info("Checking servers...");
         File[] files = this.instance.getServerFolder().listFiles();
-        for(File file : files)
-        {
+        for (File file : Objects.requireNonNull(files)) {
             String name = file.getName();
 
             MinecraftServerC serverC = instance.getServerManager().getServerByName(name);
-            if(serverC == null)
-            {
+            if (serverC == null) {
                 instance.getConnectionManager().sendPacket(new MinecraftServerUpdatePacket(instance, name, MinecraftServerUpdatePacket.UType.END));
-                instance.getLogger().info("Server: " + name + " not found. Sending shutdown to hydro.");
-                try{
+                Hydroangeas.getLogger().info("Server: " + name + " not found. Sending shutdown to hydro.");
+                try {
                     FileDeleteStrategy.FORCE.delete(file);
-                    instance.getLogger().info("Deleted folder!");
-                }catch(Exception e)
-                {
+                    Hydroangeas.getLogger().info("Deleted folder!");
+                } catch (Exception e) {
                     e.printStackTrace();
-                    instance.getLogger().info("Can't delete folder!");
+                    Hydroangeas.getLogger().info("Can't delete folder!");
                 }
             }
         }
-        instance.getLogger().info("Check done !");
+        Hydroangeas.getLogger().info("Check done !");
         return true;
     }
 

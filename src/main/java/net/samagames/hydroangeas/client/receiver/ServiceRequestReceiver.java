@@ -32,41 +32,34 @@ import java.io.IOException;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ServiceRequestReceiver implements PacketReceiver
-{
-
+public class ServiceRequestReceiver implements PacketReceiver {
     public HydroangeasClient instance;
 
-    public ServiceRequestReceiver(HydroangeasClient instance)
-    {
+    public ServiceRequestReceiver(HydroangeasClient instance) {
         this.instance = instance;
     }
 
     @Override
-    public void receive(String packet)
-    {
+    public void receive(String packet) {
         ServiceRequest data = new Gson().fromJson(packet, ServiceRequest.class);
 
         String target = data.getTarget();
 
         MinecraftServerC server = instance.getServerManager().getServerByName(target);
 
-        if (server == null)
-        {
+        if (server == null) {
             return;
         }
 
         JsonObject response = new JsonObject();
         response.addProperty("reqId", data.getReqId().toString());
 
-        if (data.getName().equals("fetch"))
-        {
+        if (data.getName().equals("fetch")) {
             response.addProperty("code", 200);
 
             JsonArray list = new JsonArray();
 
-            for (RemoteService service : server.getRemoteControl().getServices())
-            {
+            for (RemoteService service : server.getRemoteControl().getServices()) {
                 if (!service.getmBeanInfo().getClassName().startsWith("net.samagames"))
                     continue;
 
@@ -74,8 +67,7 @@ public class ServiceRequestReceiver implements PacketReceiver
                 jsonObject.addProperty("name", service.getName());
 
                 JsonArray operations = new JsonArray();
-                for (MBeanOperationInfo operation : service.getmBeanInfo().getOperations())
-                {
+                for (MBeanOperationInfo operation : service.getmBeanInfo().getOperations()) {
                     operations.add(new Gson().toJsonTree(operation));
                 }
                 jsonObject.add("operations", operations);
@@ -85,15 +77,12 @@ public class ServiceRequestReceiver implements PacketReceiver
 
             response.add("data", list);
 
-        }else
-        {
+        } else {
             RemoteControl remoteControl = server.getRemoteControl();
-            if (remoteControl != null && remoteControl.isConnected())
-            {
+            if (remoteControl != null && remoteControl.isConnected()) {
                 RemoteService service = remoteControl.getService(data.getName());
 
-                if (service != null)
-                {
+                if (service != null) {
                     try {
                         Object result = server.getRemoteControl().invokeService(service, data.getOperation(), data.getArguments(), data.getSignature());
                         response.addProperty("code", 200);
@@ -103,13 +92,11 @@ public class ServiceRequestReceiver implements PacketReceiver
                         response.addProperty("code", 500);
                         response.add("data", null);
                     }
-                }else
-                {
+                } else {
                     response.addProperty("code", 404);
                     response.add("data", null);
                 }
-            }else
-            {
+            } else {
                 response.addProperty("code", 503);
                 response.add("data", null);
             }

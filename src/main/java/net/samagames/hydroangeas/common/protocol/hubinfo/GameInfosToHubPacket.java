@@ -18,56 +18,45 @@ import net.samagames.hydroangeas.common.packets.AbstractPacket;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class GameInfosToHubPacket extends AbstractPacket
-{
-
+public class GameInfosToHubPacket extends AbstractPacket {
     private int playerMaxForMap;
     private int playerWaitFor;
     private int totalPlayerOnServers;
 
     private String templateID;
 
-    public GameInfosToHubPacket()
-    {
+    public GameInfosToHubPacket() {
     }
 
-    public GameInfosToHubPacket(String templateID)
-    {
+    public GameInfosToHubPacket(String templateID) {
         this.templateID = templateID;
     }
 
-    public int getPlayerMaxForMap()
-    {
+    public int getPlayerMaxForMap() {
         return playerMaxForMap;
     }
 
-    public void setPlayerMaxForMap(int playerMaxForMap)
-    {
+    public void setPlayerMaxForMap(int playerMaxForMap) {
         this.playerMaxForMap = playerMaxForMap;
     }
 
-    public int getPlayerWaitFor()
-    {
+    public int getPlayerWaitFor() {
         return playerWaitFor;
     }
 
-    public void setPlayerWaitFor(int playerWaitFor)
-    {
+    public void setPlayerWaitFor(int playerWaitFor) {
         this.playerWaitFor = playerWaitFor;
     }
 
-    public int getTotalPlayerOnServers()
-    {
+    public int getTotalPlayerOnServers() {
         return totalPlayerOnServers;
     }
 
-    public void setTotalPlayerOnServers(int totalPlayerOnServers)
-    {
+    public void setTotalPlayerOnServers(int totalPlayerOnServers) {
         this.totalPlayerOnServers = totalPlayerOnServers;
     }
 
-    public String getTemplateID()
-    {
+    public String getTemplateID() {
         return templateID;
     }
 }

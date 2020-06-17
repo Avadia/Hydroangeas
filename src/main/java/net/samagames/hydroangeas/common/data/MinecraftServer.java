@@ -23,7 +23,6 @@ import java.util.UUID;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class MinecraftServer {
-
     protected UUID uuid;
 
     protected UUID owner;
@@ -52,13 +51,12 @@ public abstract class MinecraftServer {
     protected long startedTime;
 
     public MinecraftServer(UUID uuid,
-                            String game,
-                            String map,
-                            int minSlot,
-                            int maxSlot,
-                            JsonElement options,
-                            JsonElement startupOptions)
-    {
+                           String game,
+                           String map,
+                           int minSlot,
+                           int maxSlot,
+                           JsonElement options,
+                           JsonElement startupOptions) {
         this.uuid = uuid;
         this.game = game;
         this.map = map;
@@ -80,8 +78,7 @@ public abstract class MinecraftServer {
         this.uuid = uuid;
     }
 
-    public void changeUUID()
-    {
+    public void changeUUID() {
         this.uuid = UUID.randomUUID();
     }
 
@@ -141,8 +138,7 @@ public abstract class MinecraftServer {
         this.templateID = templateID;
     }
 
-    public String getServerName()
-    {
+    public String getServerName() {
         return this.game + "_" + ((hubID == null) ? this.uuid.toString().split("-")[0] : hubID);
     }
 
@@ -162,8 +158,7 @@ public abstract class MinecraftServer {
         this.startupOptions = startupOptions;
     }
 
-    public boolean isHub()
-    {
+    public boolean isHub() {
         return hubID != null;
     }
 

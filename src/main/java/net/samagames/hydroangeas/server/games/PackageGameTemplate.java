@@ -24,99 +24,83 @@ import java.util.Random;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class PackageGameTemplate implements AbstractGameTemplate
-{
+public class PackageGameTemplate implements AbstractGameTemplate {
+    private final String id;
 
-    private String id;
-
-    private List<String> templates = new ArrayList<>();
+    private final List<String> templates = new ArrayList<>();
 
     private SimpleGameTemplate currentTemplate;
 
-    public PackageGameTemplate(String id, JsonElement data)
-    {
+    public PackageGameTemplate(String id, JsonElement data) {
         this.id = id;
         JsonObject object = data.getAsJsonObject();
 
-        for (JsonElement element : object.getAsJsonArray("Templates"))
-        {
+        for (JsonElement element : object.getAsJsonArray("Templates")) {
             templates.add(element.getAsString());
         }
     }
 
-    public boolean selectTemplate()
-    {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean selectTemplate() {
         Random random = new Random();
         String selected = templates.get(random.nextInt(templates.size()));
         AbstractGameTemplate template = Hydroangeas.getInstance().getAsServer().getTemplateManager().getTemplateByID(selected);
-        if (template == null || template instanceof PackageGameTemplate)
-        {
-            Hydroangeas.getInstance().getLogger().severe("Package Template: " + id + " contains an invalid sub template");
+        if (template == null || template instanceof PackageGameTemplate) {
+            Hydroangeas.getLogger().severe("Package Template: " + id + " contains an invalid sub template");
             return false;
-        } else
-        {
+        } else {
             currentTemplate = (SimpleGameTemplate) template;
         }
         return true;
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     @Override
-    public String getGameName()
-    {
+    public String getGameName() {
         return currentTemplate.getGameName();
     }
 
     @Override
-    public String getMapName()
-    {
+    public String getMapName() {
         return currentTemplate.getMapName();
     }
 
     @Override
-    public int getMinSlot()
-    {
+    public int getMinSlot() {
         return currentTemplate.getMinSlot();
     }
 
     @Override
-    public int getMaxSlot()
-    {
+    public int getMaxSlot() {
         return currentTemplate.getMaxSlot();
     }
 
     @Override
-    public JsonElement getOptions()
-    {
+    public JsonElement getOptions() {
         return currentTemplate.getOptions();
     }
 
     @Override
-    public int getWeight()
-    {
+    public int getWeight() {
         return currentTemplate.getWeight();
     }
 
     @Override
-    public boolean isCoupaing()
-    {
+    public boolean isCoupaing() {
         return currentTemplate.isCoupaing();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Template id: " + id + ((isCoupaing()) ? " Coupaing Server " : " ");
     }
 
     @Override
-    public JsonElement getStartupOptions()
-    {
+    public JsonElement getStartupOptions() {
         return currentTemplate.getStartupOptions();
     }
 
@@ -132,12 +116,10 @@ public class PackageGameTemplate implements AbstractGameTemplate
 
     @Override
     public void resetStats() {
-        for(String template : templates)
-        {
-            try{
+        for (String template : templates) {
+            try {
                 Hydroangeas.getInstance().getAsServer().getTemplateManager().getTemplateByID(template).resetStats();
-            }catch (Exception e)
-            {
+            } catch (Exception ignored) {
 
             }
         }

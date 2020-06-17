@@ -22,33 +22,29 @@ import java.util.concurrent.atomic.AtomicInteger;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class DataQueue {
-
-    private HydroangeasServer instance;
+    private final HydroangeasServer instance;
 
     //Number of started server in the last 10 minutes
-    private AtomicInteger numberOfServerStarted = new AtomicInteger(0);
+    private final AtomicInteger numberOfServerStarted = new AtomicInteger(0);
 
-    private AtomicInteger lastServerStartNB = new AtomicInteger(0);
+    private final AtomicInteger lastServerStartNB = new AtomicInteger(0);
 
     private final static double NumberOfMinutePerServer = 10.0;
 
-    public DataQueue(HydroangeasServer instance)
-    {
+    public DataQueue(HydroangeasServer instance) {
         this.instance = instance;
     }
 
-    public void startedServer()
-    {
+    public void startedServer() {
         //Increment now
         numberOfServerStarted.incrementAndGet();
 
         //Decrement in 10 minutes
-        instance.getScheduler().schedule(() -> numberOfServerStarted.decrementAndGet(), 10L, TimeUnit.MINUTES);
+        instance.getScheduler().schedule(numberOfServerStarted::decrementAndGet, 10L, TimeUnit.MINUTES);
     }
 
-    public boolean needToAnticipate()
-    {
-        return ((((double)numberOfServerStarted.get()) > 0) ? 10.0/((double)numberOfServerStarted.get()): Integer.MAX_VALUE) < NumberOfMinutePerServer;
+    public boolean needToAnticipate() {
+        return ((((double) numberOfServerStarted.get()) > 0) ? 10.0 / ((double) numberOfServerStarted.get()) : Integer.MAX_VALUE) < NumberOfMinutePerServer;
     }
 
     public int getLastServerStartNB() {

@@ -21,24 +21,17 @@ import java.util.logging.*;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HydroLogger extends Logger
-{
-
-    private final Formatter formatter = new ConciseFormatter();
+public class HydroLogger extends Logger {
     private final LogDispatcher dispatcher = new LogDispatcher(this);
 
-    @SuppressWarnings(
-            {
-                    "CallToPrintStackTrace", "CallToThreadStartDuringObjectConstruction"
-            })
-    public HydroLogger(Hydroangeas hydroangeas)
-    {
+    @SuppressWarnings({"CallToPrintStackTrace", "CallToThreadStartDuringObjectConstruction"})
+    public HydroLogger(Hydroangeas hydroangeas) {
         super("Hydroangeas", null);
         setLevel(Level.ALL);
 
-        try
-        {
+        try {
             FileHandler fileHandler = new FileHandler("Hydroangeas.log", 1 << 24, 8, true);
+            Formatter formatter = new ConciseFormatter();
             fileHandler.setFormatter(formatter);
             addHandler(fileHandler);
 
@@ -46,8 +39,7 @@ public class HydroLogger extends Logger
             consoleHandler.setLevel(Level.INFO);
             consoleHandler.setFormatter(formatter);
             addHandler(consoleHandler);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.err.println("Could not register logger!");
             ex.printStackTrace();
         }
@@ -55,13 +47,11 @@ public class HydroLogger extends Logger
     }
 
     @Override
-    public void log(LogRecord record)
-    {
+    public void log(LogRecord record) {
         dispatcher.queue(record);
     }
 
-    void doLog(LogRecord record)
-    {
+    void doLog(LogRecord record) {
         super.log(record);
     }
 }

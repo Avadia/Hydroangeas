@@ -18,9 +18,7 @@ import com.google.gson.JsonElement;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public interface AbstractGameTemplate
-{
-
+public interface AbstractGameTemplate {
     String getId();
 
     String getGameName();

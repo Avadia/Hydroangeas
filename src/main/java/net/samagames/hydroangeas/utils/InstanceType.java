@@ -16,21 +16,18 @@ package net.samagames.hydroangeas.utils;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public enum InstanceType
-{
+public enum InstanceType {
     CLIENT("Client"),
     SERVER("Server");
 
     private final String text;
 
-    InstanceType(String text)
-    {
+    InstanceType(String text) {
         this.text = text;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.text;
     }
 }

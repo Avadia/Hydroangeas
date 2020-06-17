@@ -18,10 +18,8 @@ import com.google.gson.JsonElement;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class JsonUtils
-{
-    public static String getStringOrNull(JsonElement jsonElement)
-    {
+public class JsonUtils {
+    public static String getStringOrNull(JsonElement jsonElement) {
         return jsonElement.isJsonNull() ? null : jsonElement.getAsString();
     }
 }

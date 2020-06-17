@@ -33,20 +33,18 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MinecraftServerS extends MinecraftServer
-{
-    private HydroClient client;
+public class MinecraftServerS extends MinecraftServer {
+    private final HydroClient client;
 
     private boolean started;
 
     private boolean available;
 
-    private List<Runnable> onStartHook;
+    private final List<Runnable> onStartHook;
 
-    private int suppressionFlag = 0;
+    private final int suppressionFlag = 0;
 
-    public MinecraftServerS(HydroClient client, AbstractGameTemplate template)
-    {
+    public MinecraftServerS(HydroClient client, AbstractGameTemplate template) {
         this(client,
                 UUID.randomUUID(),
                 template.getGameName(),
@@ -61,8 +59,7 @@ public class MinecraftServerS extends MinecraftServer
         this.weight = template.getWeight();
     }
 
-    public MinecraftServerS(HydroClient client, MinecraftServerSyncPacket packet)
-    {
+    public MinecraftServerS(HydroClient client, MinecraftServerSyncPacket packet) {
         this(client,
                 packet.getMinecraftUUID(),
                 packet.getGame(),
@@ -85,8 +82,7 @@ public class MinecraftServerS extends MinecraftServer
                             int minSlot,
                             int maxSlot,
                             JsonElement options,
-                            JsonElement startupOptions)
-    {
+                            JsonElement startupOptions) {
         super(uuid,
                 game,
                 map,
@@ -100,19 +96,15 @@ public class MinecraftServerS extends MinecraftServer
         onStartHook = new ArrayList<>();
     }
 
-    public void shutdown()
-    {
+    public void shutdown() {
         client.getInstance().getConnectionManager().sendPacket(client,
                 new AskForClientActionPacket(client.getUUID(), AskForClientActionPacket.ActionCommand.SERVEREND, getServerName()));
     }
 
-    public void onStarted()
-    {
-        List<Runnable> hooks = new ArrayList<>();
-        hooks.addAll(onStartHook);
+    public void onStarted() {
+        List<Runnable> hooks = new ArrayList<>(onStartHook);
         onStartHook.clear();
-        for(Runnable runnable : hooks)
-        {
+        for (Runnable runnable : hooks) {
             client.getInstance().getScheduler().execute(runnable);
         }
 
@@ -129,29 +121,24 @@ public class MinecraftServerS extends MinecraftServer
         //Hydroangeas.getInstance().getRedisSubscriber().send("servers", "heartbeat " + getServerName() + " " + ip + " " + port);
     }
 
-    public void onShutdown()
-    {
-        if(isCoupaingServer())
-        {
+    public void onShutdown() {
+        if (isCoupaingServer()) {
             Hydroangeas.getInstance().getAsServer().getHostGameManager().removeServer(getServerName());
         }
 
         //If we need to save some data after shutdown
-        if (isHub())
-        {
+        if (isHub()) {
             Hydroangeas.getInstance().getAsServer().getHubBalancer().onHubShutdown(this);
         }
         unregisterNetwork();
         updateHubHostGame(2);
     }
 
-    public void addOnStartHook(Runnable runnable)
-    {
+    public void addOnStartHook(Runnable runnable) {
         onStartHook.add(runnable);
     }
 
-    public void unregisterNetwork()
-    {
+    public void unregisterNetwork() {
         //Security remove server from redis
         Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getResource();
         jedis.hdel("servers", getServerName());
@@ -161,31 +148,25 @@ public class MinecraftServerS extends MinecraftServer
         Hydroangeas.getInstance().getRedisSubscriber().send("servers", "stop " + getServerName());
     }
 
-    public void dispatchCommand(String command)
-    {
-        Hydroangeas.getInstance().getRedisSubscriber().send("commands.servers."+getServerName(), command);
+    public void dispatchCommand(String command) {
+        Hydroangeas.getInstance().getRedisSubscriber().send("commands.servers." + getServerName(), command);
     }
 
-    public boolean isStarted()
-    {
+    public boolean isStarted() {
         return started;
     }
 
-    public void setStarted(boolean started)
-    {
+    public void setStarted(boolean started) {
         this.started = started;
     }
 
-    public void setStatus(Status status)
-    {
-        if(this.status.equals(Status.STARTING) && status.equals(Status.WAITING_FOR_PLAYERS))
-        {
-            try{
+    public void setStatus(Status status) {
+        if (this.status.equals(Status.STARTING) && status.equals(Status.WAITING_FOR_PLAYERS)) {
+            try {
                 AbstractGameTemplate templateByID = HydroangeasServer.getInstance().getAsServer().getTemplateManager().getTemplateByID(this.templateID);
-                if(!isCoupaingServer())
+                if (!isCoupaingServer())
                     templateByID.addTimeToStart(System.currentTimeMillis() - startedTime);
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 Hydroangeas.getLogger().severe("Error to save starting stat for: " + getServerName());
                 Hydroangeas.getLogger().severe("Prevent starting system may fail");
             }
@@ -194,10 +175,8 @@ public class MinecraftServerS extends MinecraftServer
         updateHubHostGame(1);
     }
 
-    public void setActualSlots(int actualSlots)
-    {
-        if(!available && actualSlots >= 1)
-        {
+    public void setActualSlots(int actualSlots) {
+        if (!available && actualSlots >= 1) {
             available = true;
             timeToLive = CleanServer.LIVETIME;
         }
@@ -205,9 +184,8 @@ public class MinecraftServerS extends MinecraftServer
         updateHubHostGame(1);
     }
 
-    public void updateHubHostGame(int state)
-    {
-        if(!coupaingServer)
+    public void updateHubHostGame(int state) {
+        if (!coupaingServer)
             return;
 
         HostGameInfoToHubPacket packet = new HostGameInfoToHubPacket();
@@ -228,8 +206,7 @@ public class MinecraftServerS extends MinecraftServer
         return client;
     }
 
-    public void sendPlayer(UUID uuid)
-    {
+    public void sendPlayer(UUID uuid) {
         GameConnector.sendPlayerToServer(getServerName(), uuid);
         //TODO check if player is connected
         /*client.getInstance().getScheduler().schedule(new Runnable() {

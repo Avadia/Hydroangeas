@@ -25,23 +25,20 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HydroClient
-{
-
-    private HydroangeasServer instance;
+public class HydroClient {
+    private final HydroangeasServer instance;
     private UUID uuid;
     private String ip;
     private int maxWeight;
     private long timestamp;
 
-    private Hydroangeas.RestrictionMode restrictionMode;
-    private List<String> whitelist;
-    private List<String> blacklist;
+    private final Hydroangeas.RestrictionMode restrictionMode;
+    private final List<String> whitelist;
+    private final List<String> blacklist;
 
-    private MinecraftServerManager serverManager;
+    private final MinecraftServerManager serverManager;
 
-    public HydroClient(HydroangeasServer instance, UUID uuid, Hydroangeas.RestrictionMode restrictionMode, List<String> whitelist, List<String> blacklist)
-    {
+    public HydroClient(HydroangeasServer instance, UUID uuid, Hydroangeas.RestrictionMode restrictionMode, List<String> whitelist, List<String> blacklist) {
         this.instance = instance;
         this.uuid = uuid;
         this.restrictionMode = restrictionMode;
@@ -53,8 +50,7 @@ public class HydroClient
         serverManager = new MinecraftServerManager(instance, this);
     }
 
-    public void updateData(HelloFromClientPacket packet)
-    {
+    public void updateData(HelloFromClientPacket packet) {
         if (uuid == null)
             this.uuid = packet.getUUID();
 
@@ -62,8 +58,7 @@ public class HydroClient
 
         setMaxWeight(packet.getMaxWeight());
 
-        if (getActualWeight() != packet.getActualWeight())
-        {
+        if (getActualWeight() != packet.getActualWeight()) {
             instance.log(Level.SEVERE, "Error client and server not sync about weight! client:" + packet.getActualWeight() + " server:" + getActualWeight());
         }
 
@@ -71,92 +66,72 @@ public class HydroClient
 
     }
 
-    public void shutdown()
-    {
+    public void shutdown() {
         instance.getConnectionManager().sendPacket(this, new AskForClientActionPacket(instance.getUUID(), AskForClientActionPacket.ActionCommand.CLIENTSHUTDOWN, ""));
     }
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return this.uuid;
     }
 
-    public String getIp()
-    {
+    public String getIp() {
         return this.ip;
     }
 
-    public void setIp(String ip)
-    {
+    public void setIp(String ip) {
         this.ip = ip;
     }
 
-    public int getMaxWeight()
-    {
+    public int getMaxWeight() {
         return this.maxWeight;
     }
 
-    public void setMaxWeight(int maxWeight)
-    {
+    public void setMaxWeight(int maxWeight) {
         this.maxWeight = maxWeight;
     }
 
-    public int getActualWeight()
-    {
+    public int getActualWeight() {
         return serverManager.getTotalWeight();
     }
 
-    public int getAvailableWeight()
-    {
+    public int getAvailableWeight() {
         return getMaxWeight() - getActualWeight();
     }
 
-    public long getTimestamp()
-    {
+    public long getTimestamp() {
         return this.timestamp;
     }
 
-    public void setTimestamp(long timestamp)
-    {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
-    public MinecraftServerManager getServerManager()
-    {
+    public MinecraftServerManager getServerManager() {
         return this.serverManager;
     }
 
-    public HydroangeasServer getInstance()
-    {
+    public HydroangeasServer getInstance() {
         return instance;
     }
 
-    public int getPlayer()
-    {
+    public int getPlayer() {
         int data = 0;
-        for(MinecraftServerS server : serverManager.getServers())
-        {
+        for (MinecraftServerS server : serverManager.getServers()) {
             data += server.getActualSlots();
         }
         return data;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof HydroClient)
-        {
-            if (this.getUUID().equals(((HydroClient) obj).getUUID()))
-            {
-                return true;
-            }
+    public boolean equals(Object obj) {
+        if (obj instanceof HydroClient) {
+            return this.getUUID().equals(((HydroClient) obj).getUUID());
         }
         return false;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return this.getUUID().hashCode();
     }
 

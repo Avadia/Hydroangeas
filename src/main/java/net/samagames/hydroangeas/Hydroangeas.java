@@ -34,9 +34,7 @@ import java.util.logging.Logger;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public abstract class Hydroangeas
-{
-
+public abstract class Hydroangeas {
     private static Hydroangeas instance;
     protected final ScheduledExecutorService scheduler;
     protected final ConsoleReader consoleReader;
@@ -52,8 +50,7 @@ public abstract class Hydroangeas
 
     protected static Logger logger;
 
-    public Hydroangeas(OptionSet options) throws IOException
-    {
+    public Hydroangeas(OptionSet options) throws IOException {
         instance = this;
         uuid = UUID.randomUUID();
 
@@ -84,22 +81,23 @@ public abstract class Hydroangeas
         isRunning = true;
     }
 
-    public void loadConfig()
-    {
-        this.configuration = new Configuration(this, options);
+    public static Hydroangeas getInstance() {
+        return instance;
     }
 
-    public static Hydroangeas getInstance()
-    {
-        return instance;
+    public static Logger getLogger() {
+        return logger;
     }
 
     public abstract void enable();
 
     public abstract void disable();
 
-    public void shutdown()
-    {
+    public void loadConfig() {
+        this.configuration = new Configuration(this, options);
+    }
+
+    public void shutdown() {
         isRunning = false;
 
         disable();
@@ -110,82 +108,64 @@ public abstract class Hydroangeas
         databaseConnector.disconnect();
     }
 
-    public void log(Level level, String message)
-    {
+    public void log(Level level, String message) {
         logger.log(level, message);
     }
 
-    public Configuration getConfiguration()
-    {
+    public Configuration getConfiguration() {
         return this.configuration;
     }
 
-    public DatabaseConnector getDatabaseConnector()
-    {
+    public DatabaseConnector getDatabaseConnector() {
         return this.databaseConnector;
     }
 
-    public RedisSubscriber getRedisSubscriber()
-    {
+    public RedisSubscriber getRedisSubscriber() {
         return this.redisSubscriber;
     }
 
-    public LinuxBridge getLinuxBridge()
-    {
+    public LinuxBridge getLinuxBridge() {
         return this.linuxBridge;
     }
 
-    public ScheduledExecutorService getScheduler()
-    {
+    public ScheduledExecutorService getScheduler() {
         return scheduler;
     }
 
-    public HydroangeasClient getAsClient()
-    {
+    public HydroangeasClient getAsClient() {
         if (this instanceof HydroangeasClient)
             return (HydroangeasClient) this;
         else
             return null;
     }
 
-    public HydroangeasServer getAsServer()
-    {
+    public HydroangeasServer getAsServer() {
         if (this instanceof HydroangeasServer)
             return (HydroangeasServer) this;
         else
             return null;
     }
 
-    public ConsoleReader getConsoleReader()
-    {
+    public ConsoleReader getConsoleReader() {
         return consoleReader;
     }
 
-    public CommandManager getCommandManager()
-    {
+    public CommandManager getCommandManager() {
         return commandManager;
     }
 
-    public static Logger getLogger()
-    {
-        return logger;
-    }
-
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return uuid;
     }
 
-    public enum RestrictionMode
-    {
+    public enum RestrictionMode {
         NONE("none"),
         WHITELIST("whitelist"),
         BLACKLIST("blacklist");
 
-        private String mode;
+        private final String mode;
 
-        RestrictionMode(String mode)
-        {
+        RestrictionMode(String mode) {
 
             this.mode = mode;
         }
@@ -194,11 +174,9 @@ public abstract class Hydroangeas
             return mode;
         }
 
-        static public RestrictionMode valueFrom(String mode)
-        {
-            for(RestrictionMode data : RestrictionMode.values())
-            {
-                if(data.getMode().equalsIgnoreCase(mode))
+        static public RestrictionMode valueFrom(String mode) {
+            for (RestrictionMode data : RestrictionMode.values()) {
+                if (data.getMode().equalsIgnoreCase(mode))
                     return data;
             }
 

@@ -28,18 +28,14 @@ import java.security.NoSuchAlgorithmException;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MiscUtils
-{
-    public static File getJarFolder()
-    {
+public class MiscUtils {
+    public static File getJarFolder() {
         URL url;
         String extURL;
 
-        try
-        {
+        try {
             url = MiscUtils.class.getProtectionDomain().getCodeSource().getLocation();
-        } catch (SecurityException ex)
-        {
+        } catch (SecurityException ex) {
             url = MiscUtils.class.getResource(MiscUtils.class.getSimpleName() + ".class");
         }
 
@@ -47,8 +43,7 @@ public class MiscUtils
 
         if (extURL.endsWith(".jar"))
             extURL = extURL.substring(0, extURL.lastIndexOf("/"));
-        else
-        {
+        else {
             String suffix = "/" + (MiscUtils.class.getName()).replace(".", "/") + ".class";
             extURL = extURL.replace(suffix, "");
 
@@ -56,83 +51,68 @@ public class MiscUtils
                 extURL = extURL.substring(4, extURL.lastIndexOf("/"));
         }
 
-        try
-        {
+        try {
             url = new URL(extURL);
-        } catch (MalformedURLException ignored)
-        {
+        } catch (MalformedURLException ignored) {
         }
 
-        try
-        {
+        try {
             return new File(url.toURI());
-        } catch (URISyntaxException ex)
-        {
+        } catch (URISyntaxException ex) {
             return new File(url.getPath());
         }
     }
 
-    public static String getApplicationDirectory()
-    {
+    public static String getApplicationDirectory() {
         String jarDir = null;
 
-        try
-        {
+        try {
             CodeSource codeSource = MiscUtils.class.getProtectionDomain().getCodeSource();
             File jarFile = new File(URLDecoder.decode(codeSource.getLocation().toURI().getPath(), "UTF-8"));
             jarDir = jarFile.getParentFile().getPath();
-        } catch (URISyntaxException | UnsupportedEncodingException ex)
-        {
+        } catch (URISyntaxException | UnsupportedEncodingException ex) {
             ex.printStackTrace();
         }
 
         return jarDir + "/";
     }
 
-    public static String getSHA1(File f) throws NoSuchAlgorithmException, IOException
-    {
+    public static String getSHA1(File f) throws NoSuchAlgorithmException, IOException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA1");
 
-        try (FileInputStream fis = new FileInputStream(f))
-        {
+        try (FileInputStream fis = new FileInputStream(f)) {
             byte[] data = new byte[1024];
-            int read = 0;
-            while ((read = fis.read(data)) != -1)
-            {
+            int read;
+            while ((read = fis.read(data)) != -1) {
                 sha1.update(data, 0, read);
             }
         }
         byte[] hashBytes = sha1.digest();
 
         StringBuilder sb = new StringBuilder();
-        for (byte hashByte : hashBytes)
-        {
+        for (byte hashByte : hashBytes) {
             sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
         }
         return sb.toString();
     }
 
-    public static byte[] stringToByte(String ip)
-    {
-        String[] split = ip.split(".");
+    public static byte[] stringToByte(String ip) {
+        String[] split = ip.split("\\.");
         byte[] result = new byte[4];
         int i = 0;
-        for (String number : split)
-        {
-            result[i] = Byte.valueOf(number);
+        for (String number : split) {
+            result[i] = Byte.parseByte(number);
             i++;
         }
         return result;
     }
 
-    public static int calculServerWeight(String game, int maxSlot, boolean isCoupaing)
-    {
+    public static int calculServerWeight(String game, int maxSlot, boolean isCoupaing) {
         game = game.toLowerCase();
         int weight = 0;
 
         //GameType
-        switch (game)
-        {
+        switch (game) {
             case "uhc":
                 weight += 40;
                 break;
@@ -159,8 +139,7 @@ public class MiscUtils
         weight += maxSlot;
 
         //Is coupaing
-        if (isCoupaing)
-        {
+        if (isCoupaing) {
             weight += 50;
         }
 

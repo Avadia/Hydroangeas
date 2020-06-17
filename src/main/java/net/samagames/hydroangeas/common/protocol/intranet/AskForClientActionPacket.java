@@ -20,43 +20,35 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class AskForClientActionPacket extends AbstractPacket
-{
-
+public class AskForClientActionPacket extends AbstractPacket {
     private UUID uuid;
     private ActionCommand command;
 
     //Datas
     private String data;
 
-    public AskForClientActionPacket()
-    {
+    public AskForClientActionPacket() {
     }
 
-    public AskForClientActionPacket(UUID uuid, ActionCommand command, String data)
-    {
+    public AskForClientActionPacket(UUID uuid, ActionCommand command, String data) {
         this.uuid = uuid;
         this.command = command;
         this.data = data;
     }
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return uuid;
     }
 
-    public String getData()
-    {
+    public String getData() {
         return data;
     }
 
-    public ActionCommand getCommand()
-    {
+    public ActionCommand getCommand() {
         return command;
     }
 
-    public enum ActionCommand
-    {
+    public enum ActionCommand {
         SERVEREND, CLIENTSHUTDOWN, CONSOLECOMMAND
     }
 }

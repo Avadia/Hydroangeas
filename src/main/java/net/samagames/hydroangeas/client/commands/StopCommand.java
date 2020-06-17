@@ -21,20 +21,16 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class StopCommand extends AbstractCommand
-{
-
+public class StopCommand extends AbstractCommand {
     public HydroangeasClient instance;
 
-    public StopCommand(HydroangeasClient hydroangeasClient)
-    {
+    public StopCommand(HydroangeasClient hydroangeasClient) {
         super("stop");
         this.instance = hydroangeasClient;
     }
 
     @Override
-    public boolean execute(String[] args)
-    {
+    public boolean execute(String[] args) {
         instance.log(Level.INFO, "Stopping the server..");
         System.exit(0);
 

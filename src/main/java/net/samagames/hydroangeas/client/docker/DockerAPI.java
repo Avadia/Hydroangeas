@@ -2,10 +2,12 @@ package net.samagames.hydroangeas.client.docker;
 
 import com.google.gson.*;
 import net.samagames.hydroangeas.Hydroangeas;
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.Random;
 
 /*
@@ -25,19 +27,16 @@ import java.util.Random;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class DockerAPI {
-
     private static final Gson GSON = new GsonBuilder().create();
     //private DockerClient docker;
-    private String url = "http://127.0.0.1:2376";
+    private final String url = "http://127.0.0.1:2376";
 
-    public DockerAPI()
-    {
+    public DockerAPI() {
         //docker = DefaultDockerClient.builder().uri("http://127.0.0.1:2376/").build();
 
     }
 
-    public String createContainer(DockerContainer container)
-    {
+    public String createContainer(DockerContainer container) {
         JsonObject r = Hydroangeas.getInstance().getAsClient().getDockerConfig();
 
         ifNotSet(r, "Hostname", "");
@@ -52,8 +51,7 @@ public class DockerAPI {
         ifNotSet(r, "Env", new JsonArray());
 
         JsonArray cmd = new JsonArray();
-        for(String s : container.getCommand())
-        {
+        for (String s : container.getCommand()) {
             cmd.add(s);
         }
 
@@ -81,8 +79,8 @@ public class DockerAPI {
         //r.addProperty("MacAddress", randomMACAddress()); //Don't know how to use
 
         JsonObject exposedPorts = new JsonObject();
-        exposedPorts.add(container.getPort()+ "/tcp", new JsonObject());
-        exposedPorts.add(container.getPort()+ "/udp", new JsonObject());
+        exposedPorts.add(container.getPort() + "/tcp", new JsonObject());
+        exposedPorts.add(container.getPort() + "/udp", new JsonObject());
 
         r.add("ExposedPorts", exposedPorts);
         r.addProperty("StopSignal", "SIGTERM");
@@ -97,12 +95,12 @@ public class DockerAPI {
 
         ifNotSet(hostconfig, "LxcConf", new JsonObject());
         ifNotSet(hostconfig, "Memory", container.getAllowedRam() * 2);
-        ifNotSet(hostconfig, "MemorySwap", (container.getAllowedRam() * 2 ) + container.getAllowedRam() << 2);
+        ifNotSet(hostconfig, "MemorySwap", (container.getAllowedRam() * 2) + container.getAllowedRam() << 2);
         ifNotSet(hostconfig, "MemoryReservation", container.getAllowedRam() * 2);
         ifNotSet(hostconfig, "KernelMemory", 0);
         ifNotSet(hostconfig, "CpuShares", 512);
         ifNotSet(hostconfig, "CpuPeriod", 100000);
-        ifNotSet(hostconfig, "CpuQuota" , 800000);
+        ifNotSet(hostconfig, "CpuQuota", 800000);
         ifNotSet(hostconfig, "BlkioWeight", 1000);
         ifNotSet(hostconfig, "MemorySwappiness", 80);
         ifNotSet(hostconfig, "OomKillDisable", true);
@@ -112,11 +110,11 @@ public class DockerAPI {
         JsonArray hostPorts = new JsonArray();
         JsonObject hostPort = new JsonObject();
         hostPort.addProperty("HostIp", "0.0.0.0");
-        hostPort.addProperty("HostPort", ""+container.getPort());
+        hostPort.addProperty("HostPort", "" + container.getPort());
         hostPorts.add(hostPort);
 
-        portBindings.add(container.getPort()+"/tcp", hostPorts);
-        portBindings.add(container.getPort()+"/udp", hostPorts);
+        portBindings.add(container.getPort() + "/tcp", hostPorts);
+        portBindings.add(container.getPort() + "/udp", hostPorts);
 
         hostconfig.add("PortBindings", portBindings);
         ifNotSet(hostconfig, "PublishAllPorts", true);
@@ -161,18 +159,14 @@ public class DockerAPI {
 
         Response response = sendRequest("/containers/create?name=" + container.getName(), r, "POST");
 
-        if(response.getStatus() == 201)
-        {
+        if (response.getStatus() == 201) {
             JsonObject data = response.getResponse().getAsJsonObject();
             String id = data.get("Id").getAsString();
             JsonElement warnings1 = data.get("Warnings");
-            if(warnings1 != null && warnings1.isJsonArray())
-            {
+            if (warnings1 != null && warnings1.isJsonArray()) {
                 JsonArray warnings = warnings1.getAsJsonArray();
-                if(warnings != null && warnings.size() > 0)
-                {
-                    for(JsonElement s : warnings)
-                    {
+                if (warnings != null && warnings.size() > 0) {
+                    for (JsonElement s : warnings) {
                         System.err.print(s);
                     }
                 }
@@ -184,53 +178,44 @@ public class DockerAPI {
         return null;
     }
 
-    private void ifNotSet(JsonObject element, String property, String defaut)
-    {
-        if(!element.has(property))
+    private void ifNotSet(JsonObject element, String property, String defaut) {
+        if (!element.has(property))
             element.addProperty(property, defaut);
     }
 
-    private void ifNotSet(JsonObject element, String property)
-    {
-        if(!element.has(property))
+    @SuppressWarnings("SameParameterValue")
+    private void ifNotSet(JsonObject element, String property) {
+        if (!element.has(property))
             element.add(property, null);
     }
 
-    private void ifNotSet(JsonObject element, String property, Boolean defaut)
-    {
-        if(!element.has(property))
+    private void ifNotSet(JsonObject element, String property, Boolean defaut) {
+        if (!element.has(property))
             element.addProperty(property, defaut);
     }
 
-    private void ifNotSet(JsonObject element, String property, Number defaut)
-    {
-        if(!element.has(property))
+    private void ifNotSet(JsonObject element, String property, Number defaut) {
+        if (!element.has(property))
             element.addProperty(property, defaut);
     }
 
-    private void ifNotSet(JsonObject element, String property, JsonElement defaut)
-    {
-        if(!element.has(property))
+    private void ifNotSet(JsonObject element, String property, JsonElement defaut) {
+        if (!element.has(property))
             element.add(property, defaut);
     }
 
     public void deleteContainerWithName(String cName) {
-
         Response response = sendRequest("/containers/json?all=1", new JsonObject(), "GET");
 
-        if(response.getStatus() == 200)
-        {
-            for(JsonElement object : response.getResponse().getAsJsonArray())
-            {
+        if (response.getStatus() == 200) {
+            for (JsonElement object : response.getResponse().getAsJsonArray()) {
                 JsonObject container = object.getAsJsonObject();
                 String id = container.get("Id").getAsString();
-                for(JsonElement obj : container.get("Names").getAsJsonArray())
-                {
+                for (JsonElement obj : container.get("Names").getAsJsonArray()) {
                     if (obj.getAsString().contains(cName)) {
                         try {
                             killContainer(id);
-                        }catch (Exception e)
-                        {
+                        } catch (Exception ignored) {
                         }
                         removeContainer(id);
                     }
@@ -239,40 +224,34 @@ public class DockerAPI {
         }
     }
 
-    public JsonArray listRunningContainers()
-    {
+    public JsonArray listRunningContainers() {
         Response response = sendRequest("/containers/json?all=1&filter=[status=running]", new JsonObject(), "GET");
 
-        if(response.getStatus() == 200 && response.getResponse().isJsonArray())
-        {
+        if (response.getStatus() == 200 && response.getResponse().isJsonArray()) {
             return response.getResponse().getAsJsonArray();
         }
 
         return null;
     }
 
-    public boolean startContainer(String id)
-    {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean startContainer(String id) {
         Response response = sendRequest("/containers/" + id + "/start", new JsonObject(), "POST");
         return response.getStatus() == 204;
     }
 
-    public JsonObject inspectContainer(String id)
-    {
+    public JsonObject inspectContainer(String id) {
         Response response = sendRequest("/containers/" + id + "/json?size=0", new JsonObject(), "GET");
 
-        if(response.getStatus() == 200)
-        {
+        if (response.getStatus() == 200) {
             return response.getResponse().getAsJsonObject();
         }
         return null;
     }
 
-    public boolean isRunning(String id)
-    {
+    public boolean isRunning(String id) {
         JsonObject inspect = inspectContainer(id);
-        if(inspect != null)
-        {
+        if (inspect != null) {
             String status = inspect.get("State").getAsJsonObject().get("Status").getAsString();
             //Hydroangeas.getInstance().getLogger().info("Status: " + status);
             return status.equals("running");
@@ -280,32 +259,29 @@ public class DockerAPI {
         return false;
     }
 
-    public void stopContainer(String id)
-    {
+    public void stopContainer(String id) {
         sendRequest("/containers/" + id + "/stop?t=0", new JsonObject(), "POST");
     }
 
-    public void killContainer(String id)
-    {
+    public void killContainer(String id) {
         sendRequest("/containers/" + id + "/kill", new JsonObject(), "POST");
     }
 
-    public void removeContainer(String id)
-    {
+    public void removeContainer(String id) {
         sendRequest("/containers/" + id + "?v=1&force=1", new JsonObject(), "DELETE");
     }
 
-    private String randomMACAddress(){
+    private String randomMACAddress() {
         Random rand = new Random();
         byte[] macAddr = new byte[6];
         rand.nextBytes(macAddr);
 
-        macAddr[0] = (byte)(macAddr[0] & (byte)254);  //zeroing last 2 bytes to make it unicast and locally adminstrated
+        macAddr[0] = (byte) (macAddr[0] & (byte) 254);  //zeroing last 2 bytes to make it unicast and locally adminstrated
 
         StringBuilder sb = new StringBuilder(18);
-        for(byte b : macAddr){
+        for (byte b : macAddr) {
 
-            if(sb.length() > 0)
+            if (sb.length() > 0)
                 sb.append(":");
 
             sb.append(String.format("%02x", b));
@@ -314,6 +290,7 @@ public class DockerAPI {
         return sb.toString();
     }
 
+    @SuppressWarnings("deprecation")
     public Response sendRequest(String point, JsonElement element, String method) {
         String requestData = GSON.toJson(element);
 
@@ -325,40 +302,34 @@ public class DockerAPI {
             RequestBody body = RequestBody.create(mediaType, requestData);
 
             Request request;
-            if(method.equalsIgnoreCase("get"))
-            {
+            if (method.equalsIgnoreCase("get")) {
                 request = new Request.Builder().url(this.url + point).get().build();
-            }else
+            } else
                 request = new Request.Builder().url(this.url + point).method(method, body).build();
 
             okhttp3.Response responses = client.newCall(request).execute();
 
             int statusCode = responses.code();
             JsonElement json = null;
-            if(responses.body() != null)
-            {
-                try{
-                    json = new JsonParser().parse(responses.body().string());
-                }catch (Exception e)
-                {
-                    json = null;
+            if (responses.body() != null) {
+                try {
+                    json = new JsonParser().parse(Objects.requireNonNull(responses.body()).string());
+                } catch (Exception ignored) {
                 }
             }
             return new Response(statusCode, json);
         } catch (Exception e) {
-            Hydroangeas.getInstance().getLogger().severe("Error for " + point + " (message:" + e.getMessage() + ")");
+            Hydroangeas.getLogger().severe("Error for " + point + " (message:" + e.getMessage() + ")");
         }
 
         return new Response(500, null);
     }
 
-    public class Response {
+    public static class Response {
+        private final int status;
+        private final JsonElement response;
 
-        private int status;
-        private JsonElement response;
-
-        public Response(int status, JsonElement response)
-        {
+        public Response(int status, JsonElement response) {
             this.status = status;
             this.response = response;
         }
@@ -371,5 +342,4 @@ public class DockerAPI {
             return response;
         }
     }
-
 }

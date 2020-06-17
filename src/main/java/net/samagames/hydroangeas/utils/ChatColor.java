@@ -1,7 +1,6 @@
 package net.samagames.hydroangeas.utils;
 
-public enum ChatColor
-{
+public enum ChatColor {
     BLACK('0', 0x00),
     DARK_BLUE('1', 0x1),
     DARK_GREEN('2', 0x2),
@@ -28,19 +27,16 @@ public enum ChatColor
     public static final char COLOR_CHAR = '\u00A7';
     private final String toString;
 
-    ChatColor(char code, int intCode)
-    {
+    ChatColor(char code, int intCode) {
         this(code, intCode, false);
     }
 
-    ChatColor(char code, int intCode, boolean isFormat)
-    {
+    ChatColor(char code, int intCode, boolean isFormat) {
         this.toString = new String(new char[]{COLOR_CHAR, code});
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return toString;
     }
 }

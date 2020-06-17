@@ -20,11 +20,8 @@ import java.util.UUID;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class PlayerMessager
-{
-
-    public static void sendMessage(UUID player, String message)
-    {
+public class PlayerMessager {
+    public static void sendMessage(UUID player, String message) {
         Hydroangeas.getInstance().getRedisSubscriber().send("apiexec.send", player + " {\"text\":\"" + message + "\"}");
     }
 }

@@ -23,21 +23,19 @@ import javax.management.NotificationListener;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 class RemoteListener implements NotificationListener {
+    private final RemoteControl remoteControl;
 
-    private RemoteControl remoteControl;
-
-    RemoteListener(RemoteControl remoteControl)
-    {
+    RemoteListener(RemoteControl remoteControl) {
         this.remoteControl = remoteControl;
     }
 
     @Override
     public void handleNotification(Notification notification, Object handback) {
         MBeanServerNotification mbs = (MBeanServerNotification) notification;
-        if(MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(mbs.getType())) {
+        if (MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(mbs.getType())) {
             remoteControl.addService(mbs.getMBeanName());
             Hydroangeas.getLogger().info("New service: " + mbs.getMBeanName().getCanonicalName());
-        } else if(MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(mbs.getType())) {
+        } else if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(mbs.getType())) {
             remoteControl.removeService(mbs.getMBeanName());
         }
     }

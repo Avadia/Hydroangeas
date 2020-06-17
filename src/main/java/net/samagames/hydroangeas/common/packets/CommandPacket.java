@@ -16,31 +16,25 @@ package net.samagames.hydroangeas.common.packets;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class CommandPacket extends AbstractPacket
-{
+public class CommandPacket extends AbstractPacket {
     private String sourceUUID;
     private String action;
 
-    public CommandPacket()
-    {
+    public CommandPacket() {
 
     }
 
-    public CommandPacket(String source, String action)
-    {
+    public CommandPacket(String source, String action) {
         this.sourceUUID = source;
         this.action = action;
     }
 
-    public String getAction()
-    {
+    public String getAction() {
         return action;
     }
 
-
     // TODO: Send logs of the command to the client
-    public String getSourceUUID()
-    {
+    public String getSourceUUID() {
         return sourceUUID;
     }
 }

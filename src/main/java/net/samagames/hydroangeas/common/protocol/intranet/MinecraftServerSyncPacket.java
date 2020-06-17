@@ -25,7 +25,6 @@ import java.util.UUID;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class MinecraftServerSyncPacket extends AbstractPacket {
-
     private UUID clientUUID;
     private UUID minecraftUUID;
 
@@ -48,8 +47,7 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
     private long timeToLive = 14400000L;
     private long startedTime;
 
-    public MinecraftServerSyncPacket(MinecraftServerS server)
-    {
+    public MinecraftServerSyncPacket(MinecraftServerS server) {
         this(null,
                 server.getUUID(),
                 -1,
@@ -66,8 +64,7 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
                 server.isCoupaingServer());
     }
 
-    public MinecraftServerSyncPacket(HydroangeasClient client, MinecraftServerC server)
-    {
+    public MinecraftServerSyncPacket(HydroangeasClient client, MinecraftServerC server) {
         this(client.getClientUUID(),
                 server.getUUID(),
                 server.getPort(),
@@ -97,8 +94,7 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
                                      JsonElement startupOptions,
                                      int weight,
                                      UUID asker,
-                                     boolean isCoupaing)
-    {
+                                     boolean isCoupaing) {
         this.clientUUID = clientUUID;
         this.minecraftUUID = minecraftUUID;
 
@@ -120,57 +116,46 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
         this.isCoupaing = isCoupaing;
     }
 
-    public MinecraftServerSyncPacket()
-    {
+    public MinecraftServerSyncPacket() {
     }
 
-    public String getGame()
-    {
+    public String getGame() {
         return this.game;
     }
 
-    public String getMap()
-    {
+    public String getMap() {
         return this.map;
     }
 
-    public String getServerName()
-    {
+    public String getServerName() {
         return this.game + "_" + ((hubID == null) ? this.minecraftUUID.toString().split("-")[0] : hubID);
     }
 
-    public int getMinSlot()
-    {
+    public int getMinSlot() {
         return this.minSlot;
     }
 
-    public int getMaxSlot()
-    {
+    public int getMaxSlot() {
         return this.maxSlot;
     }
 
-    public JsonElement getOptions()
-    {
+    public JsonElement getOptions() {
         return this.options;
     }
 
-    public boolean isCoupaingServer()
-    {
+    public boolean isCoupaingServer() {
         return this.isCoupaing;
     }
 
-    public Integer getHubID()
-    {
+    public Integer getHubID() {
         return hubID;
     }
 
-    public JsonElement getStartupOptions()
-    {
+    public JsonElement getStartupOptions() {
         return startupOptions;
     }
 
-    public int getWeight()
-    {
+    public int getWeight() {
         return weight;
     }
 

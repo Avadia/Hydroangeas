@@ -35,124 +35,99 @@ import java.util.logging.Level;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ServerConnectionManager extends ConnectionManager
-{
-
+public class ServerConnectionManager extends ConnectionManager {
     public HydroangeasServer instance;
 
-    public ServerConnectionManager(Hydroangeas hydroangeas)
-    {
+    public ServerConnectionManager(Hydroangeas hydroangeas) {
         super(hydroangeas);
         instance = hydroangeas.getAsServer();
     }
 
-    public void sendPacket(HydroClient client, AbstractPacket packet)
-    {
+    public void sendPacket(HydroClient client, AbstractPacket packet) {
         String channel = "global@" + client.getUUID() + "@hydroangeas-client";
         sendPacket(channel, packet);
     }
 
-    public void sendPacket(UUID client, AbstractPacket packet)
-    {
+    public void sendPacket(UUID client, AbstractPacket packet) {
         String channel = "global@" + client + "@hydroangeas-client";
         sendPacket(channel, packet);
     }
 
     @Override
-    public void handler(int id, String data)
-    {
+    public void handler(int id, String data) {
         Object spacket = gson.fromJson(data, packets[id].getClass());
 
-        if (spacket instanceof HeartbeatPacket)
-        {
+        if (spacket instanceof HeartbeatPacket) {
             HeartbeatPacket heartbeatPacket = (HeartbeatPacket) spacket;
             instance.getClientManager().onClientHeartbeat(heartbeatPacket.getUUID());
-        } else if (spacket instanceof MinecraftServerIssuePacket)
-        {
+        } else if (spacket instanceof MinecraftServerIssuePacket) {
             MinecraftServerIssuePacket packet = (MinecraftServerIssuePacket) spacket;
             hydroangeas.log(Level.SEVERE, "An error occurred with the client '" + packet.getUUID() + "'!");
             hydroangeas.log(Level.SEVERE, "> Category: Server issue (" + packet.getIssueType().name() + ")");
 
             HydroClient client = instance.getClientManager().getClientByUUID(packet.getUUID());
-            if (client == null)
-            {
+            if (client == null) {
                 return;
             }
 
             MinecraftServerS server = client.getServerManager().getServerByName(packet.getServerName());
-            if (server.isHub())
-            {
+            if (server.isHub()) {
                 instance.getHubBalancer().onHubShutdown(server);
             }
             ModMessage.sendError(InstanceType.SERVER, packet.getMessage());
-        } else if (spacket instanceof MinecraftServerSyncPacket)
-        {
+        } else if (spacket instanceof MinecraftServerSyncPacket) {
             MinecraftServerSyncPacket packet = (MinecraftServerSyncPacket) spacket;
 
             HydroClient client = instance.getClientManager().getClientByUUID(packet.getClientUUID());
-            if (client == null)
-            {
+            if (client == null) {
                 return;
             }
 
             client.getServerManager().handleServerData(packet);
 
-        } else if (spacket instanceof MinecraftServerUpdatePacket)
-        {
+        } else if (spacket instanceof MinecraftServerUpdatePacket) {
             MinecraftServerUpdatePacket packet = (MinecraftServerUpdatePacket) spacket;
 
             HydroClient client = instance.getClientManager().getClientByUUID(packet.getUUID());
-            if (client == null)
-            {
-                instance.getLogger().info("Received an update from unknown client: " + packet.getUUID());
+            if (client == null) {
+                Hydroangeas.getLogger().info("Received an update from unknown client: " + packet.getUUID());
                 return;
             }
 
             MinecraftServerS server = client.getServerManager().getServerByName(packet.getServerName());
 
             //Handle pour l'algo avant de prendre les action
-            try
-            {
+            try {
                 instance.getAlgorithmicMachine().onServerUpdate(client, server, packet);
-            } catch (Exception e)
-            {
+            } catch (Exception ignored) {
             }
 
-            switch (packet.getAction())
-            {
+            switch (packet.getAction()) {
                 case START:
                     server.setStarted(true);
                     server.onStarted();
-                    instance.getLogger().info("Server: " + server.getServerName() + " started!");
+                    Hydroangeas.getLogger().info("Server: " + server.getServerName() + " started!");
                     break;
                 case END:
                     client.getServerManager().removeServer(packet.getServerName());
                     break;
             }
 
-        } else if (spacket instanceof ByeFromClientPacket)
-        {
+        } else if (spacket instanceof ByeFromClientPacket) {
             instance.getClientManager().onClientNoReachable(((ByeFromClientPacket) spacket).getUUID());
-        } else if (spacket instanceof CoupaingServerPacket)
-        {
+        } else if (spacket instanceof CoupaingServerPacket) {
             instance.getClientManager().orderServerForCoupaing((CoupaingServerPacket) spacket);
-        } else if (spacket instanceof HelloFromClientPacket)
-        {
+        } else if (spacket instanceof HelloFromClientPacket) {
             instance.getClientManager().updateClient((HelloFromClientPacket) spacket);
-        } else if (spacket instanceof QueueAddPlayerPacket)
-        {
+        } else if (spacket instanceof QueueAddPlayerPacket) {
             instance.getQueueManager().handlePacket((QueueAddPlayerPacket) spacket);
-        } else if (spacket instanceof QueueRemovePlayerPacket)
-        {
+        } else if (spacket instanceof QueueRemovePlayerPacket) {
             instance.getQueueManager().handlePacket((QueueRemovePlayerPacket) spacket);
-        } else if (spacket instanceof QueueAttachPlayerPacket)
-        {
+        } else if (spacket instanceof QueueAttachPlayerPacket) {
             instance.getQueueManager().handlePacket((QueueAttachPlayerPacket) spacket);
-        } else if (spacket instanceof QueueDetachPlayerPacket)
-        {
+        } else if (spacket instanceof QueueDetachPlayerPacket) {
             instance.getQueueManager().handlePacket((QueueDetachPlayerPacket) spacket);
-        } else if (spacket instanceof CommandPacket)
-        {
+        } else if (spacket instanceof CommandPacket) {
             instance.getCommandManager().inputCommand(((CommandPacket) spacket).getAction());
         }
     }

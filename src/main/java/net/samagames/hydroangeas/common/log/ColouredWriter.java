@@ -27,15 +27,12 @@ import java.util.logging.LogRecord;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class ColouredWriter extends Handler
-{
-
+public class ColouredWriter extends Handler {
     private final Map<ChatColor, String> replacements = new EnumMap<>(ChatColor.class);
     private final ChatColor[] colors = ChatColor.values();
     private final ConsoleReader console;
 
-    public ColouredWriter(ConsoleReader console)
-    {
+    public ColouredWriter(ConsoleReader console) {
         this.console = console;
 
         replacements.put(ChatColor.BLACK, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
@@ -62,39 +59,30 @@ public class ColouredWriter extends Handler
         replacements.put(ChatColor.RESET, Ansi.ansi().a(Ansi.Attribute.RESET).toString());
     }
 
-    public void print(String s)
-    {
-        for (ChatColor color : colors)
-        {
+    public void print(String s) {
+        for (ChatColor color : colors) {
             s = s.replaceAll("(?i)" + color, replacements.get(color));
         }
-        try
-        {
+        try {
             console.print(ConsoleReader.RESET_LINE + s + Ansi.ansi().reset());
             console.drawLine();
             console.flush();
-        } catch (IOException ex)
-        {
+        } catch (IOException ignored) {
         }
     }
 
     @Override
-    public void publish(LogRecord record)
-    {
-        if (isLoggable(record))
-        {
+    public void publish(LogRecord record) {
+        if (isLoggable(record)) {
             print(getFormatter().format(record));
         }
     }
 
     @Override
-    public void flush()
-    {
+    public void flush() {
     }
 
     @Override
-    public void close() throws SecurityException
-    {
+    public void close() throws SecurityException {
     }
-
 }

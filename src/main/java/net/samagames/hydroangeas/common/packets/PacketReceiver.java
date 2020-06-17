@@ -16,7 +16,6 @@ package net.samagames.hydroangeas.common.packets;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public interface PacketReceiver
-{
+public interface PacketReceiver {
     void receive(String data);
 }

@@ -18,9 +18,7 @@ import net.samagames.hydroangeas.common.packets.AbstractPacket;
  * You should have received a copy of the GNU General Public License
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-public abstract class QueuePacket extends AbstractPacket
-{
-
+public abstract class QueuePacket extends AbstractPacket {
     private String game;
     private String map;
 
@@ -28,46 +26,38 @@ public abstract class QueuePacket extends AbstractPacket
 
     private TypeQueue typeQueue;
 
-    public QueuePacket()
-    {
+    public QueuePacket() {
     }
 
-    public QueuePacket(TypeQueue typeQueue, String game, String map)
-    {
+    public QueuePacket(TypeQueue typeQueue, String game, String map) {
         this(typeQueue, game + "_" + map);
         this.game = game;
         this.map = map;
     }
 
-    public QueuePacket(TypeQueue typeQueue, String templateID)
-    {
+    public QueuePacket(TypeQueue typeQueue, String templateID) {
         this.typeQueue = typeQueue;
         this.templateID = templateID;
     }
 
-    public TypeQueue getTypeQueue()
-    {
+    public TypeQueue getTypeQueue() {
         return typeQueue;
     }
 
-    public String getTemplateID()
-    {
+    public String getTemplateID() {
         return templateID;
     }
 
-    public String getMap()
-    {
+    public String getMap() {
         return map;
     }
 
-    public String getGame()
-    {
+    public String getGame() {
         return game;
     }
 
 
-    public enum TypeQueue
-    {
+    public enum TypeQueue {
         NAMEDID, NAMED, RANDOM, FAST
     }
 }

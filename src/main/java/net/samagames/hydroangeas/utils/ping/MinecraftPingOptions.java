@@ -32,7 +32,6 @@ package net.samagames.hydroangeas.utils.ping;
  * Storage class for {@link MinecraftPing} options.
  */
 public class MinecraftPingOptions {
-
     private String hostname;
     private int port = 25565;
     private int timeout = 2000;
@@ -73,5 +72,4 @@ public class MinecraftPingOptions {
     public String getCharset() {
         return this.charset;
     }
-
 }

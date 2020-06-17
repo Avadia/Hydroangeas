@@ -1,15 +1,11 @@
 package net.samagames.hydroangeas.client.resources;
 
 import org.apache.commons.io.FileUtils;
-import sun.util.calendar.BaseCalendar;
-import sun.util.calendar.CalendarUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /*
  * This file is part of Hydroangeas.
@@ -28,23 +24,21 @@ import java.util.TimeZone;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class LogManager {
+    private final File logFolder;
+    private final File serverFolder;
 
-    private File logFolder;
-    private File serverFolder;
-
-    public LogManager(File rootFolder)
-    {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public LogManager(File rootFolder) {
         logFolder = new File(rootFolder, "serverlogs");
         logFolder.mkdir();
 
         serverFolder = rootFolder;
     }
 
-    public boolean saveLog(String serverName, String template)
-    {
-        File logFile = new File(serverFolder, "servers/"+serverName+"/logs/latest.log");
-        if(logFile.exists())
-        {
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "UnusedReturnValue"})
+    public boolean saveLog(String serverName, String template) {
+        File logFile = new File(serverFolder, "servers/" + serverName + "/logs/latest.log");
+        if (logFile.exists()) {
             try {
                 File folder = new File(logFolder, template);
                 folder.mkdir();
