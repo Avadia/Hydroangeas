@@ -105,7 +105,6 @@ public class Configuration {
         if (!object.has("sql-url")) flag = false;
         if (!object.has("sql-user")) flag = false;
         if (!object.has("sql-password")) flag = false;
-        if (!object.has("web-domain")) flag = false;
 
         /* Client **/
         if (!object.has("max-weight")) flag = false;
