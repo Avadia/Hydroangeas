@@ -9,7 +9,6 @@ import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerUpdateP
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 /*
@@ -41,8 +40,7 @@ public class ServerManager {
             //Check state of hydro
             checkTemplate(serverInfos.getTemplateID());
 
-            int port = getAvailablePort();
-            MinecraftServerC server = new MinecraftServerC(this.instance, serverInfos, port);
+            MinecraftServerC server = new MinecraftServerC(this.instance, serverInfos);
 
             Hydroangeas.getLogger().info("Server creation !");
 
@@ -81,30 +79,6 @@ public class ServerManager {
         instance.getConnectionManager().sendPacket(new MinecraftServerUpdatePacket(instance, server.getServerName(), MinecraftServerUpdatePacket.UType.END));
         this.servers.remove(server);
         Hydroangeas.getLogger().info("Stopped server " + server.getServerName());
-    }
-
-    //Only number dividable by 2 and not used by an other server
-    private int getAvailablePort() {
-        boolean isUsed;
-        int i;
-
-        do {
-            isUsed = false;
-            i = ThreadLocalRandom.current().nextInt(20000, 40000);
-            if (i % 2 != 0) {
-                i++;
-            }
-
-            for (MinecraftServerC c : getServers()) {
-                if (c.getPort() == i) {
-                    isUsed = true;
-                    break;
-                }
-            }
-        }
-        while (isUsed);
-
-        return i;
     }
 
     public int getWeightOfAllServers() {

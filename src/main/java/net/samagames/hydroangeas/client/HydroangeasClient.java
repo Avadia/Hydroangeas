@@ -1,30 +1,19 @@
 package net.samagames.hydroangeas.client;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import joptsimple.OptionSet;
 import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.client.commands.ClientCommandManager;
-import net.samagames.hydroangeas.client.docker.DockerAPI;
-import net.samagames.hydroangeas.client.receiver.ServiceRequestReceiver;
-import net.samagames.hydroangeas.client.resources.LogManager;
-import net.samagames.hydroangeas.client.resources.ResourceManager;
+import net.samagames.hydroangeas.client.panel.PanelController;
 import net.samagames.hydroangeas.client.servers.ServerManager;
 import net.samagames.hydroangeas.client.tasks.LifeThread;
 import net.samagames.hydroangeas.client.tasks.ServerAliveWatchDog;
 import net.samagames.hydroangeas.common.protocol.intranet.ByeFromClientPacket;
-import net.samagames.hydroangeas.utils.MiscUtils;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -48,50 +37,34 @@ import java.util.logging.Level;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class HydroangeasClient extends Hydroangeas {
-    private String templatesDomain;
     private int maxWeight;
-    private File serverFolder;
-
     private RestrictionMode restrictionMode;
     private List<String> whitelist;
     private List<String> blacklist;
-
     private ClientConnectionManager connectionManager;
     private LifeThread lifeThread;
     private ServerManager serverManager;
-    private ResourceManager resourceManager;
-    private LogManager logManager;
-
-    private final DockerAPI dockerAPI;
     private ServerAliveWatchDog serverAliveWatchDog;
-
-    private JsonObject dockerConfig;
+    private PanelController panelController;
+    private List<String> ports;
 
     public HydroangeasClient(OptionSet options) throws IOException {
         super(options);
-        dockerAPI = new DockerAPI();
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void enable() {
         this.log(Level.INFO, "Starting Hydroangeas client...");
 
         this.loadConfig();
 
-        serverFolder.mkdir();
+        ports = new ArrayList<>();
+        for (int i = 15600; i <= 15699; i++)
+            ports.add(i + "");
 
-        logManager = new LogManager(MiscUtils.getJarFolder());
-
-        try {
-            FileUtils.forceDelete(serverFolder);
-            FileUtils.forceMkdir(serverFolder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        panelController = new PanelController(this.configuration.getJsonConfiguration().get("panel-admin-token").getAsString(), this.configuration.getJsonConfiguration().get("panel-user-token").getAsString());
 
         connectionManager = new ClientConnectionManager(this);
-        this.redisSubscriber.registerReceiver("samaconnect.services.requests", new ServiceRequestReceiver(this));
 
         commandManager = new ClientCommandManager(this);
 
@@ -99,7 +72,6 @@ public class HydroangeasClient extends Hydroangeas {
         this.redisSubscriber.registerReceiver("globalSecurity@hydroangeas-client", connectionManager::getPacket);
 
         this.serverManager = new ServerManager(this);
-        this.resourceManager = new ResourceManager(this);
 
         this.lifeThread = new LifeThread(this);
         this.lifeThread.start();
@@ -107,33 +79,14 @@ public class HydroangeasClient extends Hydroangeas {
         this.serverAliveWatchDog = new ServerAliveWatchDog(this);
     }
 
-    @SuppressWarnings({"ResultOfMethodCallIgnored", "deprecation"})
     @Override
     public void loadConfig() {
         super.loadConfig();
 
-        JsonElement parsed = null;
-        try {
-            File f = new File("DockerConfig.json");
-            f.createNewFile();
-            InputStreamReader reader = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8);
-            parsed = new JsonParser().parse(reader);
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (parsed == null)
-            dockerConfig = new JsonObject();
-        else
-            dockerConfig = parsed.getAsJsonObject();
-
         blacklist = new ArrayList<>();
         whitelist = new ArrayList<>();
 
-        this.templatesDomain = this.configuration.getJsonConfiguration().get("web-domain").getAsString();
         this.maxWeight = this.configuration.getJsonConfiguration().get("max-weight").getAsInt();
-        this.serverFolder = new File(MiscUtils.getJarFolder(), "servers");
 
         try {
             this.restrictionMode = RestrictionMode.valueFrom(configuration.getJsonConfiguration().get("RestrictionMode").getAsString());
@@ -196,18 +149,6 @@ public class HydroangeasClient extends Hydroangeas {
         return serverManager.getWeightOfAllServers();
     }
 
-    public String getSimpleTemplatesDomain() {
-        return this.templatesDomain;
-    }
-
-    public String getTemplatesDomain() {
-        return this.templatesDomain + "static/templates/";
-    }
-
-    public File getServerFolder() {
-        return this.serverFolder;
-    }
-
     public LifeThread getLifeThread() {
         return this.lifeThread;
     }
@@ -243,10 +184,6 @@ public class HydroangeasClient extends Hydroangeas {
         return connectionManager;
     }
 
-    public ResourceManager getResourceManager() {
-        return this.resourceManager;
-    }
-
     public List<String> getWhitelist() {
         return whitelist;
     }
@@ -263,19 +200,15 @@ public class HydroangeasClient extends Hydroangeas {
         this.restrictionMode = restrictionMode;
     }
 
-    public LogManager getLogManager() {
-        return logManager;
-    }
-
-    public DockerAPI getDockerAPI() {
-        return dockerAPI;
-    }
-
     public ServerAliveWatchDog getServerAliveWatchDog() {
         return serverAliveWatchDog;
     }
 
-    public JsonObject getDockerConfig() {
-        return dockerConfig;
+    public PanelController getPanelController() {
+        return panelController;
+    }
+
+    public List<String> getPorts() {
+        return ports;
     }
 }

@@ -11,7 +11,6 @@ import net.samagames.hydroangeas.server.connection.ServerConnectionManager;
 import net.samagames.hydroangeas.server.games.AbstractGameTemplate;
 import net.samagames.hydroangeas.server.hubs.HubBalancer;
 import net.samagames.hydroangeas.server.receiver.ServerStatusReceiver;
-import net.samagames.hydroangeas.server.receiver.ServiceRequestReceiver;
 import net.samagames.hydroangeas.server.waitingqueue.Queue;
 import net.samagames.hydroangeas.server.waitingqueue.QueueManager;
 import net.samagames.hydroangeas.utils.InstanceType;
@@ -77,8 +76,6 @@ public class HydroangeasServer extends Hydroangeas {
         this.redisSubscriber.registerReceiver("serverUpdateChannel", new ServerStatusReceiver(this));
         this.redisSubscriber.registerReceiver("hubUpdateChannel", new ServerStatusReceiver(this));
         this.redisSubscriber.registerReceiver("hubsChannel", new ServerStatusReceiver(this));
-
-        this.redisSubscriber.registerReceiver("samaconnect.services.requests", new ServiceRequestReceiver(this));
 
         this.clientManager = new ClientManager(this);
 

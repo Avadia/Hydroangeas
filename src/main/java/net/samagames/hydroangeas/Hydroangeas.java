@@ -8,7 +8,6 @@ import net.samagames.hydroangeas.common.database.DatabaseConnector;
 import net.samagames.hydroangeas.common.database.RedisSubscriber;
 import net.samagames.hydroangeas.common.log.HydroLogger;
 import net.samagames.hydroangeas.server.HydroangeasServer;
-import net.samagames.hydroangeas.utils.LinuxBridge;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
@@ -35,6 +34,7 @@ import java.util.logging.Logger;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class Hydroangeas {
+    protected static Logger logger;
     private static Hydroangeas instance;
     protected final ScheduledExecutorService scheduler;
     protected final ConsoleReader consoleReader;
@@ -44,11 +44,7 @@ public abstract class Hydroangeas {
     protected Configuration configuration;
     protected DatabaseConnector databaseConnector;
     protected RedisSubscriber redisSubscriber;
-    protected LinuxBridge linuxBridge;
-
     protected CommandManager commandManager;
-
-    protected static Logger logger;
 
     public Hydroangeas(OptionSet options) throws IOException {
         instance = this;
@@ -69,7 +65,6 @@ public abstract class Hydroangeas {
         this.databaseConnector = new DatabaseConnector(this);
 
         this.redisSubscriber = new RedisSubscriber(this);
-        this.linuxBridge = new LinuxBridge();
         this.enable();
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
         {
@@ -124,10 +119,6 @@ public abstract class Hydroangeas {
         return this.redisSubscriber;
     }
 
-    public LinuxBridge getLinuxBridge() {
-        return this.linuxBridge;
-    }
-
     public ScheduledExecutorService getScheduler() {
         return scheduler;
     }
@@ -170,10 +161,6 @@ public abstract class Hydroangeas {
             this.mode = mode;
         }
 
-        public String getMode() {
-            return mode;
-        }
-
         static public RestrictionMode valueFrom(String mode) {
             for (RestrictionMode data : RestrictionMode.values()) {
                 if (data.getMode().equalsIgnoreCase(mode))
@@ -181,6 +168,10 @@ public abstract class Hydroangeas {
             }
 
             return RestrictionMode.NONE;
+        }
+
+        public String getMode() {
+            return mode;
         }
     }
 }

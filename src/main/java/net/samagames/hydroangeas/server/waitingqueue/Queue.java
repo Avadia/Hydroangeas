@@ -42,25 +42,19 @@ public class Queue {
     private final HydroangeasServer instance;
 
     private final PriorityPlayerQueue queue;
-
-    private AbstractGameTemplate template;
-
-    //Anticipation
-
     private final DataQueue dataQueue;
 
-    // Manager
-
+    //Anticipation
     private final WatchQueue watchQueue;
 
-    //Hub data
-
-    private volatile boolean sendInfo = true;
-
-    private long lastSend = System.currentTimeMillis();
-
+    // Manager
     //Stats
     private final long lastJoinTime = System.currentTimeMillis();
+
+    //Hub data
+    private AbstractGameTemplate template;
+    private volatile boolean sendInfo = true;
+    private long lastSend = System.currentTimeMillis();
 
 
     public Queue(QueueManager manager, AbstractGameTemplate template) {

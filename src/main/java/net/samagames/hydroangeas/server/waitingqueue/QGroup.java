@@ -25,10 +25,8 @@ import java.util.stream.Collectors;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class QGroup {
-    private QPlayer leader;
-
     private final List<QPlayer> players = new ArrayList<>();
-
+    private QPlayer leader;
     private int priority;
 
     public QGroup(QPlayer player) {

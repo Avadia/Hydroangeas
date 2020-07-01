@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class QueueManager {
-    public List<Queue> queues = new ArrayList<>();
     private final HydroangeasServer instance;
+    public List<Queue> queues = new ArrayList<>();
 
     public QueueManager(HydroangeasServer instance) {
         this.instance = instance;

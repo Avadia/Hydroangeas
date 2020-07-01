@@ -22,14 +22,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class DataQueue {
+    private final static double NumberOfMinutePerServer = 10.0;
     private final HydroangeasServer instance;
-
     //Number of started server in the last 10 minutes
     private final AtomicInteger numberOfServerStarted = new AtomicInteger(0);
-
     private final AtomicInteger lastServerStartNB = new AtomicInteger(0);
-
-    private final static double NumberOfMinutePerServer = 10.0;
 
     public DataQueue(HydroangeasServer instance) {
         this.instance = instance;

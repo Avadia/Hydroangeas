@@ -27,16 +27,14 @@ import java.util.logging.Level;
  */
 public class HydroClient {
     private final HydroangeasServer instance;
+    private final Hydroangeas.RestrictionMode restrictionMode;
+    private final List<String> whitelist;
+    private final List<String> blacklist;
+    private final MinecraftServerManager serverManager;
     private UUID uuid;
     private String ip;
     private int maxWeight;
     private long timestamp;
-
-    private final Hydroangeas.RestrictionMode restrictionMode;
-    private final List<String> whitelist;
-    private final List<String> blacklist;
-
-    private final MinecraftServerManager serverManager;
 
     public HydroClient(HydroangeasServer instance, UUID uuid, Hydroangeas.RestrictionMode restrictionMode, List<String> whitelist, List<String> blacklist) {
         this.instance = instance;

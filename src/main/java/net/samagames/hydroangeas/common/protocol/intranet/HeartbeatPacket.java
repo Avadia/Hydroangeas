@@ -21,8 +21,8 @@ import java.util.UUID;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class HeartbeatPacket extends AbstractPacket {
-    private UUID uuid;
     private final boolean online = true;
+    private UUID uuid;
 
     public HeartbeatPacket(UUID uuid) {
         this.uuid = uuid;

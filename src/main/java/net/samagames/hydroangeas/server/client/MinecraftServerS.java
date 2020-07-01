@@ -35,14 +35,10 @@ import java.util.UUID;
  */
 public class MinecraftServerS extends MinecraftServer {
     private final HydroClient client;
-
-    private boolean started;
-
-    private boolean available;
-
     private final List<Runnable> onStartHook;
-
     private final int suppressionFlag = 0;
+    private boolean started;
+    private boolean available;
 
     public MinecraftServerS(HydroClient client, AbstractGameTemplate template) {
         this(client,

@@ -49,7 +49,7 @@ public class MinecraftServerManager {
             }
         } else {
             for (int i = 1; ; i++) {
-                if (instance.getClientManager().getServerByName("Hub_" + i) == null) {
+                if (instance.getClientManager().getServerByName("hub_" + i) == null) {
                     server.setHubID(i);
                     break;
                 }

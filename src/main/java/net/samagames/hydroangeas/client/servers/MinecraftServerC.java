@@ -1,18 +1,15 @@
 package net.samagames.hydroangeas.client.servers;
 
-import com.google.gson.JsonObject;
-import net.samagames.hydroangeas.Hydroangeas;
+import com.mattmalec.pterodactyl4j.DataType;
+import com.mattmalec.pterodactyl4j.application.entities.*;
+import com.mattmalec.pterodactyl4j.application.managers.ServerAction;
 import net.samagames.hydroangeas.client.HydroangeasClient;
-import net.samagames.hydroangeas.client.docker.DockerContainer;
-import net.samagames.hydroangeas.client.remote.RemoteControl;
 import net.samagames.hydroangeas.common.data.MinecraftServer;
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerIssuePacket;
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPacket;
-import org.apache.commons.io.FileDeleteStrategy;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.time.Instant;
+import java.util.*;
 import java.util.logging.Level;
 
 import static net.samagames.hydroangeas.Hydroangeas.getLogger;
@@ -36,17 +33,10 @@ import static net.samagames.hydroangeas.Hydroangeas.getLogger;
 public class MinecraftServerC extends MinecraftServer {
     private final HydroangeasClient instance;
 
-    private final File serverFolder;
-
     private long lastHeartbeat = System.currentTimeMillis();
 
-    private DockerContainer container;
-
-    private RemoteControl remoteControl;
-
     public MinecraftServerC(HydroangeasClient instance,
-                            MinecraftServerSyncPacket serverInfos,
-                            int port) {
+                            MinecraftServerSyncPacket serverInfos) {
         super(serverInfos.getMinecraftUUID(),
                 serverInfos.getGame(),
                 serverInfos.getMap(),
@@ -65,47 +55,63 @@ public class MinecraftServerC extends MinecraftServer {
 
         this.timeToLive = serverInfos.getTimeToLive();
 
-        this.serverFolder = new File(this.instance.getServerFolder(), serverInfos.getServerName());
-        try {
-            FileDeleteStrategy.FORCE.delete(serverFolder);
-            FileUtils.forceDeleteOnExit(serverFolder);
-        } catch (IOException e) {
-            getLogger().warning(serverFolder + " will not be able to be deleted during JVM shutdown!");
-        }
-        this.port = port;
-
         this.weight = serverInfos.getWeight();
+
+        this.port = Integer.parseInt(this.instance.getPorts().remove(0));
+
+        this.ip = "0.0.0.0";
     }
 
     public boolean makeServer() {
-        try {
-            FileUtils.forceMkdir(serverFolder);
-            this.instance.getResourceManager().downloadServer(this, this.serverFolder);
-            this.instance.getResourceManager().downloadMap(this, this.serverFolder);
-            this.instance.getResourceManager().downloadDependencies(this, this.serverFolder);
-        } catch (Exception e) {
+        Location location = this.instance.getPanelController().getAdminPanel().asApplication().retrieveLocationById("1").execute();
+        Nest nest = this.instance.getPanelController().getAdminPanel().asApplication().retrieveNestById("8").execute();
+        Egg egg = this.instance.getPanelController().getAdminPanel().asApplication().retrieveEggById(nest, "18").execute();
+        User owner = this.instance.getPanelController().getAdminPanel().asApplication().retrieveUserById("11").execute();
+        Map<String, String> variables = new HashMap<>();
+        variables.put("PAPER_JARFILE", "paper.jar");
+        variables.put("UPDATER_JARFILE", "updater.jar");
+        variables.put("BUILD_NUMBER", "latest");
+        variables.put("MINECRAFT_VERSION", "1.12.2");
+        Set<String> portRange = new HashSet<>();
+        portRange.add(this.port + "");
+        StringBuilder startupCommand = new StringBuilder(egg.getStartupCommand());
+        ServerAction createServerAction = this.instance.getPanelController().getAdminPanel().asApplication().createServer();
+
+        startupCommand.append(" ");
+
+        ApplicationServer server = createServerAction.setName("Minecraft - " + this.getServerName())
+                .setCPU(800L)
+                .setMemory(1024L, DataType.MB)
+                .setSwap(1024L, DataType.MB)
+                .setDescription("Created on " + Instant.now().toString())
+                .setOwner(owner)
+                .setEgg(egg)
+                .setLocations(Collections.singleton(location))
+                .setAllocations(0L)
+                .setDatabases(0L)
+                .setDisk(500L, DataType.MB)
+                .setDockerImage(egg.getDockerImage())
+                .setDedicatedIP(false)
+                .setPortRange(portRange)
+                .startOnCompletion(true)
+                .setEnvironment(variables)
+                .setStartupCommand(startupCommand.toString())
+                .build().execute();
+
+        if (server == null) {
             this.instance.log(Level.SEVERE, "Can't make the server " + getServerName() + "!");
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
-            e.printStackTrace();
-            try {
-                FileDeleteStrategy.FORCE.delete(serverFolder);
-                FileUtils.forceDeleteOnExit(serverFolder);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
             return false;
         }
+
+        Allocation allocation = server.retrieveAllocation().execute();
+        this.ip
 
         try {
             this.instance.getResourceManager().patchServer(this, this.serverFolder, isCoupaingServer());
         } catch (Exception e) {
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.PATCH));
             e.printStackTrace();
-            try {
-                FileUtils.forceDelete(serverFolder);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
             return false;
         }
 
@@ -113,89 +119,35 @@ public class MinecraftServerC extends MinecraftServer {
     }
 
     public boolean startServer() {
-        try {
-            JsonObject startupOptionsObj = startupOptions.getAsJsonObject();
-            String maxRAM = startupOptionsObj.get("maxRAM").getAsString();
+//                            "-Xmx" + maxRAM,
+//                            "-Xms" + startupOptionsObj.get("minRAM").getAsString(),
+//                            "-Xmn" + startupOptionsObj.get("edenRAM").getAsString(),
+//                            "-XX:+UseG1GC",
+//                            "-XX:+UnlockExperimentalVMOptions",
+//                            "-XX:MaxGCPauseMillis=50",
+//                            "-XX:+DisableExplicitGC",
+//                            "-XX:G1HeapRegionSize=4M",
+//                            "-XX:TargetSurvivorRatio=90",
+//                            "-XX:G1NewSizePercent=50",
+//                            "-XX:G1MaxNewSizePercent=80",
+//                            "-XX:InitiatingHeapOccupancyPercent=10",
+//                            "-XX:G1MixedGCLiveThresholdPercent=50",
+//                            "-XX:+AggressiveOpts",
+//                            "-XX:+UseLargePagesInMetaspace",
+//                            "-Djava.net.preferIPv4Stack=true",
+//                            "-Dcom.sun.management.jmxremote",
+//                            "-Dcom.sun.management.jmxremote.port=" + (getPort() + 1),
+//                            "-Dcom.sun.management.jmxremote.local.only=false",
+//                            "-Dcom.sun.management.jmxremote.authenticate=false",
+//                            "-Dcom.sun.management.jmxremote.ssl=false",
 
-            container = new DockerContainer(
-                    getServerName(),
-                    serverFolder,
-                    port,
-                    new String[]{"/usr/bin/java",
-                            //"-Duser.dir " + serverFolder.getAbsolutePath(),
-                            "-Xmx" + maxRAM,
-                            "-Xms" + startupOptionsObj.get("minRAM").getAsString(),
-                            "-Xmn" + startupOptionsObj.get("edenRAM").getAsString(),
-                            "-XX:+UseG1GC",
-                            "-XX:+UnlockExperimentalVMOptions",
-                            "-XX:MaxGCPauseMillis=50",
-                            "-XX:+DisableExplicitGC",
-                            "-XX:G1HeapRegionSize=4M",
-                            "-XX:TargetSurvivorRatio=90",
-                            "-XX:G1NewSizePercent=50",
-                            "-XX:G1MaxNewSizePercent=80",
-                            "-XX:InitiatingHeapOccupancyPercent=10",
-                            "-XX:G1MixedGCLiveThresholdPercent=50",
-                            "-XX:+AggressiveOpts",
-                            "-XX:+UseLargePagesInMetaspace",
-                            "-Djava.net.preferIPv4Stack=true",
-                            "-Dcom.sun.management.jmxremote",
-                            "-Dcom.sun.management.jmxremote.port=" + (getPort() + 1),
-                            "-Dcom.sun.management.jmxremote.local.only=false",
-                            "-Dcom.sun.management.jmxremote.authenticate=false",
-                            "-Dcom.sun.management.jmxremote.ssl=false",
-                            "-jar", serverFolder.getAbsolutePath() + "/spigot.jar", "nogui"},
-                    maxRAM
-            );
-            Hydroangeas.getLogger().info(container.createContainer());
-
-            getLogger().info("Starting server " + getServerName());
-
-            remoteControl = new RemoteControl(this, "blackmesa", (getPort() + 1));
-        } catch (Exception e) {
-            this.instance.log(Level.SEVERE, "Can't start the server " + getServerName() + "!");
-            e.printStackTrace();
-            try {
-                FileDeleteStrategy.FORCE.delete(serverFolder);
-                FileUtils.forceDelete(serverFolder);
-            } catch (IOException ignored) {
-            }
-
-            return false;
-        }
-
-        return true;
+        getLogger().info("Starting server " + getServerName());
+        this.instance.log(Level.SEVERE, "Can't start the server " + getServerName() + "!");
     }
 
     public boolean stopServer() {
-        try {
-            try {
-                if (remoteControl != null)
-                    remoteControl.disconnect();
-            } catch (Exception ignored) {
-
-            }
-
-            instance.getServerManager().onServerStop(this);
-            Hydroangeas.getInstance().getAsClient().getLogManager().saveLog(getServerName(), getTemplateID());
-            container.removeContainer();
-
-        } catch (Exception e) {
-            this.instance.log(Level.SEVERE, "Can't stop the server " + getServerName() + "!");
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                FileDeleteStrategy.FORCE.delete(serverFolder);
-                FileUtils.forceDelete(serverFolder);
-            } catch (IOException ignored) {
-            }
-        }
-        return true;
-    }
-
-    public File getServerFolder() {
-        return this.serverFolder;
+        instance.getServerManager().onServerStop(this);
+        this.instance.log(Level.SEVERE, "Can't stop the server " + getServerName() + "!");
     }
 
     public HydroangeasClient getInstance() {
@@ -208,13 +160,5 @@ public class MinecraftServerC extends MinecraftServer {
 
     public void doHeartbeat() {
         this.lastHeartbeat = System.currentTimeMillis();
-    }
-
-    public DockerContainer getContainer() {
-        return container;
-    }
-
-    public RemoteControl getRemoteControl() {
-        return remoteControl;
     }
 }

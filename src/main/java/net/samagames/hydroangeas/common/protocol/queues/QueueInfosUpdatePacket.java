@@ -66,44 +66,44 @@ public class QueueInfosUpdatePacket extends AbstractPacket {
         return type;
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public String getGame() {
-        return game;
-    }
-
-    public String getMap() {
-        return map;
-    }
-
-    public QPlayer getPlayer() {
-        return player;
-    }
-
     public void setType(Type type) {
         this.type = type;
     }
 
-    public void setGame(String game) {
-        this.game = game;
-    }
-
-    public void setMap(String map) {
-        this.map = map;
+    public boolean isSuccess() {
+        return success;
     }
 
     public void setSuccess(boolean success) {
         this.success = success;
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public String getGame() {
+        return game;
+    }
+
+    public void setGame(String game) {
+        this.game = game;
+    }
+
+    public String getMap() {
+        return map;
+    }
+
+    public void setMap(String map) {
+        this.map = map;
+    }
+
+    public QPlayer getPlayer() {
+        return player;
     }
 
     public void setPlayer(QPlayer player) {

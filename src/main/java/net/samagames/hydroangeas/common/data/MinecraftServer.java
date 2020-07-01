@@ -42,6 +42,7 @@ public abstract class MinecraftServer {
 
     protected int weight;
 
+    protected String ip;
     protected int port;
 
     protected Status status = Status.STARTING;
@@ -66,9 +67,7 @@ public abstract class MinecraftServer {
         this.startupOptions = startupOptions;
 
         this.startedTime = System.currentTimeMillis();
-
     }
-
 
     public UUID getUUID() {
         return uuid;
@@ -176,6 +175,14 @@ public abstract class MinecraftServer {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public int getPort() {

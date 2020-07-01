@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class TemplateManager {
-    private List<AbstractGameTemplate> templates;
     private final HydroangeasServer instance;
+    private List<AbstractGameTemplate> templates;
 
     public TemplateManager(HydroangeasServer instance) {
 

@@ -98,16 +98,14 @@ public class Configuration {
     public boolean validateJson(JsonObject object) {
         boolean flag = true;
 
-        /* Common **/
         if (!object.has("redis-ip")) flag = false;
         if (!object.has("redis-port")) flag = false;
         if (!object.has("redis-password")) flag = false;
         if (!object.has("sql-url")) flag = false;
         if (!object.has("sql-user")) flag = false;
         if (!object.has("sql-password")) flag = false;
-
-        /* Client **/
-        if (!object.has("max-weight")) flag = false;
+        if (!object.has("panel-admin-token")) flag = false;
+        if (!object.has("panel-user-token")) flag = false;
 
         return flag;
     }

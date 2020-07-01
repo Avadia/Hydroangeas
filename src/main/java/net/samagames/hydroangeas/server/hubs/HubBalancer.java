@@ -30,12 +30,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class HubBalancer {
     private final HydroangeasServer instance;
-
-    private BalancingTask balancer;
-
-    private SimpleGameTemplate hubTemplate;
-
     private final CopyOnWriteArrayList<MinecraftServerS> hubs = new CopyOnWriteArrayList<>();
+    private BalancingTask balancer;
+    private SimpleGameTemplate hubTemplate;
 
     public HubBalancer(HydroangeasServer instance) {
         this.instance = instance;
