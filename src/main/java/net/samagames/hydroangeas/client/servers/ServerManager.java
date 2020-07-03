@@ -44,6 +44,8 @@ public class ServerManager {
 
             Hydroangeas.getLogger().info("Server creation !");
 
+            this.servers.add(server);
+
             if (!server.makeServer()) {
                 instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), serverInfos.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
                 instance.getConnectionManager().sendPacket(new MinecraftServerUpdatePacket(instance, server.getServerName(), MinecraftServerUpdatePacket.UType.END));
@@ -56,7 +58,6 @@ public class ServerManager {
                 server.stopServer();
                 return;
             }
-            this.servers.add(server);
 
             this.instance.log(Level.INFO, "New server started -> Game (" + serverInfos.getGame() + ") & Map (" + serverInfos.getMap() + ")");
 

@@ -33,6 +33,8 @@ import static net.samagames.hydroangeas.Hydroangeas.getLogger;
 public class MinecraftServerC extends MinecraftServer {
     private final HydroangeasClient instance;
 
+    private ApplicationServer server;
+
     private long lastHeartbeat = System.currentTimeMillis();
 
     public MinecraftServerC(HydroangeasClient instance,
@@ -56,13 +58,11 @@ public class MinecraftServerC extends MinecraftServer {
         this.timeToLive = serverInfos.getTimeToLive();
 
         this.weight = serverInfos.getWeight();
-
-        this.port = Integer.parseInt(this.instance.getPorts().remove(0));
-
-        this.ip = "0.0.0.0";
     }
 
     public boolean makeServer() {
+        String tempPort = this.instance.getPorts().remove(0);
+
         Location location = this.instance.getPanelController().getAdminPanel().asApplication().retrieveLocationById("1").execute();
         Nest nest = this.instance.getPanelController().getAdminPanel().asApplication().retrieveNestById("8").execute();
         Egg egg = this.instance.getPanelController().getAdminPanel().asApplication().retrieveEggById(nest, "18").execute();
@@ -73,49 +73,36 @@ public class MinecraftServerC extends MinecraftServer {
         variables.put("BUILD_NUMBER", "latest");
         variables.put("MINECRAFT_VERSION", "1.12.2");
         Set<String> portRange = new HashSet<>();
-        portRange.add(this.port + "");
+        portRange.add(tempPort);
         StringBuilder startupCommand = new StringBuilder(egg.getStartupCommand());
         ServerAction createServerAction = this.instance.getPanelController().getAdminPanel().asApplication().createServer();
 
-        startupCommand.append(" ");
-
-        ApplicationServer server = createServerAction.setName("Minecraft - " + this.getServerName())
-                .setCPU(800L)
-                .setMemory(1024L, DataType.MB)
-                .setSwap(1024L, DataType.MB)
-                .setDescription("Created on " + Instant.now().toString())
-                .setOwner(owner)
-                .setEgg(egg)
-                .setLocations(Collections.singleton(location))
-                .setAllocations(0L)
-                .setDatabases(0L)
-                .setDisk(500L, DataType.MB)
-                .setDockerImage(egg.getDockerImage())
-                .setDedicatedIP(false)
-                .setPortRange(portRange)
-                .startOnCompletion(true)
-                .setEnvironment(variables)
-                .setStartupCommand(startupCommand.toString())
-                .build().execute();
-
-        if (server == null) {
+        try {
+            server = createServerAction.setName("Minecraft - " + this.getServerName())
+                    .setCPU(800L)
+                    .setMemory(1024L, DataType.MB)
+                    .setSwap(1024L, DataType.MB)
+                    .setDescription("Created on " + Instant.now().toString())
+                    .setOwner(owner)
+                    .setEgg(egg)
+                    .setLocations(Collections.singleton(location))
+                    .setAllocations(0L)
+                    .setDatabases(0L)
+                    .setDisk(500L, DataType.MB)
+                    .setDockerImage(egg.getDockerImage())
+                    .setDedicatedIP(false)
+                    .setPortRange(portRange)
+                    .startOnCompletion(true)
+                    .setEnvironment(variables)
+                    .setStartupCommand(startupCommand.toString())
+                    .build().execute();
+            return true;
+        } catch (Exception e) {
             this.instance.log(Level.SEVERE, "Can't make the server " + getServerName() + "!");
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
+            this.instance.getPorts().add(tempPort);
             return false;
         }
-
-        Allocation allocation = server.retrieveAllocation().execute();
-        this.ip
-
-        try {
-            this.instance.getResourceManager().patchServer(this, this.serverFolder, isCoupaingServer());
-        } catch (Exception e) {
-            instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.PATCH));
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
     }
 
     public boolean startServer() {
@@ -142,16 +129,31 @@ public class MinecraftServerC extends MinecraftServer {
 //                            "-Dcom.sun.management.jmxremote.ssl=false",
 
         getLogger().info("Starting server " + getServerName());
-        this.instance.log(Level.SEVERE, "Can't start the server " + getServerName() + "!");
+        //this.instance.log(Level.SEVERE, "Can't start the server " + getServerName() + "!");
+        return true;
     }
 
     public boolean stopServer() {
+        if (server != null) {
+            try {
+                String tempPort = server.retrieveAllocation().execute().getPort();
+                server.getController().delete(false).execute();
+                this.instance.getPorts().add(tempPort);
+            } catch (Exception e) {
+                this.instance.log(Level.SEVERE, "Can't stop the server " + getServerName() + "!");
+                return false;
+            }
+        }
         instance.getServerManager().onServerStop(this);
-        this.instance.log(Level.SEVERE, "Can't stop the server " + getServerName() + "!");
+        return true;
     }
 
     public HydroangeasClient getInstance() {
         return instance;
+    }
+
+    public ApplicationServer getServer() {
+        return server;
     }
 
     public long getLastHeartbeat() {
