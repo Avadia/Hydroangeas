@@ -3,6 +3,7 @@ package net.samagames.hydroangeas.client.servers;
 import com.mattmalec.pterodactyl4j.DataType;
 import com.mattmalec.pterodactyl4j.application.entities.*;
 import com.mattmalec.pterodactyl4j.application.managers.ServerAction;
+import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.client.HydroangeasClient;
 import net.samagames.hydroangeas.common.data.MinecraftServer;
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerIssuePacket;
@@ -34,8 +35,7 @@ public class MinecraftServerC extends MinecraftServer {
     private final HydroangeasClient instance;
 
     private ApplicationServer server;
-
-    private long lastHeartbeat = System.currentTimeMillis();
+    private Allocation allocation;
 
     public MinecraftServerC(HydroangeasClient instance,
                             MinecraftServerSyncPacket serverInfos) {
@@ -98,7 +98,7 @@ public class MinecraftServerC extends MinecraftServer {
                     .build().execute();
             return true;
         } catch (Exception e) {
-            this.instance.log(Level.SEVERE, "Can't make the server " + getServerName() + "!");
+            Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "!", e);
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
             this.instance.getPorts().add(tempPort);
             return false;
@@ -129,6 +129,12 @@ public class MinecraftServerC extends MinecraftServer {
 //                            "-Dcom.sun.management.jmxremote.ssl=false",
 
         getLogger().info("Starting server " + getServerName());
+        try {
+            if (server != null)
+                allocation = server.retrieveAllocation().execute();
+        } catch (Exception e) {
+            Hydroangeas.getLogger().log(Level.SEVERE, "Can't get allocation of server " + getServerName() + "!", e);
+        }
         //this.instance.log(Level.SEVERE, "Can't start the server " + getServerName() + "!");
         return true;
     }
@@ -136,13 +142,24 @@ public class MinecraftServerC extends MinecraftServer {
     public boolean stopServer() {
         if (server != null) {
             try {
-                String tempPort = server.retrieveAllocation().execute().getPort();
-                server.getController().delete(false).execute();
-                this.instance.getPorts().add(tempPort);
+                if (allocation == null)
+                    allocation = server.retrieveAllocation().execute();
             } catch (Exception e) {
-                this.instance.log(Level.SEVERE, "Can't stop the server " + getServerName() + "!");
-                return false;
+                Hydroangeas.getLogger().log(Level.SEVERE, "Can't reassign port of server " + getServerName() + "!", e);
             }
+            try {
+                server.getController().delete(false).execute();
+            } catch (Exception e) {
+                Hydroangeas.getLogger().log(Level.SEVERE, "Can't stop the server " + getServerName() + "! Try force...", e);
+                try {
+                    server.getController().delete(true).execute();
+                } catch (Exception e1) {
+                    Hydroangeas.getLogger().log(Level.SEVERE, "Can't force stop the server " + getServerName() + "!", e1);
+                    return false;
+                }
+            }
+            if (allocation != null)
+                this.instance.getPorts().add(allocation.getPort());
         }
         instance.getServerManager().onServerStop(this);
         return true;
@@ -156,11 +173,7 @@ public class MinecraftServerC extends MinecraftServer {
         return server;
     }
 
-    public long getLastHeartbeat() {
-        return lastHeartbeat;
-    }
-
-    public void doHeartbeat() {
-        this.lastHeartbeat = System.currentTimeMillis();
+    public Allocation getAllocation() {
+        return allocation;
     }
 }

@@ -11,11 +11,7 @@ import net.samagames.hydroangeas.client.tasks.ServerAliveWatchDog;
 import net.samagames.hydroangeas.common.protocol.intranet.ByeFromClientPacket;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -134,7 +130,6 @@ public class HydroangeasClient extends Hydroangeas {
     public void disable() {
         connectionManager.sendPacket(new ByeFromClientPacket(getUUID()));
         this.serverManager.stopAll();
-        this.serverAliveWatchDog.disable();
     }
 
     public UUID getClientUUID() {
@@ -155,29 +150,6 @@ public class HydroangeasClient extends Hydroangeas {
 
     public ServerManager getServerManager() {
         return this.serverManager;
-    }
-
-    public String getIP() {
-        try {
-            return getInternalIpv4();
-        } catch (IOException e) {
-            return "0.0.0.0";
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    private String getInternalIpv4() throws IOException {
-        NetworkInterface i = NetworkInterface.getByName("eth0");
-        for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements(); ) {
-            InetAddress addr = (InetAddress) en2.nextElement();
-            if (!addr.isLoopbackAddress()) {
-                if (addr instanceof Inet4Address) {
-                    return addr.getHostAddress();
-                }
-            }
-        }
-        InetAddress inet = Inet4Address.getLocalHost();
-        return inet == null ? "0.0.0.0" : inet.getHostAddress();
     }
 
     public ClientConnectionManager getConnectionManager() {

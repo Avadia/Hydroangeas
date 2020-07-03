@@ -39,6 +39,8 @@ public class MinecraftServerS extends MinecraftServer {
     private final int suppressionFlag = 0;
     private boolean started;
     private boolean available;
+    private String ip;
+    private int port;
 
     public MinecraftServerS(HydroClient client, AbstractGameTemplate template) {
         this(client,
@@ -66,6 +68,7 @@ public class MinecraftServerS extends MinecraftServer {
                 packet.getStartupOptions());
 
         this.templateID = packet.getTemplateID();
+        this.ip = packet.getIp();
         this.port = packet.getPort();
         this.hubID = packet.getHubID();
         this.weight = packet.getWeight();
@@ -106,15 +109,13 @@ public class MinecraftServerS extends MinecraftServer {
 
         updateHubHostGame(0);
 
-       /* String ip = this.client.getIp();
-        int port = getPort();
-        //Register server in redis cache
-        Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getResource();
-        jedis.hset("servers", getServerName(), ip + ":" + port);
-        jedis.close();*/
-
-        //Register server to all bungee
-        //Hydroangeas.getInstance().getRedisSubscriber().send("servers", "heartbeat " + getServerName() + " " + ip + " " + port);
+//        //Register server in redis cache
+//        Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getResource();
+//        jedis.hset("servers", getServerName(), ip + ":" + port);
+//        jedis.close();
+//
+//        //Register server to all bungee
+//        Hydroangeas.getInstance().getRedisSubscriber().send("servers", "heartbeat " + getServerName() + " " + ip + " " + port);
     }
 
     public void onShutdown() {
@@ -211,5 +212,21 @@ public class MinecraftServerS extends MinecraftServer {
 
             }
         })*/
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

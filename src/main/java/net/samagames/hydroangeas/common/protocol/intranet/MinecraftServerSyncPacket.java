@@ -28,6 +28,7 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
     private UUID clientUUID;
     private UUID minecraftUUID;
 
+    private String ip;
     private int port;
 
     private Integer hubID;
@@ -50,6 +51,7 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
     public MinecraftServerSyncPacket(MinecraftServerS server) {
         this(null,
                 server.getUUID(),
+                "0.0.0.0",
                 -1,
                 server.getHubID(),
                 server.getGame(),
@@ -67,7 +69,8 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
     public MinecraftServerSyncPacket(HydroangeasClient client, MinecraftServerC server) {
         this(client.getClientUUID(),
                 server.getUUID(),
-                server.getPort(),
+                server.getAllocation().getIP(),
+                Integer.parseInt(server.getAllocation().getPort()),
                 server.getHubID(),
                 server.getGame(),
                 server.getMap(),
@@ -83,6 +86,7 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
 
     public MinecraftServerSyncPacket(UUID clientUUID,
                                      UUID minecraftUUID,
+                                     String ip,
                                      int port,
                                      Integer hubID,
                                      String game,
@@ -98,6 +102,7 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
         this.clientUUID = clientUUID;
         this.minecraftUUID = minecraftUUID;
 
+        this.ip = ip;
         this.port = port;
 
         this.hubID = hubID;
@@ -201,6 +206,14 @@ public class MinecraftServerSyncPacket extends AbstractPacket {
 
     public void setMinecraftUUID(UUID minecraftUUID) {
         this.minecraftUUID = minecraftUUID;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public int getPort() {

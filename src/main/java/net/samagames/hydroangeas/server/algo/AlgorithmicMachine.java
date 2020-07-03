@@ -61,13 +61,13 @@ public class AlgorithmicMachine {
         }
 
         MinecraftServerS server = client.getServerManager().addServer(template, template.getGameName().toLowerCase().startsWith("hub"));
-        instance.log(Level.INFO, template + " created on " + client.getIp());
+        instance.log(Level.INFO, template + " created on " + client.getUUID());
         return server;
     }
 
     public void onServerUpdate(HydroClient client, MinecraftServerS oldServer, MinecraftServerUpdatePacket serverStatus) {
         if (serverStatus.getAction().equals(MinecraftServerUpdatePacket.UType.END)) {
-            instance.log(Level.INFO, "Server ended on " + client.getIp() + " servername: " + serverStatus.getServerName());
+            instance.log(Level.INFO, "Server ended on " + client.getUUID() + " servername: " + serverStatus.getServerName());
         }
     }
 

@@ -32,7 +32,6 @@ public class HydroClient {
     private final List<String> blacklist;
     private final MinecraftServerManager serverManager;
     private UUID uuid;
-    private String ip;
     private int maxWeight;
     private long timestamp;
 
@@ -52,8 +51,6 @@ public class HydroClient {
         if (uuid == null)
             this.uuid = packet.getUUID();
 
-        setIp(packet.getIp());
-
         setMaxWeight(packet.getMaxWeight());
 
         if (getActualWeight() != packet.getActualWeight()) {
@@ -70,14 +67,6 @@ public class HydroClient {
 
     public UUID getUUID() {
         return this.uuid;
-    }
-
-    public String getIp() {
-        return this.ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
     }
 
     public int getMaxWeight() {

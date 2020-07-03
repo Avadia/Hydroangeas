@@ -24,7 +24,6 @@ import java.util.UUID;
  */
 public class HelloFromClientPacket extends AbstractPacket {
     private UUID uuid;
-    private String ip;
     private int maxWeight;
     private int actualWeight;
     private long timestamp;
@@ -39,7 +38,6 @@ public class HelloFromClientPacket extends AbstractPacket {
 
     public HelloFromClientPacket(HydroangeasClient instance) {
         this(instance.getClientUUID(),
-                instance.getIP(),
                 instance.getRestrictionMode(),
                 instance.getMaxWeight(),
                 instance.getActualWeight(),
@@ -48,9 +46,8 @@ public class HelloFromClientPacket extends AbstractPacket {
                 instance.getBlacklist());
     }
 
-    public HelloFromClientPacket(UUID uuid, String ip, HydroangeasClient.RestrictionMode mode, int maxWeight, int actualWeight, long timestamp, List<String> whitelist, List<String> blacklist) {
+    public HelloFromClientPacket(UUID uuid, HydroangeasClient.RestrictionMode mode, int maxWeight, int actualWeight, long timestamp, List<String> whitelist, List<String> blacklist) {
         this.uuid = uuid;
-        this.ip = ip;
         this.mode = mode;
         this.maxWeight = maxWeight;
         this.actualWeight = actualWeight;
@@ -62,10 +59,6 @@ public class HelloFromClientPacket extends AbstractPacket {
 
     public UUID getUUID() {
         return uuid;
-    }
-
-    public String getIp() {
-        return ip;
     }
 
     public int getMaxWeight() {

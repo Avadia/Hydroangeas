@@ -36,7 +36,6 @@ public class InfosCommand extends AbstractCommand {
 
     public static void showHydroClient(HydroClient client, Integer i) {
         Hydroangeas.getInstance().log(Level.INFO, "#" + ((i != null) ? i : "") + " " + client.getUUID() + ": ");
-        Hydroangeas.getInstance().log(Level.INFO, "   ip:         " + ConsoleColor.RED + client.getIp() + ConsoleColor.RESET);
         Hydroangeas.getInstance().log(Level.INFO, "   weight:     " + ConsoleColor.RED + client.getActualWeight() + ConsoleColor.RESET);
         Hydroangeas.getInstance().log(Level.INFO, "   maxWeight:  " + ConsoleColor.RED + client.getMaxWeight() + ConsoleColor.RESET);
         Hydroangeas.getInstance().log(Level.INFO, "   Nb player:  " + ConsoleColor.RED + client.getPlayer() + ConsoleColor.RESET);

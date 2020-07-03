@@ -110,6 +110,7 @@ public class MinecraftServerManager {
                         new AskForClientActionPacket(instance.getUUID(), AskForClientActionPacket.ActionCommand.SERVEREND, packet.getServerName()));
                 return;
             }
+            server.setIp(packet.getIp());
             server.setPort(packet.getPort());
         }
     }
