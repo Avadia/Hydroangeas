@@ -7,7 +7,6 @@ import net.samagames.hydroangeas.client.commands.ClientCommandManager;
 import net.samagames.hydroangeas.client.panel.PanelController;
 import net.samagames.hydroangeas.client.servers.ServerManager;
 import net.samagames.hydroangeas.client.tasks.LifeThread;
-import net.samagames.hydroangeas.client.tasks.ServerAliveWatchDog;
 import net.samagames.hydroangeas.common.protocol.intranet.ByeFromClientPacket;
 
 import java.io.IOException;
@@ -40,7 +39,6 @@ public class HydroangeasClient extends Hydroangeas {
     private ClientConnectionManager connectionManager;
     private LifeThread lifeThread;
     private ServerManager serverManager;
-    private ServerAliveWatchDog serverAliveWatchDog;
     private PanelController panelController;
     private List<String> ports;
 
@@ -71,8 +69,6 @@ public class HydroangeasClient extends Hydroangeas {
 
         this.lifeThread = new LifeThread(this);
         this.lifeThread.start();
-
-        this.serverAliveWatchDog = new ServerAliveWatchDog(this);
     }
 
     @Override
@@ -170,10 +166,6 @@ public class HydroangeasClient extends Hydroangeas {
 
     public void setRestrictionMode(RestrictionMode restrictionMode) {
         this.restrictionMode = restrictionMode;
-    }
-
-    public ServerAliveWatchDog getServerAliveWatchDog() {
-        return serverAliveWatchDog;
     }
 
     public PanelController getPanelController() {
