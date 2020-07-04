@@ -31,7 +31,7 @@ public class SimpleGameTemplate implements AbstractGameTemplate {
         DEFAULT_STARTUP_OPTIONS.addProperty("RAM", 1024L);
         DEFAULT_STARTUP_OPTIONS.addProperty("swap", 1024L);
         DEFAULT_STARTUP_OPTIONS.addProperty("disk", 500L);
-        DEFAULT_STARTUP_OPTIONS.addProperty("plugins", "SamaGamesCore");
+        DEFAULT_STARTUP_OPTIONS.addProperty("plugins", "SamaGamesAPI");
         DEFAULT_STARTUP_OPTIONS.addProperty("configs", "default");
     }
 
