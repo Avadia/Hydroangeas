@@ -93,8 +93,6 @@ public class MinecraftServerC extends MinecraftServer {
                 .append(":").append(this.map)
                 .append(":").append(this.minSlot)
                 .append(":").append(this.maxSlot);
-        String tempIp = Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("node-ip").getAsString();
-        startupCommand.append(" ip:").append(tempIp);
         startupCommand.append(" port:").append(tempPort);
 
         ServerAction createServerAction = this.instance.getPanelController().getAdminPanel().asApplication().createServer();
@@ -121,7 +119,7 @@ public class MinecraftServerC extends MinecraftServer {
             allocation = new Allocation() {
                 @Override
                 public String getIP() {
-                    return tempIp;
+                    return Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("node-ip").getAsString();
                 }
 
                 @Override
