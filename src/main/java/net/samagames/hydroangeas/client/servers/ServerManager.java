@@ -9,6 +9,7 @@ import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerUpdateP
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /*
@@ -74,6 +75,11 @@ public class ServerManager {
     public void stopAll() {
         for (MinecraftServerC server : servers)
             instance.getConnectionManager().sendPacket(!server.stopServer() ? new MinecraftServerIssuePacket(this.instance.getClientUUID(), server.getServerName(), MinecraftServerIssuePacket.Type.STOP) : new MinecraftServerUpdatePacket(instance, server.getServerName(), MinecraftServerUpdatePacket.UType.END));
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onServerStop(MinecraftServerC server) {
