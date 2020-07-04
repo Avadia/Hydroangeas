@@ -28,9 +28,11 @@ public class SimpleGameTemplate implements AbstractGameTemplate {
 
     static {
         DEFAULT_STARTUP_OPTIONS = new JsonObject();
-        DEFAULT_STARTUP_OPTIONS.addProperty("minRAM", "512M");
-        DEFAULT_STARTUP_OPTIONS.addProperty("maxRAM", "1024M");
-        DEFAULT_STARTUP_OPTIONS.addProperty("edenRAM", "256M");
+        DEFAULT_STARTUP_OPTIONS.addProperty("RAM", 1024L);
+        DEFAULT_STARTUP_OPTIONS.addProperty("swap", 1024L);
+        DEFAULT_STARTUP_OPTIONS.addProperty("disk", 500L);
+        DEFAULT_STARTUP_OPTIONS.addProperty("plugins", "SamaGamesCore");
+        DEFAULT_STARTUP_OPTIONS.addProperty("configs", "default");
     }
 
     private final String id;

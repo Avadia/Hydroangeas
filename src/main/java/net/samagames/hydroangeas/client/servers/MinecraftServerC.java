@@ -1,5 +1,6 @@
 package net.samagames.hydroangeas.client.servers;
 
+import com.google.gson.JsonObject;
 import com.mattmalec.pterodactyl4j.DataType;
 import com.mattmalec.pterodactyl4j.application.entities.*;
 import com.mattmalec.pterodactyl4j.application.managers.ServerAction;
@@ -75,20 +76,37 @@ public class MinecraftServerC extends MinecraftServer {
         Set<String> portRange = new HashSet<>();
         portRange.add(tempPort);
         StringBuilder startupCommand = new StringBuilder(egg.getStartupCommand());
+        JsonObject startupOptions = this.getStartupOptions().getAsJsonObject();
+        for (String pl : startupOptions.get("plugins").getAsString().split(";"))
+            startupCommand.append(" pl:").append(pl);
+        startupCommand.append(" map:").append(this.map);
+        startupCommand.append(" config:").append(startupOptions.get("configs").getAsString());
+        startupCommand.append(" database:").append(getServerName())
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().redisIp)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPort)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPassword)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlURL)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlUser)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlPassword);
+        startupCommand.append(" game:").append(this.templateID)
+                .append(":").append(this.map)
+                .append(":").append(this.minSlot)
+                .append(":").append(this.maxSlot);
+
         ServerAction createServerAction = this.instance.getPanelController().getAdminPanel().asApplication().createServer();
 
         try {
             server = createServerAction.setName("Minecraft - " + this.getServerName())
                     .setCPU(800L)
-                    .setMemory(1024L, DataType.MB)
-                    .setSwap(1024L, DataType.MB)
+                    .setMemory(startupOptions.get("RAM").getAsLong(), DataType.MB)
+                    .setSwap(startupOptions.get("swap").getAsLong(), DataType.MB)
                     .setDescription("Created on " + Instant.now().toString())
                     .setOwner(owner)
                     .setEgg(egg)
                     .setLocations(Collections.singleton(location))
                     .setAllocations(0L)
                     .setDatabases(0L)
-                    .setDisk(500L, DataType.MB)
+                    .setDisk(startupOptions.get("disk").getAsLong(), DataType.MB)
                     .setDockerImage(egg.getDockerImage())
                     .setDedicatedIP(false)
                     .setPortRange(portRange)
