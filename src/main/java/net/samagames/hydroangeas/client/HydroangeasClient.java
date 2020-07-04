@@ -56,7 +56,7 @@ public class HydroangeasClient extends Hydroangeas {
         for (int i = 15600; i <= 15699; i++)
             ports.add(i + "");
 
-        panelController = new PanelController(this.configuration.getJsonConfiguration().get("panel-admin-token").getAsString(), this.configuration.getJsonConfiguration().get("panel-user-token").getAsString());
+        panelController = new PanelController(this.configuration.getJsonConfiguration().get("panel-url").getAsString(), this.configuration.getJsonConfiguration().get("panel-admin-token").getAsString(), this.configuration.getJsonConfiguration().get("panel-user-token").getAsString());
 
         connectionManager = new ClientConnectionManager(this);
 

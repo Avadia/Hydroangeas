@@ -104,8 +104,6 @@ public class Configuration {
         if (!object.has("sql-url")) flag = false;
         if (!object.has("sql-user")) flag = false;
         if (!object.has("sql-password")) flag = false;
-        if (!object.has("panel-admin-token")) flag = false;
-        if (!object.has("panel-user-token")) flag = false;
 
         return flag;
     }

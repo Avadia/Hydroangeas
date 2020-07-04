@@ -5,6 +5,7 @@
   "sql-url": "http://127.0.0.1:2000/",
   "sql-user": "test",
   "sql-password": "test",
+  "panel-url": "",
   "panel-admin-token": "",
   "panel-user-token": ""
 }
