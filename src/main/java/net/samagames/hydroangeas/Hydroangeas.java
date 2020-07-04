@@ -74,6 +74,7 @@ public abstract class Hydroangeas {
         }));
 
         isRunning = true;
+        logger.info("Hydroangeas enabled!");
     }
 
     public static Hydroangeas getInstance() {
