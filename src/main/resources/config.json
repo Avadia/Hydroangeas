@@ -7,5 +7,6 @@
   "sql-password": "test",
   "panel-url": "",
   "panel-admin-token": "",
-  "panel-user-token": ""
+  "panel-user-token": "",
+  "node-ip": ""
 }

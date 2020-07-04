@@ -11,6 +11,7 @@ import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerIssuePa
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPacket;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -92,6 +93,9 @@ public class MinecraftServerC extends MinecraftServer {
                 .append(":").append(this.map)
                 .append(":").append(this.minSlot)
                 .append(":").append(this.maxSlot);
+        String tempIp = Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("node-ip").getAsString();
+        startupCommand.append(" ip:").append(tempIp);
+        startupCommand.append(" port:").append(tempPort);
 
         ServerAction createServerAction = this.instance.getPanelController().getAdminPanel().asApplication().createServer();
 
@@ -114,6 +118,47 @@ public class MinecraftServerC extends MinecraftServer {
                     .setEnvironment(variables)
                     .setStartupCommand(startupCommand.toString())
                     .build().execute();
+            allocation = new Allocation() {
+                @Override
+                public String getIP() {
+                    return tempIp;
+                }
+
+                @Override
+                public String getFullAddress() {
+                    return getIP() + ":" + getPort();
+                }
+
+                @Override
+                public String getAlias() {
+                    return null;
+                }
+
+                @Override
+                public String getPort() {
+                    return tempPort;
+                }
+
+                @Override
+                public boolean isAssigned() {
+                    return true;
+                }
+
+                @Override
+                public long getIdLong() {
+                    return -1;
+                }
+
+                @Override
+                public OffsetDateTime getCreationDate() {
+                    return null;
+                }
+
+                @Override
+                public OffsetDateTime getUpdatedDate() {
+                    return null;
+                }
+            };
             return true;
         } catch (Exception e) {
             Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "!", e);
@@ -147,12 +192,12 @@ public class MinecraftServerC extends MinecraftServer {
 //                            "-Dcom.sun.management.jmxremote.ssl=false",
 
         getLogger().info("Starting server " + getServerName());
-        try {
-            if (server != null)
-                allocation = server.retrieveAllocation().execute();
-        } catch (Exception e) {
-            Hydroangeas.getLogger().log(Level.SEVERE, "Can't get allocation of server " + getServerName() + "!", e);
-        }
+//        try {
+//            if (server != null)
+//                allocation = server.retrieveAllocation().execute();
+//        } catch (Exception e) {
+//            Hydroangeas.getLogger().log(Level.SEVERE, "Can't get allocation of server " + getServerName() + "!", e);
+//        }
         //this.instance.log(Level.SEVERE, "Can't start the server " + getServerName() + "!");
         return true;
     }
