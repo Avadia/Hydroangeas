@@ -203,12 +203,6 @@ public class MinecraftServerC extends MinecraftServer {
     public boolean stopServer() {
         if (server != null) {
             try {
-                if (allocation == null)
-                    allocation = server.retrieveAllocation().execute();
-            } catch (Exception e) {
-                Hydroangeas.getLogger().log(Level.SEVERE, "Can't reassign port of server " + getServerName() + "!", e);
-            }
-            try {
                 server.getController().delete(false).execute();
             } catch (Exception e) {
                 Hydroangeas.getLogger().log(Level.SEVERE, "Can't stop the server " + getServerName() + "! Try force...", e);
