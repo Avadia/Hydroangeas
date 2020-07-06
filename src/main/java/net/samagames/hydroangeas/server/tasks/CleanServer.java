@@ -38,7 +38,8 @@ public class CleanServer {
     public void check() {
         for (HydroClient client : instance.getClientManager().getClients()) {
             client.getServerManager().getServers().stream().filter(server -> System.currentTimeMillis() - server.getStartedTime() > server.getTimeToLive()).forEach(server -> {
-                Hydroangeas.getLogger().info("Scheduled shutdown for: " + server.getServerName());
+
+                Hydroangeas.getLogger().info("Scheduled shutdown for: " + server.getServerName() + ": " + (System.currentTimeMillis() - server.getStartedTime()) + ">" + server.getTimeToLive());
 
                 int timeToStop;
                 if (server.isHub()) {

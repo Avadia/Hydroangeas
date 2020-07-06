@@ -90,6 +90,6 @@ public class ShutdownCommand extends AbstractCommand {
     }
 
     private void showSyntaxe() {
-        Hydroangeas.getLogger().info("Command syntaxe: shutdown {client, server} name");
+        Hydroangeas.getLogger().info("Command syntaxe: shutdown {client, server, template} name");
     }
 }
