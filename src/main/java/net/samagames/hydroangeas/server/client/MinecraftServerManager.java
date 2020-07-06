@@ -1,6 +1,7 @@
 package net.samagames.hydroangeas.server.client;
 
 import net.samagames.hydroangeas.Hydroangeas;
+import net.samagames.hydroangeas.common.Messages;
 import net.samagames.hydroangeas.common.protocol.intranet.AskForClientActionPacket;
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPacket;
 import net.samagames.hydroangeas.server.HydroangeasServer;
@@ -49,7 +50,7 @@ public class MinecraftServerManager {
             }
         } else {
             for (int i = 1; ; i++) {
-                if (instance.getClientManager().getServerByName("hub_" + i) == null) {
+                if (instance.getClientManager().getServerByName(Messages.HUB.getMessage() + "_" + i) == null) {
                     server.setHubID(i);
                     break;
                 }

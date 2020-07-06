@@ -1,6 +1,7 @@
 package net.samagames.hydroangeas.server.hubs;
 
 import net.samagames.hydroangeas.Hydroangeas;
+import net.samagames.hydroangeas.common.Messages;
 import net.samagames.hydroangeas.server.HydroangeasServer;
 import net.samagames.hydroangeas.server.client.MinecraftServerS;
 import net.samagames.hydroangeas.server.games.SimpleGameTemplate;
@@ -59,9 +60,9 @@ public class HubBalancer {
     @SuppressWarnings("UnusedReturnValue")
     public boolean updateHubTemplate() {
         try {
-            hubTemplate = (SimpleGameTemplate) instance.getTemplateManager().getTemplateByID("hub");
+            hubTemplate = (SimpleGameTemplate) instance.getTemplateManager().getTemplateByID(Messages.HUB.getMessage());
             if (hubTemplate == null)
-                throw new IOException("No Hub template found !");
+                throw new IOException("No " + Messages.HUB.getMessage() + " template found !");
         } catch (IOException e) {
             e.printStackTrace();
             Hydroangeas.getLogger().severe("Add one and reboot HydroServer or no hub will be start on the network!");
@@ -82,7 +83,7 @@ public class HubBalancer {
         if (hubTemplate != null) {
             if (hubTemplate.getId().equalsIgnoreCase(server.getTemplateID())) {
                 hubs.add(server);
-                Hydroangeas.getLogger().info("[HubBalancer] Add already started hub: " + server.getServerName());
+                Hydroangeas.getLogger().info("[HubBalancer] Add already started " + Messages.HUB.getMessage() + ": " + server.getServerName());
             }
         }
     }
@@ -91,7 +92,7 @@ public class HubBalancer {
         if (hubTemplate != null) {
             for (MinecraftServerS server : instance.getClientManager().getServersByTemplate(hubTemplate)) {
                 hubs.add(server);
-                Hydroangeas.getLogger().info("[HubBalancer] Add already started hub: " + server.getServerName());
+                Hydroangeas.getLogger().info("[HubBalancer] Add already started " + Messages.HUB.getMessage() + ": " + server.getServerName());
             }
         }
     }
