@@ -64,7 +64,7 @@ public class ClientManager {
                 packet.getWeight(),
                 true);
 
-        instance.getAlgorithmicMachine().orderTemplate(template);
+        instance.getAlgorithmicMachine().orderTemplate(template, "Coupaing");
     }
 
     public void updateClient(HelloFromClientPacket packet) {

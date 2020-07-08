@@ -45,7 +45,7 @@ public class TemplateCommand extends AbstractCommand {
                 instance.log(Level.INFO, "Template not found!");
                 return false;
             }
-            instance.getAlgorithmicMachine().orderTemplate(template);
+            instance.getAlgorithmicMachine().orderTemplate(template, getClass().getSimpleName());
         }
         instance.log(Level.INFO, "Done!");
         return true;

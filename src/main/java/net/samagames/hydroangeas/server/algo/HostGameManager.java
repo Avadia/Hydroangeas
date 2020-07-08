@@ -39,7 +39,7 @@ public class HostGameManager {
         Queue queue = instance.getQueueManager().addQueue(template);
         queue.getWatchQueue().setAutoOrder(false);
 
-        MinecraftServerS minecraftServerS = instance.getAlgorithmicMachine().orderTemplate(template);
+        MinecraftServerS minecraftServerS = instance.getAlgorithmicMachine().orderTemplate(template, getClass().getSimpleName());
         //servers.put(minecraftServerS.getUUID(), minecraftServerS);
         minecraftServerS.setOwner(asker);
         minecraftServerS.setCoupaingServer(true);

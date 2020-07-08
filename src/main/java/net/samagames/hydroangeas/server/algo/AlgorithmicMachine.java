@@ -52,16 +52,16 @@ public class AlgorithmicMachine {
         return null;
     }
 
-    public MinecraftServerS orderTemplate(AbstractGameTemplate template) {
+    public MinecraftServerS orderTemplate(AbstractGameTemplate template, String className) {
         HydroClient client = selectGoodHydroClient(template);
 
         if (client == null) {
-            instance.log(Level.SEVERE, ConsoleColor.RED + "No Hydroclient available !" + ConsoleColor.RESET);
+            instance.log(Level.SEVERE, ConsoleColor.RED + className + " want a " + template.getGameName() + " server but no Hydroclient available !" + ConsoleColor.RESET);
             return null;
         }
 
         MinecraftServerS server = client.getServerManager().addServer(template, template.getGameName().toLowerCase().startsWith("hub"));
-        instance.log(Level.INFO, template + " created on " + client.getUUID());
+        instance.log(Level.INFO, template + " created on " + client.getUUID() + " for " + className + ".");
         return server;
     }
 

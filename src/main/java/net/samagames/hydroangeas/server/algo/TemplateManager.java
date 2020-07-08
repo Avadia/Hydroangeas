@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import net.samagames.hydroangeas.Hydroangeas;
+import net.samagames.hydroangeas.common.Messages;
 import net.samagames.hydroangeas.server.HydroangeasServer;
 import net.samagames.hydroangeas.server.games.AbstractGameTemplate;
 import net.samagames.hydroangeas.server.games.PackageGameTemplate;
@@ -56,7 +57,9 @@ public class TemplateManager {
         for (AbstractGameTemplate template : templates) {
             Queue queue = instance.getQueueManager().getQueueByName(template.getId());
             if (queue == null) {
-                instance.getQueueManager().addQueue(template);
+                queue = instance.getQueueManager().addQueue(template);
+                if (template.getGameName().toLowerCase().equalsIgnoreCase(Messages.HUB.getMessage()))
+                    queue.getWatchQueue().setAutoOrder(false);
             } else {
                 queue.reload(template);
             }

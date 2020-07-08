@@ -99,7 +99,7 @@ public class WatchQueue {
     }
 
     private void startTemplateServer() {
-        MinecraftServerS server = Hydroangeas.getInstance().getAsServer().getAlgorithmicMachine().orderTemplate(queue.getTemplate());
+        MinecraftServerS server = Hydroangeas.getInstance().getAsServer().getAlgorithmicMachine().orderTemplate(queue.getTemplate(), getClass().getSimpleName() + " of " + queue.getGame());
 
         //Server started let's proceed
         if (server != null) {

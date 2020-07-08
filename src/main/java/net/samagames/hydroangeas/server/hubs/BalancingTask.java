@@ -70,7 +70,7 @@ public class BalancingTask extends Thread {
                         }
                     }
                 }
-                Thread.sleep(300);//Need to be very reactive
+                sleep(300);//Need to be very reactive
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -89,7 +89,7 @@ public class BalancingTask extends Thread {
     public void checkCooldown() throws InterruptedException {
         while (coolDown > 0) {
             coolDown--;
-            Thread.sleep(100);
+            sleep(100);
         }
         coolDown = 0;//Security in case of forgot
     }
