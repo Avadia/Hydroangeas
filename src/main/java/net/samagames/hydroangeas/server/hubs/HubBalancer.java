@@ -65,7 +65,7 @@ public class HubBalancer {
                 throw new IOException("No " + Messages.HUB.getMessage() + " template found !");
         } catch (IOException e) {
             e.printStackTrace();
-            Hydroangeas.getLogger().severe("Add one and reboot HydroServer or no hub will be start on the network!");
+            Hydroangeas.getLogger().severe("Add one and reboot HydroServer or no " + Messages.HUB.getMessage() + " will be start on the network!");
             return false;
         }
 
