@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import joptsimple.OptionSet;
 import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.client.commands.ClientCommandManager;
-import net.samagames.hydroangeas.client.panel.PanelController;
+import net.samagames.hydroangeas.client.panel.PanelManager;
 import net.samagames.hydroangeas.client.servers.ServerManager;
 import net.samagames.hydroangeas.client.tasks.LifeThread;
 import net.samagames.hydroangeas.common.protocol.intranet.ByeFromClientPacket;
@@ -39,8 +39,7 @@ public class HydroangeasClient extends Hydroangeas {
     private ClientConnectionManager connectionManager;
     private LifeThread lifeThread;
     private ServerManager serverManager;
-    private PanelController panelController;
-    private List<String> ports;
+    private PanelManager panelManager;
 
     public HydroangeasClient(OptionSet options) throws IOException {
         super(options);
@@ -52,11 +51,7 @@ public class HydroangeasClient extends Hydroangeas {
 
         this.loadConfig();
 
-        ports = new ArrayList<>();
-        for (int i = 15600; i <= 15699; i++)
-            ports.add(i + "");
-
-        panelController = new PanelController(this.configuration.getJsonConfiguration().get("panel-url").getAsString(), this.configuration.getJsonConfiguration().get("panel-admin-token").getAsString(), this.configuration.getJsonConfiguration().get("panel-user-token").getAsString());
+        panelManager = new PanelManager(this);
 
         connectionManager = new ClientConnectionManager(this);
 
@@ -168,11 +163,7 @@ public class HydroangeasClient extends Hydroangeas {
         this.restrictionMode = restrictionMode;
     }
 
-    public PanelController getPanelController() {
-        return panelController;
-    }
-
-    public List<String> getPorts() {
-        return ports;
+    public PanelManager getPanelManager() {
+        return panelManager;
     }
 }

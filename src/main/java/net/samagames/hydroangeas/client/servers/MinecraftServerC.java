@@ -11,7 +11,6 @@ import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerIssuePa
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPacket;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -63,19 +62,24 @@ public class MinecraftServerC extends MinecraftServer {
     }
 
     public boolean makeServer() {
-        String tempPort = this.instance.getPorts().remove(0);
+        if (this.instance.getPanelManager().getAllocations().isEmpty()) {
+            Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "! No allocation available!");
+            instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
+            return false;
+        }
+        allocation = this.instance.getPanelManager().getAllocations().remove(0);
 
-        Location location = this.instance.getPanelController().getAdminPanel().asApplication().retrieveLocationById("1").execute();
-        Nest nest = this.instance.getPanelController().getAdminPanel().asApplication().retrieveNestById("8").execute();
-        Egg egg = this.instance.getPanelController().getAdminPanel().asApplication().retrieveEggById(nest, "18").execute();
-        User owner = this.instance.getPanelController().getAdminPanel().asApplication().retrieveUserById("11").execute();
+        Location location = this.instance.getPanelManager().getAdminPanel().retrieveLocationById("1").execute();
+        Nest nest = this.instance.getPanelManager().getAdminPanel().retrieveNestById("8").execute();
+        Egg egg = this.instance.getPanelManager().getAdminPanel().retrieveEggById(nest, "18").execute();
+        User owner = this.instance.getPanelManager().getAdminPanel().retrieveUserById("11").execute();
         Map<String, String> variables = new HashMap<>();
         variables.put("PAPER_JARFILE", "paper.jar");
         variables.put("UPDATER_JARFILE", "updater.jar");
         variables.put("BUILD_NUMBER", "latest");
         variables.put("MINECRAFT_VERSION", "1.12.2");
         Set<String> portRange = new HashSet<>();
-        portRange.add(tempPort);
+        portRange.add(allocation.getPort());
         StringBuilder startupCommand = new StringBuilder(egg.getStartupCommand());
         JsonObject startupOptions = this.getStartupOptions().getAsJsonObject();
         for (String pl : startupOptions.get("plugins").getAsString().split(";"))
@@ -93,9 +97,9 @@ public class MinecraftServerC extends MinecraftServer {
                 .append(":").append(this.map)
                 .append(":").append(this.minSlot)
                 .append(":").append(this.maxSlot);
-        startupCommand.append(" port:").append(tempPort);
+        startupCommand.append(" port:").append(allocation.getPort());
 
-        ServerAction createServerAction = this.instance.getPanelController().getAdminPanel().asApplication().createServer();
+        ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
 
         try {
             server = createServerAction.setName("Minecraft - " + this.getServerName())
@@ -116,52 +120,11 @@ public class MinecraftServerC extends MinecraftServer {
                     .setEnvironment(variables)
                     .setStartupCommand(startupCommand.toString())
                     .build().execute();
-            allocation = new Allocation() {
-                @Override
-                public String getIP() {
-                    return Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("node-ip").getAsString();
-                }
-
-                @Override
-                public String getFullAddress() {
-                    return getIP() + ":" + getPort();
-                }
-
-                @Override
-                public String getAlias() {
-                    return null;
-                }
-
-                @Override
-                public String getPort() {
-                    return tempPort;
-                }
-
-                @Override
-                public boolean isAssigned() {
-                    return true;
-                }
-
-                @Override
-                public long getIdLong() {
-                    return -1;
-                }
-
-                @Override
-                public OffsetDateTime getCreationDate() {
-                    return null;
-                }
-
-                @Override
-                public OffsetDateTime getUpdatedDate() {
-                    return null;
-                }
-            };
             return true;
         } catch (Exception e) {
             Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "!", e);
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
-            this.instance.getPorts().add(tempPort);
+            this.instance.getPanelManager().getAllocations().add(allocation);
             return false;
         }
     }
@@ -214,7 +177,7 @@ public class MinecraftServerC extends MinecraftServer {
                 }
             }
             if (allocation != null)
-                this.instance.getPorts().add(allocation.getPort());
+                this.instance.getPanelManager().getAllocations().add(allocation);
         }
         instance.getServerManager().onServerStop(this);
         return true;
