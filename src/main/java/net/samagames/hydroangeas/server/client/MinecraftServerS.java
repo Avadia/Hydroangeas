@@ -109,12 +109,12 @@ public class MinecraftServerS extends MinecraftServer {
         updateHubHostGame(0);
 
         //Register server in redis cache
-        Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getResource();
-        jedis.hset("servers", getServerName(), ip + ":" + port);
-        jedis.close();
+//        Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getResource();
+//        jedis.hset("servers", getServerName(), ip + ":" + port);                                              (NOW IN HYDROANGEAS CLIENT)
+//        jedis.close();
 
         //Register server to all bungee
-        //Hydroangeas.getInstance().getRedisSubscriber().send("servers", "heartbeat " + getServerName()); (NOW IN SAMAGAMESCORE)
+//        Hydroangeas.getInstance().getRedisSubscriber().send("servers", "heartbeat " + getServerName());       (NOW IN SAMAGAMESCORE)
     }
 
     public void onShutdown() {

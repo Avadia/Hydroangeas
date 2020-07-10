@@ -9,6 +9,7 @@ import net.samagames.hydroangeas.client.HydroangeasClient;
 import net.samagames.hydroangeas.common.data.MinecraftServer;
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerIssuePacket;
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPacket;
+import redis.clients.jedis.Jedis;
 
 import java.time.Instant;
 import java.util.*;
@@ -153,6 +154,9 @@ public class MinecraftServerC extends MinecraftServer {
 //                            "-Dcom.sun.management.jmxremote.ssl=false",
 
         getLogger().info("Starting server " + getServerName());
+        Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getResource();
+        jedis.hset("servers", getServerName(), allocation.getIP() + ":" + allocation.getPort());
+        jedis.close();
 //        try {
 //            if (server != null)
 //                allocation = server.retrieveAllocation().execute();
