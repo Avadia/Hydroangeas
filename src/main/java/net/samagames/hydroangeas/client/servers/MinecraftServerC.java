@@ -86,8 +86,7 @@ public class MinecraftServerC extends MinecraftServer {
             startupCommand.append(" pl:").append(pl);
         startupCommand.append(" map:").append(this.map);
         startupCommand.append(" config:").append(startupOptions.get("configs").getAsString());
-        startupCommand.append(" database:").append(getServerName())
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().redisIp)
+        startupCommand.append(" database:").append(Hydroangeas.getInstance().getConfiguration().redisIp)
                 .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPort)
                 .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPassword)
                 .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlURL)
@@ -98,6 +97,7 @@ public class MinecraftServerC extends MinecraftServer {
                 .append(":").append(this.minSlot)
                 .append(":").append(this.maxSlot);
         startupCommand.append(" port:").append(allocation.getPort());
+        startupCommand.append(" bungeename:").append(getServerName());
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
 
