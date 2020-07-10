@@ -39,7 +39,7 @@ public class PanelManager {
             if (!allocation.isAssigned()) {
                 if (!registeredIps.contains(allocation.getIP()))
                     instance.getDatabaseConnector().getJedisPool().getResource().sadd("proxys", allocation.getIP());
-                allocations.add(allocation);
+                this.allocations.add(allocation);
             }
         }
     }
