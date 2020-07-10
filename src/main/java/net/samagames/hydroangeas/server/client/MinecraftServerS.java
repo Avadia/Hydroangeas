@@ -114,7 +114,7 @@ public class MinecraftServerS extends MinecraftServer {
         jedis.close();
 
         //Register server to all bungee
-        Hydroangeas.getInstance().getRedisSubscriber().send("servers", "heartbeat " + getServerName() + " " + ip + " " + port);
+        //Hydroangeas.getInstance().getRedisSubscriber().send("servers", "heartbeat " + getServerName()); (NOW IN SAMAGAMESCORE)
     }
 
     public void onShutdown() {
