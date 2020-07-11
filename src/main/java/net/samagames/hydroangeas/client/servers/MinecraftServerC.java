@@ -99,6 +99,9 @@ public class MinecraftServerC extends MinecraftServer {
                 .append(":").append(this.maxSlot);
         startupCommand.append(" port:").append(allocation.getPort());
         startupCommand.append(" bungeename:").append(getServerName());
+        JsonObject options = this.getOptions().getAsJsonObject();
+        if (options.has("slack"))
+            startupCommand.append(" slack:").append(options.get("slack").getAsString());
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
 
