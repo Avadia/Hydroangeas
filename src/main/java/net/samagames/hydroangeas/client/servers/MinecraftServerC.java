@@ -90,7 +90,9 @@ public class MinecraftServerC extends MinecraftServer {
         startupCommand.append(" database:").append(Hydroangeas.getInstance().getConfiguration().redisIp)
                 .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPort)
                 .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPassword)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlURL)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlIp)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlPort)
+                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlName)
                 .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlUser)
                 .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlPassword);
         startupCommand.append(" game:").append(this.templateID)

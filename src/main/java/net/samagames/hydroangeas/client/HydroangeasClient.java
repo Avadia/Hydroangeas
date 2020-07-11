@@ -1,7 +1,6 @@
 package net.samagames.hydroangeas.client;
 
 import com.google.gson.JsonElement;
-import joptsimple.OptionSet;
 import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.client.commands.ClientCommandManager;
 import net.samagames.hydroangeas.client.panel.PanelManager;
@@ -41,8 +40,8 @@ public class HydroangeasClient extends Hydroangeas {
     private ServerManager serverManager;
     private PanelManager panelManager;
 
-    public HydroangeasClient(OptionSet options) throws IOException {
-        super(options);
+    public HydroangeasClient() throws IOException {
+        super();
     }
 
     @Override

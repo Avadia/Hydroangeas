@@ -1,6 +1,5 @@
 package net.samagames.hydroangeas.server;
 
-import joptsimple.OptionSet;
 import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.server.algo.AlgorithmicMachine;
 import net.samagames.hydroangeas.server.algo.HostGameManager;
@@ -55,8 +54,8 @@ public class HydroangeasServer extends Hydroangeas {
 
     private Timer resetTimer;
 
-    public HydroangeasServer(OptionSet options) throws IOException {
-        super(options);
+    public HydroangeasServer() throws IOException {
+        super();
     }
 
     @SuppressWarnings({"MagicConstant", "deprecation"})

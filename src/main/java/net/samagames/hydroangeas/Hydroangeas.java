@@ -1,7 +1,6 @@
 package net.samagames.hydroangeas;
 
 import jline.console.ConsoleReader;
-import joptsimple.OptionSet;
 import net.samagames.hydroangeas.client.HydroangeasClient;
 import net.samagames.hydroangeas.common.commands.CommandManager;
 import net.samagames.hydroangeas.common.database.DatabaseConnector;
@@ -40,13 +39,12 @@ public abstract class Hydroangeas {
     protected final ConsoleReader consoleReader;
     public boolean isRunning;
     protected UUID uuid;
-    protected OptionSet options;
     protected Configuration configuration;
     protected DatabaseConnector databaseConnector;
     protected RedisSubscriber redisSubscriber;
     protected CommandManager commandManager;
 
-    public Hydroangeas(OptionSet options) throws IOException {
+    public Hydroangeas() throws IOException {
         instance = this;
         uuid = UUID.randomUUID();
 
@@ -60,7 +58,6 @@ public abstract class Hydroangeas {
         logger.info("----------------------------------------");
 
         this.scheduler = Executors.newScheduledThreadPool(16);
-        this.options = options;
         loadConfig();
         this.databaseConnector = new DatabaseConnector(this);
 
@@ -90,7 +87,7 @@ public abstract class Hydroangeas {
     public abstract void disable();
 
     public void loadConfig() {
-        this.configuration = new Configuration(this, options);
+        this.configuration = new Configuration(this);
     }
 
     public void shutdown() {

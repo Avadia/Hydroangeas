@@ -2,9 +2,6 @@ package net.samagames.hydroangeas;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import joptsimple.OptionSet;
-import net.samagames.hydroangeas.utils.MiscUtils;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,19 +31,17 @@ public class Configuration {
     public String redisIp;
     public String redisPassword;
     public int redisPort;
-    public String sqlURL;
+    public String sqlIp;
+    public String sqlPort;
+    public String sqlName;
     public String sqlUser;
     public String sqlPassword;
     private JsonObject jsonConfiguration;
 
-    public Configuration(Hydroangeas instance, OptionSet options) {
+    public Configuration(Hydroangeas instance) {
         this.instance = instance;
-
-        if (options.has("d"))
-            this.createDefaultConfiguration();
-
         try {
-            this.loadConfiguration(options.valueOf("c").toString());
+            this.loadConfiguration("config.yml");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,21 +69,11 @@ public class Configuration {
         this.redisIp = jsonConfiguration.get("redis-ip").getAsString();
         this.redisPort = jsonConfiguration.get("redis-port").getAsInt();
         this.redisPassword = jsonConfiguration.get("redis-password").getAsString();
-        this.sqlURL = jsonConfiguration.get("sql-url").getAsString();
+        this.sqlIp = jsonConfiguration.get("sql-ip").getAsString();
+        this.sqlPort = jsonConfiguration.get("sql-port").getAsString();
+        this.sqlName = jsonConfiguration.get("sql-name").getAsString();
         this.sqlUser = jsonConfiguration.get("sql-user").getAsString();
         this.sqlPassword = jsonConfiguration.get("sql-password").getAsString();
-    }
-
-    public void createDefaultConfiguration() {
-        try {
-            File destinationFile = new File(MiscUtils.getJarFolder(), "config.json");
-            FileUtils.copyURLToFile(Configuration.class.getResource("/config.json"), destinationFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        this.instance.log(Level.INFO, "Default configuration file created.");
-        System.exit(3);
     }
 
     public JsonObject getJsonConfiguration() {

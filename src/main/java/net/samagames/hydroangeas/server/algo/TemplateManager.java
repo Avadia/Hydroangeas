@@ -11,7 +11,6 @@ import net.samagames.hydroangeas.server.games.PackageGameTemplate;
 import net.samagames.hydroangeas.server.games.SimpleGameTemplate;
 import net.samagames.hydroangeas.server.waitingqueue.Queue;
 import net.samagames.hydroangeas.utils.MiscUtils;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,9 +82,9 @@ public class TemplateManager {
                         if (data == null)
                             throw new JsonParseException("JSON object return null");
                         if (data.getAsJsonObject().getAsJsonPrimitive("Type") != null && data.getAsJsonObject().getAsJsonPrimitive("Type").getAsString().equals("Package")) {
-                            result.add(new PackageGameTemplate(FilenameUtils.removeExtension(file.getName()), data));
+                            result.add(new PackageGameTemplate(file.getName().split("\\.")[0], data));
                         } else {
-                            result.add(new SimpleGameTemplate(FilenameUtils.removeExtension(file.getName()), data));
+                            result.add(new SimpleGameTemplate(file.getName().split("\\.")[0], data));
                         }
                     } catch (JsonParseException e) {
                         Hydroangeas.getLogger().severe("Invalid template " + file.getName());
