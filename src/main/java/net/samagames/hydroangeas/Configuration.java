@@ -86,7 +86,9 @@ public class Configuration {
         if (!object.has("redis-ip")) flag = false;
         if (!object.has("redis-port")) flag = false;
         if (!object.has("redis-password")) flag = false;
-        if (!object.has("sql-url")) flag = false;
+        if (!object.has("sql-ip")) flag = false;
+        if (!object.has("sql-port")) flag = false;
+        if (!object.has("sql-name")) flag = false;
         if (!object.has("sql-user")) flag = false;
         if (!object.has("sql-password")) flag = false;
 
