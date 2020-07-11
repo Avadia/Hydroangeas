@@ -41,7 +41,7 @@ public class Configuration {
     public Configuration(Hydroangeas instance) {
         this.instance = instance;
         try {
-            this.loadConfiguration("config.json");
+            this.loadConfiguration("." + File.separator + "config.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
