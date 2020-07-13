@@ -74,11 +74,14 @@ public class ServerManager {
         }
     }
 
-    public void stopAll() {
+    public void stopAll(boolean sendPacket) {
         ExecutorService service = Executors.newCachedThreadPool();
         for (MinecraftServerC server : servers)
             service.submit(() -> {
-                instance.getConnectionManager().sendPacket(!server.stopServer() ? new MinecraftServerIssuePacket(this.instance.getClientUUID(), server.getServerName(), MinecraftServerIssuePacket.Type.STOP) : new MinecraftServerUpdatePacket(instance, server.getServerName(), MinecraftServerUpdatePacket.UType.END));
+                if (!server.stopServer())
+                    instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), server.getServerName(), MinecraftServerIssuePacket.Type.STOP));
+                else if (sendPacket)
+                    instance.getConnectionManager().sendPacket(new MinecraftServerUpdatePacket(instance, server.getServerName(), MinecraftServerUpdatePacket.UType.END));
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException e) {

@@ -1,6 +1,5 @@
 package net.samagames.hydroangeas.server.client;
 
-import net.samagames.hydroangeas.common.data.MinecraftServer;
 import net.samagames.hydroangeas.common.protocol.coupaings.CoupaingServerPacket;
 import net.samagames.hydroangeas.common.protocol.intranet.AskForClientDataPacket;
 import net.samagames.hydroangeas.common.protocol.intranet.HelloFromClientPacket;
@@ -95,7 +94,7 @@ public class ClientManager {
             HydroClient client = getClientByUUID(clientUUID);
 
             if (client.getUUID().equals(clientUUID)) {
-                client.getServerManager().getServers().stream().filter(MinecraftServer::isHub).forEach(serverS -> instance.getHubBalancer().onHubShutdown(serverS));
+                client.getServerManager().getServers().forEach(MinecraftServerS::onShutdown);
                 if (!clientList.remove(client)) instance.log(Level.INFO, "Not deleted !");
             }
         });

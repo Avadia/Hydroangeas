@@ -24,14 +24,17 @@ import java.util.concurrent.ArrayBlockingQueue;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class SimpleGameTemplate implements AbstractGameTemplate {
+    private static final JsonObject DEFAULT_OPTIONS;
     private static final JsonObject DEFAULT_STARTUP_OPTIONS;
 
     static {
+        DEFAULT_OPTIONS = new JsonObject();
+        DEFAULT_OPTIONS.addProperty("slack", "https://hooks.slack.com/services");
         DEFAULT_STARTUP_OPTIONS = new JsonObject();
         DEFAULT_STARTUP_OPTIONS.addProperty("RAM", 1024L);
         DEFAULT_STARTUP_OPTIONS.addProperty("swap", 1024L);
         DEFAULT_STARTUP_OPTIONS.addProperty("disk", 500L);
-        DEFAULT_STARTUP_OPTIONS.addProperty("plugins", "SamaGamesAPI");
+        DEFAULT_STARTUP_OPTIONS.addProperty("plugins", "samagamesapi;api;ViaVersion;ViaBackwards;ViaRewind");
         DEFAULT_STARTUP_OPTIONS.addProperty("configs", "default");
     }
 

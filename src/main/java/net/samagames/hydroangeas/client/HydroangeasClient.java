@@ -118,8 +118,8 @@ public class HydroangeasClient extends Hydroangeas {
 
     @Override
     public void disable() {
-        this.serverManager.stopAll();
         connectionManager.sendPacket(new ByeFromClientPacket(getUUID()));
+        this.serverManager.stopAll(false);
     }
 
     public UUID getClientUUID() {

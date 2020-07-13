@@ -83,27 +83,25 @@ public class MinecraftServerC extends MinecraftServer {
         portRange.add(allocation.getPort());
         StringBuilder startupCommand = new StringBuilder(egg.getStartupCommand());
         JsonObject startupOptions = this.getStartupOptions().getAsJsonObject();
-        for (String pl : startupOptions.get("plugins").getAsString().split(";"))
-            startupCommand.append(" pl:").append(pl);
+        for (String plugin : startupOptions.get("plugins").getAsString().split(";"))
+            startupCommand.append(" plugin:").append(plugin);
         startupCommand.append(" map:").append(this.map);
         startupCommand.append(" config:").append(startupOptions.get("configs").getAsString());
-        startupCommand.append(" database:").append(Hydroangeas.getInstance().getConfiguration().redisIp)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPort)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().redisPassword)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlIp)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlPort)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlName)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlUser)
-                .append(":").append(Hydroangeas.getInstance().getConfiguration().sqlPassword);
+        startupCommand.append(" data:").append(Hydroangeas.getInstance().getConfiguration().redisIp)
+                .append(";").append(Hydroangeas.getInstance().getConfiguration().redisPort)
+                .append(";").append(Hydroangeas.getInstance().getConfiguration().redisPassword)
+                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlIp)
+                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlPort)
+                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlName)
+                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlUser)
+                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlPassword);
         startupCommand.append(" game:").append(this.templateID)
-                .append(":").append(this.map)
-                .append(":").append(this.minSlot)
-                .append(":").append(this.maxSlot);
+                .append(";").append(this.map)
+                .append(";").append(this.minSlot)
+                .append(";").append(this.maxSlot);
         startupCommand.append(" port:").append(allocation.getPort());
-        startupCommand.append(" bungeename:").append(getServerName());
-        JsonObject options = this.getOptions().getAsJsonObject();
-        if (options.has("slack"))
-            startupCommand.append(" slack:").append(options.get("slack").getAsString());
+        startupCommand.append(" api:").append(getServerName())
+                .append(";").append(this.getOptions().getAsJsonObject().get("slack").getAsString());
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
 
