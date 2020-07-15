@@ -88,20 +88,20 @@ public class MinecraftServerC extends MinecraftServer {
         startupCommand.append(" map:").append(this.map);
         startupCommand.append(" config:").append(startupOptions.get("configs").getAsString());
         startupCommand.append(" data:").append(Hydroangeas.getInstance().getConfiguration().redisIp)
-                .append(";").append(Hydroangeas.getInstance().getConfiguration().redisPort)
-                .append(";").append(Hydroangeas.getInstance().getConfiguration().redisPassword)
-                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlIp)
-                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlPort)
-                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlName)
-                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlUser)
-                .append(";").append(Hydroangeas.getInstance().getConfiguration().sqlPassword);
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().redisPort)
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().redisPassword)
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().sqlIp)
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().sqlPort)
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().sqlName)
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().sqlUser)
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().sqlPassword);
         startupCommand.append(" game:").append(this.templateID)
-                .append(";").append(this.map)
-                .append(";").append(this.minSlot)
-                .append(";").append(this.maxSlot);
+                .append("¤").append(this.map)
+                .append("¤").append(this.minSlot)
+                .append("¤").append(this.maxSlot);
         startupCommand.append(" port:").append(allocation.getPort());
         startupCommand.append(" api:").append(getServerName())
-                .append(";").append(this.getOptions().getAsJsonObject().get("slack").getAsString());
+                .append("¤").append(this.getOptions().getAsJsonObject().get("slack").getAsString());
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
 
