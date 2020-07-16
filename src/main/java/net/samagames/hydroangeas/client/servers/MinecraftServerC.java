@@ -1,5 +1,6 @@
 package net.samagames.hydroangeas.client.servers;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mattmalec.pterodactyl4j.DataType;
 import com.mattmalec.pterodactyl4j.application.entities.*;
@@ -99,9 +100,12 @@ public class MinecraftServerC extends MinecraftServer {
                 .append("¤").append(this.map)
                 .append("¤").append(this.minSlot)
                 .append("¤").append(this.maxSlot);
+        JsonObject options = this.getOptions().getAsJsonObject();
+        for (Map.Entry<String, JsonElement> option : options.entrySet())
+            startupCommand.append("¤").append(option.getKey()).append("-=>").append(option.getValue().toString());
         startupCommand.append(" port:").append(allocation.getPort());
         startupCommand.append(" api:").append(getServerName())
-                .append("¤").append(this.getOptions().getAsJsonObject().get("slack").getAsString());
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("slack").getAsString());
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
 

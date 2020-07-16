@@ -10,5 +10,7 @@
   "panel-url": "",
   "panel-admin-token": "",
   "panel-user-token": "",
-  "panel-node-id": 0
+  "panel-node-id": 0,
+  "max-weight": "1000",
+  "slack": "https://hooks.slack.com/"
 }
