@@ -29,7 +29,6 @@ public class SimpleGameTemplate implements AbstractGameTemplate {
 
     static {
         DEFAULT_OPTIONS = new JsonObject();
-        DEFAULT_OPTIONS.addProperty("slack", "https://hooks.slack.com/services");
         DEFAULT_STARTUP_OPTIONS = new JsonObject();
         DEFAULT_STARTUP_OPTIONS.addProperty("RAM", 1024L);
         DEFAULT_STARTUP_OPTIONS.addProperty("swap", 1024L);
