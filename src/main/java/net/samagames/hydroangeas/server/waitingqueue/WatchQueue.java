@@ -77,7 +77,6 @@ public class WatchQueue {
             queue.getDataQueue().setLastServerStartNB(servers.size());
 
             if (autoOrder) {
-
                 checkCooldown();
 
                 //Check if server are started, if not start one
