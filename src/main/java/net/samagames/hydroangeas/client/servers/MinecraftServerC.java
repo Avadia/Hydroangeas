@@ -86,7 +86,6 @@ public class MinecraftServerC extends MinecraftServer {
         JsonObject startupOptions = this.getStartupOptions().getAsJsonObject();
         for (String plugin : startupOptions.get("plugins").getAsString().split(";"))
             startupCommand.append(" plugin:").append(plugin);
-        startupCommand.append(" map:").append(this.map);
         startupCommand.append(" config:").append(startupOptions.get("configs").getAsString());
         startupCommand.append(" data:").append(Hydroangeas.getInstance().getConfiguration().redisIp)
                 .append("¤").append(Hydroangeas.getInstance().getConfiguration().redisPort)
@@ -100,6 +99,7 @@ public class MinecraftServerC extends MinecraftServer {
                 .append("¤").append(this.map)
                 .append("¤").append(this.minSlot)
                 .append("¤").append(this.maxSlot);
+        startupCommand.append(" map:").append(this.map);
         JsonObject options = this.getOptions().getAsJsonObject();
         for (Map.Entry<String, JsonElement> option : options.entrySet())
             startupCommand.append("¤").append(option.getKey()).append("-=>").append(option.getValue().toString());
