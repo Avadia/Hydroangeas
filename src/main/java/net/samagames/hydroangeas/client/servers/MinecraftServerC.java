@@ -99,7 +99,6 @@ public class MinecraftServerC extends MinecraftServer {
                 .append("¤").append(this.map)
                 .append("¤").append(this.minSlot)
                 .append("¤").append(this.maxSlot);
-        startupCommand.append(" map:").append(this.map);
         JsonObject options = this.getOptions().getAsJsonObject();
         for (Map.Entry<String, JsonElement> option : options.entrySet())
             startupCommand.append("¤").append(option.getKey()).append("-=>").append(option.getValue().toString());
