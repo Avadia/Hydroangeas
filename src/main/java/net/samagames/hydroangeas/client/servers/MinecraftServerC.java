@@ -107,26 +107,29 @@ public class MinecraftServerC extends MinecraftServer {
                 .append("¤").append(Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("slack").getAsString());
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
-
+        createServerAction.setName("Minecraft - " + this.getServerName())
+                .setCPU(800L)
+                .setMemory(startupOptions.get("RAM").getAsLong(), DataType.MB)
+                .setSwap(startupOptions.get("swap").getAsLong(), DataType.MB)
+                .setDescription("Created on " + Instant.now().toString())
+                .setOwner(owner)
+                .setEgg(egg)
+                .setLocations(Collections.singleton(location))
+                .setAllocations(0L)
+                .setDatabases(0L)
+                .setDisk(startupOptions.get("disk").getAsLong(), DataType.MB)
+                .setDockerImage(egg.getDockerImage())
+                .setDedicatedIP(false)
+                .setPortRange(portRange)
+                .startOnCompletion(true)
+                .setEnvironment(variables)
+                .setStartupCommand(startupCommand.toString());
+        if (variables.get("MINECRAFT_VERSION").equals("1.12.2")) {
+            createServerAction.setPack(5);
+            createServerAction.skipScripts(true);
+        }
         try {
-            server = createServerAction.setName("Minecraft - " + this.getServerName())
-                    .setCPU(800L)
-                    .setMemory(startupOptions.get("RAM").getAsLong(), DataType.MB)
-                    .setSwap(startupOptions.get("swap").getAsLong(), DataType.MB)
-                    .setDescription("Created on " + Instant.now().toString())
-                    .setOwner(owner)
-                    .setEgg(egg)
-                    .setLocations(Collections.singleton(location))
-                    .setAllocations(0L)
-                    .setDatabases(0L)
-                    .setDisk(startupOptions.get("disk").getAsLong(), DataType.MB)
-                    .setDockerImage(egg.getDockerImage())
-                    .setDedicatedIP(false)
-                    .setPortRange(portRange)
-                    .startOnCompletion(true)
-                    .setEnvironment(variables)
-                    .setStartupCommand(startupCommand.toString())
-                    .build().execute();
+            server = createServerAction.build().execute();
             return true;
         } catch (Exception e) {
             Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "!", e);
