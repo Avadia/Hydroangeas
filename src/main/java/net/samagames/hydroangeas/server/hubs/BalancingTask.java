@@ -26,14 +26,14 @@ public class BalancingTask extends Thread {
     public static final double HUB_SAFETY_MARGIN = 1;
     public static final int HUB_CONSIDERED_AS_EMPTY = 5; //Number minimum of player on a HUB we can stop
     private final HubBalancer hubBalancer;
-    private int coolDown; //*100ms
+    private int coolDown; //*1000ms (1s)
 
     public BalancingTask(HubBalancer hubBalancer) {
         this.hubBalancer = hubBalancer;
-        coolDown = 400; //Wait 20s to load balance hub
+        coolDown = 10; //Wait 10s to load balance hub
     }
 
-    @SuppressWarnings({"InfiniteLoopStatement", "BusyWait"})
+    @SuppressWarnings({"InfiniteLoopStatement"})
     @Override
     public void run() {
         while (true) {
@@ -51,7 +51,7 @@ public class BalancingTask extends Thread {
                         hubBalancer.startNewHub();
                     }
                     //Wait until started
-                    coolDown += 20;
+                    coolDown += 30;
 
                     //Are they too much lobby ?
                 } else if (hubBalancer.getNumberServer() > requestNumber) {
@@ -63,14 +63,24 @@ public class BalancingTask extends Thread {
 
                         if (serverS.getActualSlots() < HUB_CONSIDERED_AS_EMPTY) {
                             //We are good so we let to players the time to leave the lobby
-                            serverS.dispatchCommand("evacuate lobby");
-                            hubBalancer.onHubShutdown(serverS);
+                            MinecraftServerS hubTo = null;
+                            for (MinecraftServerS minecraftServerS : hubBalancer.getBalancedHubList()) {
+                                if (!minecraftServerS.getHubID().equals(serverS.getHubID())) {
+                                    hubTo = minecraftServerS;
+                                    break;
+                                }
+                            }
+                            if (hubTo == null) {
+                                serverS.dispatchCommand("evacuate auth");
+                            } else {
+                                serverS.dispatchCommand("evacuate " + hubTo.getServerName());
+                            }
                             //Security force shutdown
                             hubBalancer.getInstance().getScheduler().schedule(serverS::shutdown, 65, TimeUnit.SECONDS);
                         }
                     }
                 }
-                sleep(300);//Need to be very reactive
+                TimeUnit.SECONDS.sleep((long) 0.5);//Need to be very reactive
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -85,12 +95,8 @@ public class BalancingTask extends Thread {
         return v + HUB_SAFETY_MARGIN;
     }
 
-    @SuppressWarnings("BusyWait")
     public void checkCooldown() throws InterruptedException {
-        while (coolDown > 0) {
-            coolDown--;
-            sleep(100);
-        }
-        coolDown = 0;//Security in case of forgot
+        TimeUnit.SECONDS.sleep(coolDown);
+        coolDown = 0;
     }
 }
