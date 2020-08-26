@@ -182,12 +182,7 @@ public class MinecraftServerC extends MinecraftServer {
                 server.getController().delete(false).execute();
             } catch (Exception e) {
                 Hydroangeas.getLogger().log(Level.SEVERE, "Can't stop the server " + getServerName() + "! Try force...", e);
-                try {
-                    server.getController().delete(true).execute();
-                } catch (Exception e1) {
-                    Hydroangeas.getLogger().log(Level.SEVERE, "Can't force stop the server " + getServerName() + "!", e1);
-                    return false;
-                }
+                return false;
             }
             if (allocation != null)
                 this.instance.getPanelManager().getAllocations().add(allocation);
