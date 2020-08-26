@@ -64,6 +64,11 @@ public class MinecraftServerC extends MinecraftServer {
     }
 
     public boolean makeServer() {
+        if (!this.instance.isRunning) {
+            Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "! Hydroangeas is stopping...");
+            instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
+            return false;
+        }
         if (this.instance.getPanelManager().getAllocations().isEmpty()) {
             Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "! No allocation available!");
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));

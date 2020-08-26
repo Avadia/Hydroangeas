@@ -80,7 +80,7 @@ public class BalancingTask extends Thread {
                         }
                     }
                 }
-                TimeUnit.SECONDS.sleep((long) 0.5);//Need to be very reactive
+                TimeUnit.SECONDS.sleep(1);//Need to be very reactive
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
