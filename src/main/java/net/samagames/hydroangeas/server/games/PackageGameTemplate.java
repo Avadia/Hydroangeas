@@ -3,6 +3,7 @@ package net.samagames.hydroangeas.server.games;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.samagames.hydroangeas.Hydroangeas;
+import net.samagames.hydroangeas.server.algo.TemplateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +42,10 @@ public class PackageGameTemplate implements AbstractGameTemplate {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public boolean selectTemplate() {
+    public boolean selectTemplate(TemplateManager templateManager) {
         Random random = new Random();
         String selected = templates.get(random.nextInt(templates.size()));
-        AbstractGameTemplate template = Hydroangeas.getInstance().getAsServer().getTemplateManager().getTemplateByID(selected);
+        AbstractGameTemplate template = templateManager.getTemplateByID(selected);
         if (template == null || template instanceof PackageGameTemplate) {
             Hydroangeas.getLogger().severe("Package Template: " + id + " contains an invalid sub template");
             return false;

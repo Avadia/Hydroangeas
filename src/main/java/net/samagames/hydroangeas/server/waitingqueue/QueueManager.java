@@ -201,7 +201,7 @@ public class QueueManager {
     }
 
     public Queue addQueue(AbstractGameTemplate template) {
-        Queue queue = new Queue(this, template);
+        Queue queue = new Queue(instance, template);
         queues.add(queue);
         return queue;
     }

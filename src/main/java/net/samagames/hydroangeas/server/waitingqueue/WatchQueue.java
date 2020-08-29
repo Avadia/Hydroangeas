@@ -109,7 +109,7 @@ public class WatchQueue {
             server.setTimeToLive(150000L);
             if (queue.getTemplate() instanceof PackageGameTemplate) // If it's a package template we change it now
             {
-                ((PackageGameTemplate) queue.getTemplate()).selectTemplate();
+                ((PackageGameTemplate) queue.getTemplate()).selectTemplate(instance.getTemplateManager());
             }
         }
     }
