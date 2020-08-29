@@ -84,6 +84,8 @@ public class HydroangeasServer extends Hydroangeas {
         this.queueManager = new QueueManager(this);
 
         this.templateManager = new TemplateManager(this);
+        //To load queues correctly
+        templateManager.reload();
 
         this.commandManager = new ServerCommandManager(this);
 
