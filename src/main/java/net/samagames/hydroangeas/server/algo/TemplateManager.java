@@ -42,7 +42,6 @@ public class TemplateManager {
     private List<AbstractGameTemplate> templates;
 
     public TemplateManager(HydroangeasServer instance) {
-
         this.instance = instance;
 
         templates = loadTemplates();
@@ -69,6 +68,8 @@ public class TemplateManager {
 
     @SuppressWarnings("deprecation")
     public List<AbstractGameTemplate> loadTemplates() {
+        Hydroangeas.getLogger().info("Ajout des templates:");
+
         List<AbstractGameTemplate> result = new ArrayList<>();
         File directory = new File(MiscUtils.getApplicationDirectory(), "templates");
         try {
@@ -82,9 +83,13 @@ public class TemplateManager {
                         if (data == null)
                             throw new JsonParseException("JSON object return null");
                         if (data.getAsJsonObject().getAsJsonPrimitive("Type") != null && data.getAsJsonObject().getAsJsonPrimitive("Type").getAsString().equals("Package")) {
-                            result.add(new PackageGameTemplate(file.getName().split("\\.")[0], data));
+                            PackageGameTemplate template = new PackageGameTemplate(file.getName().split("\\.")[0], data);
+                            result.add(template);
+                            Hydroangeas.getLogger().info("PackageGameTemplate | ID: " + template.getId());
                         } else {
-                            result.add(new SimpleGameTemplate(file.getName().split("\\.")[0], data));
+                            SimpleGameTemplate template = new SimpleGameTemplate(file.getName().split("\\.")[0], data);
+                            result.add(template);
+                            Hydroangeas.getLogger().info("SimpleGameTemplate | ID: " + template.getId() + " Jeu: " + template.getGameName() + " Map: " + template.getMapName());
                         }
                     } catch (JsonParseException e) {
                         Hydroangeas.getLogger().severe("Invalid template " + file.getName());

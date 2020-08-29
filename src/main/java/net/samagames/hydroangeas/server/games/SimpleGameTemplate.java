@@ -52,7 +52,6 @@ public class SimpleGameTemplate implements AbstractGameTemplate {
     private ArrayBlockingQueue<Long> stats;
 
     public SimpleGameTemplate(String id, JsonElement data) {
-
         stats = new ArrayBlockingQueue<>(5, true);
 
         JsonObject formated = data.getAsJsonObject();

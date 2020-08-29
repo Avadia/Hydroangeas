@@ -1,6 +1,5 @@
 package net.samagames.hydroangeas.server.waitingqueue;
 
-import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.common.packets.AbstractPacket;
 import net.samagames.hydroangeas.common.protocol.hubinfo.GameInfosToHubPacket;
 import net.samagames.hydroangeas.common.protocol.queues.QueueInfosUpdatePacket;
@@ -57,15 +56,15 @@ public class Queue {
     private long lastSend = System.currentTimeMillis();
 
 
-    public Queue(QueueManager manager, AbstractGameTemplate template) {
-        this.instance = Hydroangeas.getInstance().getAsServer();
-        this.manager = manager;
+    public Queue(HydroangeasServer hydroangeasServer, AbstractGameTemplate template) {
+        this.instance = hydroangeasServer;
+        this.manager = hydroangeasServer.getQueueManager();
         this.template = template;
         this.dataQueue = new DataQueue(instance);
 
         if (template instanceof PackageGameTemplate)//Assuming that the package template have not selected a template we force it
         {
-            ((PackageGameTemplate) template).selectTemplate();
+            ((PackageGameTemplate) template).selectTemplate(hydroangeasServer.getTemplateManager());
         }
 
         //Si priority plus grande alors tu passe devant.
