@@ -3,6 +3,7 @@ package net.samagames.hydroangeas.server.waitingqueue;
 import net.samagames.hydroangeas.common.packets.AbstractPacket;
 import net.samagames.hydroangeas.common.protocol.queues.*;
 import net.samagames.hydroangeas.server.HydroangeasServer;
+import net.samagames.hydroangeas.server.algo.TemplateManager;
 import net.samagames.hydroangeas.server.games.AbstractGameTemplate;
 import net.samagames.hydroangeas.utils.ChatColor;
 
@@ -37,7 +38,6 @@ public class QueueManager {
     }
 
     public void handlePacket(QueueAddPlayerPacket packet) {
-
         QPlayer player = packet.getPlayer();
         Queue designedQueue = getQueue(packet);
         Queue currentQueue = getQueueByLeader(player.getUUID());
@@ -200,8 +200,8 @@ public class QueueManager {
         //TODO just do it !!!!!
     }
 
-    public Queue addQueue(AbstractGameTemplate template) {
-        Queue queue = new Queue(instance, template);
+    public Queue addQueue(AbstractGameTemplate template, QueueManager queueManager, TemplateManager templateManager) {
+        Queue queue = new Queue(instance, queueManager, templateManager, template);
         queues.add(queue);
         return queue;
     }
