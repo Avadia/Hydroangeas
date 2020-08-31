@@ -36,7 +36,7 @@ public class HostGameManager {
         if (instance.getQueueManager().getQueueByTemplate(template.getId()) != null)
             return null;
 
-        Queue queue = instance.getQueueManager().addQueue(template);
+        Queue queue = instance.getQueueManager().addQueue(template, instance.getQueueManager(), instance.getTemplateManager());
         queue.getWatchQueue().setAutoOrder(false);
 
         MinecraftServerS minecraftServerS = instance.getAlgorithmicMachine().orderTemplate(template, getClass().getSimpleName());

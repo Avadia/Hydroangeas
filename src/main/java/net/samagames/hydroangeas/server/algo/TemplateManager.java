@@ -45,6 +45,8 @@ public class TemplateManager {
         this.instance = instance;
 
         templates = loadTemplates();
+
+        loadQueues();
     }
 
     public void loadQueues() {
@@ -53,7 +55,7 @@ public class TemplateManager {
         for (AbstractGameTemplate template : templates) {
             Queue queue = instance.getQueueManager().getQueueByName(template.getId());
             if (queue == null) {
-                queue = instance.getQueueManager().addQueue(template);
+                queue = instance.getQueueManager().addQueue(template, instance.getQueueManager(), this);
                 if (template.getGameName().toLowerCase().equalsIgnoreCase(Messages.HUB.getMessage()))
                     queue.getWatchQueue().setAutoOrder(false);
             } else {

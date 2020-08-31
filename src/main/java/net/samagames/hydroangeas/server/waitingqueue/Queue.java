@@ -4,6 +4,7 @@ import net.samagames.hydroangeas.common.packets.AbstractPacket;
 import net.samagames.hydroangeas.common.protocol.hubinfo.GameInfosToHubPacket;
 import net.samagames.hydroangeas.common.protocol.queues.QueueInfosUpdatePacket;
 import net.samagames.hydroangeas.server.HydroangeasServer;
+import net.samagames.hydroangeas.server.algo.TemplateManager;
 import net.samagames.hydroangeas.server.client.MinecraftServerS;
 import net.samagames.hydroangeas.server.games.AbstractGameTemplate;
 import net.samagames.hydroangeas.server.games.PackageGameTemplate;
@@ -56,15 +57,15 @@ public class Queue {
     private long lastSend = System.currentTimeMillis();
 
 
-    public Queue(HydroangeasServer hydroangeasServer, AbstractGameTemplate template) {
+    public Queue(HydroangeasServer hydroangeasServer, QueueManager queueManager, TemplateManager templateManager, AbstractGameTemplate template) {
         this.instance = hydroangeasServer;
-        this.manager = hydroangeasServer.getQueueManager();
+        this.manager = queueManager;
         this.template = template;
         this.dataQueue = new DataQueue(instance);
 
         if (template instanceof PackageGameTemplate)//Assuming that the package template have not selected a template we force it
         {
-            ((PackageGameTemplate) template).selectTemplate(hydroangeasServer.getTemplateManager());
+            ((PackageGameTemplate) template).selectTemplate(templateManager);
         }
 
         //Si priority plus grande alors tu passe devant.

@@ -62,36 +62,43 @@ public class PackageGameTemplate implements AbstractGameTemplate {
 
     @Override
     public String getGameName() {
+        verifTemplateInit();
         return currentTemplate.getGameName();
     }
 
     @Override
     public String getMapName() {
+        verifTemplateInit();
         return currentTemplate.getMapName();
     }
 
     @Override
     public int getMinSlot() {
+        verifTemplateInit();
         return currentTemplate.getMinSlot();
     }
 
     @Override
     public int getMaxSlot() {
+        verifTemplateInit();
         return currentTemplate.getMaxSlot();
     }
 
     @Override
     public JsonElement getOptions() {
+        verifTemplateInit();
         return currentTemplate.getOptions();
     }
 
     @Override
     public int getWeight() {
+        verifTemplateInit();
         return currentTemplate.getWeight();
     }
 
     @Override
     public boolean isCoupaing() {
+        verifTemplateInit();
         return currentTemplate.isCoupaing();
     }
 
@@ -102,16 +109,19 @@ public class PackageGameTemplate implements AbstractGameTemplate {
 
     @Override
     public JsonElement getStartupOptions() {
+        verifTemplateInit();
         return currentTemplate.getStartupOptions();
     }
 
     @Override
     public void addTimeToStart(long time) {
+        verifTemplateInit();
         currentTemplate.addTimeToStart(time);
     }
 
     @Override
     public long getTimeToStart() {
+        verifTemplateInit();
         return currentTemplate.getTimeToStart();
     }
 
@@ -124,5 +134,10 @@ public class PackageGameTemplate implements AbstractGameTemplate {
 
             }
         }
+    }
+
+    public void verifTemplateInit() {
+        if (currentTemplate == null)
+            selectTemplate(Hydroangeas.getInstance().getAsServer().getTemplateManager());
     }
 }
