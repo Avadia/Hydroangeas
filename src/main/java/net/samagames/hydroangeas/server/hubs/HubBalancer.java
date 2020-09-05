@@ -97,10 +97,18 @@ public class HubBalancer {
         }
     }
 
-    public void startNewHub() {
-        MinecraftServerS ordered = instance.getAlgorithmicMachine().orderTemplate(hubTemplate, getClass().getSimpleName());
-        if (ordered != null)
+    public boolean startNewHub() {
+        return this.startNewHub(false);
+    }
+
+    public boolean startNewHub(boolean force) {
+        MinecraftServerS ordered = instance.getAlgorithmicMachine().orderTemplate(hubTemplate, getClass().getSimpleName(), force);
+        if (ordered != null) {
             hubs.add(ordered);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public int getNumberServer() {
@@ -125,6 +133,10 @@ public class HubBalancer {
 
     public List<MinecraftServerS> getBalancedHubList() {
         return hubs;
+    }
+
+    public BalancingTask getBalancer() {
+        return balancer;
     }
 
     public void stopBalancing() {

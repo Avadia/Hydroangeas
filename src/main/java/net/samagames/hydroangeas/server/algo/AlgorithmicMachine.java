@@ -39,8 +39,12 @@ public class AlgorithmicMachine {
         this.instance = instance;
     }
 
-    @SuppressWarnings("ComparatorMethodParameterNotUsed")
     public HydroClient selectGoodHydroClient(AbstractGameTemplate template) {
+        return this.selectGoodHydroClient(template, false);
+    }
+
+    @SuppressWarnings("ComparatorMethodParameterNotUsed")
+    public HydroClient selectGoodHydroClient(AbstractGameTemplate template, boolean force) {
         TreeSet<HydroClient> sortedClient = new TreeSet<>((o1, o2) -> (o1.getAvailableWeight() > o2.getAvailableWeight()) ? -1 : 1);
         sortedClient.addAll(instance.getClientManager().getClients());
         for (HydroClient client : sortedClient) {
@@ -49,11 +53,22 @@ public class AlgorithmicMachine {
                 return client;
             }
         }
+        if (force && !sortedClient.isEmpty()) {
+            for (HydroClient client : sortedClient) {
+                if (hasNoRestriction(client, template)) {
+                    return client;
+                }
+            }
+        }
         return null;
     }
 
     public MinecraftServerS orderTemplate(AbstractGameTemplate template, String className) {
-        HydroClient client = selectGoodHydroClient(template);
+        return this.orderTemplate(template, className, false);
+    }
+
+    public MinecraftServerS orderTemplate(AbstractGameTemplate template, String className, boolean force) {
+        HydroClient client = selectGoodHydroClient(template, force);
 
         if (client == null) {
             instance.log(Level.SEVERE, ConsoleColor.RED + className + " want a " + template.getGameName() + " server but no Hydroclient available !" + ConsoleColor.RESET);

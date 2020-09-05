@@ -39,7 +39,7 @@ public class BalancingTask extends Thread {
         while (true) {
             try {
                 //Wait desired time in case of server start
-                checkCooldown();
+                cooldown(this.coolDown);
 
                 //Calculate the needed lobby
                 int requestNumber = (int) Math.ceil(needNumberOfHub());
@@ -47,11 +47,15 @@ public class BalancingTask extends Thread {
                 //Need we some lobby ?
                 if (hubBalancer.getNumberServer() < requestNumber) {
                     //Start them !
+                    boolean doCoolDown = false;
                     for (int i = requestNumber - hubBalancer.getNumberServer(); i > 0; i--) {
-                        hubBalancer.startNewHub();
+                        if (hubBalancer.startNewHub()) {
+                            doCoolDown = true;
+                        }
                     }
                     //Wait until started
-                    coolDown += 30;
+                    if (doCoolDown)
+                        coolDown += 60;
 
                     //Are they too much lobby ?
                 } else if (hubBalancer.getNumberServer() > requestNumber) {
@@ -95,8 +99,17 @@ public class BalancingTask extends Thread {
         return v + HUB_SAFETY_MARGIN;
     }
 
-    public void checkCooldown() throws InterruptedException {
+    public void increaseCooldown(int sec) {
+        coolDown += sec;
+    }
+
+    public void cooldown(final int coolDown) throws InterruptedException {
         TimeUnit.SECONDS.sleep(coolDown);
-        coolDown = 0;
+        if (this.coolDown == coolDown) {
+            this.coolDown = 0;
+        } else {
+            this.coolDown -= coolDown;
+            cooldown(this.coolDown);
+        }
     }
 }
