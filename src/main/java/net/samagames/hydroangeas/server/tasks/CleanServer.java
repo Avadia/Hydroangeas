@@ -42,6 +42,10 @@ public class CleanServer {
 
                 int timeToStop;
                 if (server.isHub()) {
+                    if (instance.getHubBalancer().getNumberServer() == 1) {
+                        instance.getHubBalancer().getBalancer().increaseCooldown(60);
+                        instance.getHubBalancer().startNewHub(true);
+                    }
                     server.dispatchCommand("evacuate lobby");
                     instance.getHubBalancer().onHubShutdown(server);
                     timeToStop = 65;
