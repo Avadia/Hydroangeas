@@ -39,7 +39,6 @@ public class MinecraftServerManager {
         this.client = client;
     }
 
-
     public MinecraftServerS addServer(AbstractGameTemplate template, boolean hub) {
         MinecraftServerS server = new MinecraftServerS(client, template);
 
