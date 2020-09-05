@@ -181,19 +181,17 @@ public class MinecraftServerC extends MinecraftServer {
         return true;
     }
 
-    public boolean stopServer() {
+    public void stopServer() {
         if (server != null) {
             try {
                 server.getController().delete(false).execute();
+                if (allocation != null)
+                    this.instance.getPanelManager().getAllocations().add(allocation);
             } catch (Exception e) {
-                Hydroangeas.getLogger().log(Level.SEVERE, "Can't stop the server " + getServerName() + "! Try force...", e);
-                return false;
+                Hydroangeas.getLogger().log(Level.SEVERE, "Can't stop the server " + getServerName() + "!", e);
             }
-            if (allocation != null)
-                this.instance.getPanelManager().getAllocations().add(allocation);
         }
         instance.getServerManager().onServerStop(this);
-        return true;
     }
 
     public HydroangeasClient getInstance() {
