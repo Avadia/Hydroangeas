@@ -60,6 +60,8 @@ public class InfosCommand extends AbstractCommand {
         Hydroangeas.getInstance().log(Level.INFO, "       MaxSlots: " + ConsoleColor.RED + server.getMaxSlot() + ConsoleColor.RESET);
         Hydroangeas.getInstance().log(Level.INFO, "       MinSlots: " + ConsoleColor.RED + server.getMinSlot() + ConsoleColor.RESET);
         Hydroangeas.getInstance().log(Level.INFO, "       Weight:   " + ConsoleColor.RED + server.getWeight() + ConsoleColor.RESET);
+        Hydroangeas.getInstance().log(Level.INFO, "       Status:   " + ConsoleColor.RED + server.getStatus().getId() + ConsoleColor.RESET);
+        Hydroangeas.getInstance().log(Level.INFO, "       Time:     " + ConsoleColor.RED + (System.currentTimeMillis() - server.getStartedTime()) + "/" + server.getTimeToLive() + ConsoleColor.RESET);
     }
 
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
