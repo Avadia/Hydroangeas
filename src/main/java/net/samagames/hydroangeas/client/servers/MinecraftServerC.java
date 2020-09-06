@@ -179,6 +179,7 @@ public class MinecraftServerC extends MinecraftServer {
     }
 
     public void stopServer() {
+        instance.getServerManager().onServerStop(this, true);
         if (server != null) {
             this.instance.getPanelManager().getUserPanel().setPower(this.instance.getPanelManager().getUserPanel().retrieveServerByIdentifier(server.getIdentifier()).execute(), PowerAction.STOP).execute();
             try {
@@ -194,7 +195,6 @@ public class MinecraftServerC extends MinecraftServer {
                 Hydroangeas.getLogger().log(Level.SEVERE, "Can't stop the server " + getServerName() + "!", e);
             }
         }
-        instance.getServerManager().onServerStop(this);
     }
 
     public HydroangeasClient getInstance() {

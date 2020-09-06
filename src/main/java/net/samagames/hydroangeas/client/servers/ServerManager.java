@@ -98,7 +98,12 @@ public class ServerManager {
     }
 
     public void onServerStop(MinecraftServerC server) {
-        instance.getConnectionManager().sendPacket(new MinecraftServerUpdatePacket(instance, server.getServerName(), MinecraftServerUpdatePacket.UType.END));
+        this.onServerStop(server, false);
+    }
+
+    public void onServerStop(MinecraftServerC server, boolean skipPacket) {
+        if (!skipPacket)
+            instance.getConnectionManager().sendPacket(new MinecraftServerUpdatePacket(instance, server.getServerName(), MinecraftServerUpdatePacket.UType.END));
         this.servers.remove(server);
         Hydroangeas.getLogger().info("Stopped server " + server.getServerName());
     }

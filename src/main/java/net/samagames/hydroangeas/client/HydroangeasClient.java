@@ -7,6 +7,7 @@ import net.samagames.hydroangeas.client.panel.PanelManager;
 import net.samagames.hydroangeas.client.servers.ServerManager;
 import net.samagames.hydroangeas.client.tasks.LifeThread;
 import net.samagames.hydroangeas.common.protocol.intranet.ByeFromClientPacket;
+import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerUpdatePacket;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,6 +119,7 @@ public class HydroangeasClient extends Hydroangeas {
 
     @Override
     public void disable() {
+        this.serverManager.getServers().forEach(minecraftServerC -> connectionManager.sendPacket(new MinecraftServerUpdatePacket(this, minecraftServerC.getServerName(), MinecraftServerUpdatePacket.UType.END)));
         connectionManager.sendPacket(new ByeFromClientPacket(getUUID()));
         this.serverManager.stopAll();
     }
