@@ -40,7 +40,6 @@ public class CleanServer {
             client.getServerManager().getServers().stream().filter(server -> System.currentTimeMillis() - server.getStartedTime() > server.getTimeToLive()).forEach(server -> {
                 Hydroangeas.getLogger().info("Scheduled shutdown for: " + server.getServerName() + ": " + (System.currentTimeMillis() - server.getStartedTime()) + ">" + server.getTimeToLive());
 
-                int timeToStop;
                 if (server.isHub()) {
                     if (instance.getHubBalancer().getNumberServer() == 1) {
                         instance.getHubBalancer().getBalancer().increaseCooldown(60);
@@ -48,13 +47,10 @@ public class CleanServer {
                     }
                     server.dispatchCommand("evacuate lobby");
                     instance.getHubBalancer().onHubShutdown(server);
-                    timeToStop = 65;
+                    instance.getScheduler().schedule(server::shutdown, 65, TimeUnit.SECONDS);
                 } else {
-                    server.dispatchCommand("stop");
-                    timeToStop = 15;
+                    server.shutdown();
                 }
-
-                instance.getScheduler().schedule(server::shutdown, timeToStop, TimeUnit.SECONDS);
             });
         }
     }

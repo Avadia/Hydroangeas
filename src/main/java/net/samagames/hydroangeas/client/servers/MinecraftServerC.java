@@ -3,6 +3,7 @@ package net.samagames.hydroangeas.client.servers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mattmalec.pterodactyl4j.DataType;
+import com.mattmalec.pterodactyl4j.PowerAction;
 import com.mattmalec.pterodactyl4j.application.entities.*;
 import com.mattmalec.pterodactyl4j.application.managers.ServerAction;
 import net.samagames.hydroangeas.Hydroangeas;
@@ -14,6 +15,7 @@ import redis.clients.jedis.Jedis;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import static net.samagames.hydroangeas.Hydroangeas.getLogger;
@@ -183,6 +185,12 @@ public class MinecraftServerC extends MinecraftServer {
 
     public void stopServer() {
         if (server != null) {
+            this.instance.getPanelManager().getUserPanel().setPower(this.instance.getPanelManager().getUserPanel().retrieveServerByIdentifier(server.getIdentifier()).execute(), PowerAction.STOP).execute();
+            try {
+                TimeUnit.SECONDS.sleep(15);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             try {
                 server.getController().delete(false).execute();
                 if (allocation != null)
