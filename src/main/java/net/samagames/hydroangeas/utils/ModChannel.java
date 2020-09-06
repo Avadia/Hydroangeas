@@ -22,7 +22,7 @@ public enum ModChannel {
     SANCTION(ChatColor.RED, "Sanction"),
     REPORT(ChatColor.GOLD, "Signalement");
 
-    private final ChatColor color;
+    private final String color;
     private final String name;
 
     /**
@@ -32,7 +32,7 @@ public enum ModChannel {
      * @param name  Prefix name
      */
     ModChannel(ChatColor color, String name) {
-        this.color = color;
+        this.color = color.name();
         this.name = name;
     }
 
@@ -42,7 +42,7 @@ public enum ModChannel {
      * @return Color
      */
     public ChatColor getColor() {
-        return this.color;
+        return ChatColor.valueOf(this.color);
     }
 
     /**

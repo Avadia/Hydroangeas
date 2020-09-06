@@ -23,13 +23,13 @@ import redis.clients.jedis.Jedis;
 public class JsonModMessage {
     protected String sender;
     protected ModChannel modChannel;
-    protected ChatColor senderPrefix;
+    protected String senderPrefix;
     protected String message;
 
     public JsonModMessage(String sender, ModChannel modChannel, ChatColor senderPrefix, String message) {
         this.sender = sender;
         this.modChannel = modChannel;
-        this.senderPrefix = senderPrefix;
+        this.senderPrefix = senderPrefix.name();
         this.message = message;
     }
 
@@ -48,11 +48,11 @@ public class JsonModMessage {
     }
 
     public ChatColor getSenderPrefix() {
-        return senderPrefix;
+        return ChatColor.valueOf(senderPrefix);
     }
 
     public void setSenderPrefix(ChatColor senderPrefix) {
-        this.senderPrefix = senderPrefix;
+        this.senderPrefix = senderPrefix.name();
     }
 
     public String getMessage() {
