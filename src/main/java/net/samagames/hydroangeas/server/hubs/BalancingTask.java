@@ -80,7 +80,7 @@ public class BalancingTask extends Thread {
                                 serverS.dispatchCommand("evacuate " + hubTo.getServerName());
                             }
                             //Security force shutdown
-                            hubBalancer.getInstance().getScheduler().schedule(serverS::shutdown, 65, TimeUnit.SECONDS);
+                            hubBalancer.getInstance().getScheduler().schedule(serverS::shutdown, 75, TimeUnit.SECONDS);
                         }
                     }
                 }

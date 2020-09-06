@@ -47,7 +47,7 @@ public class CleanServer {
                     }
                     server.dispatchCommand("evacuate lobby");
                     instance.getHubBalancer().onHubShutdown(server);
-                    instance.getScheduler().schedule(server::shutdown, 65, TimeUnit.SECONDS);
+                    instance.getScheduler().schedule(server::shutdown, 75, TimeUnit.SECONDS);
                 } else {
                     server.shutdown();
                 }
