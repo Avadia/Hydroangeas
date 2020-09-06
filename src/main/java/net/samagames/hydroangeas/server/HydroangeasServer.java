@@ -78,6 +78,11 @@ public class HydroangeasServer extends Hydroangeas {
 
         this.clientManager = new ClientManager(this);
 
+        this.redisSubscriber.registerReceiver("shutdownChannel", data -> this.clientManager.getClients().forEach(hydroClient -> hydroClient.getServerManager().getServers().forEach(minecraftServerS -> {
+            if (minecraftServerS.getServerName().equalsIgnoreCase(data))
+                minecraftServerS.shutdown();
+        })));
+
         this.algorithmicMachine = new AlgorithmicMachine(this);
         this.hostGameManager = new HostGameManager(this);
 
