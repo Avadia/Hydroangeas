@@ -42,7 +42,7 @@ public class CleanServer {
 
                 if (server.isHub()) {
                     if (instance.getHubBalancer().getNumberServer() == 1) {
-                        instance.getHubBalancer().getBalancer().increaseCooldown(60);
+                        instance.getHubBalancer().getBalancer().increaseCooldown(120);
                         instance.getHubBalancer().startNewHub(true);
                     }
                     server.dispatchCommand("evacuate lobby");
