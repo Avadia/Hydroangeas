@@ -43,6 +43,9 @@ public class ClientConnectionManager extends ConnectionManager {
 
     @Override
     public void handler(int id, String data) {
+        if (!instance.isRunning)
+            return;
+
         Object spacket = gson.fromJson(data, packets[id].getClass());
 
         if (spacket instanceof HeartbeatPacket) {
