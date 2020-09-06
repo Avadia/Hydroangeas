@@ -44,7 +44,6 @@ public abstract class ConnectionManager {
         packets[7] = new MinecraftServerSyncPacket();
         packets[8] = new MinecraftServerUpdatePacket();
 
-
         //Queues Packets
         packets[100] = new QueueAddPlayerPacket();
         packets[101] = new QueueRemovePlayerPacket();
