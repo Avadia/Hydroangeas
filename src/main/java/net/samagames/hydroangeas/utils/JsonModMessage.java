@@ -1,5 +1,9 @@
 package net.samagames.hydroangeas.utils;
 
+import com.google.gson.Gson;
+import net.samagames.hydroangeas.Hydroangeas;
+import redis.clients.jedis.Jedis;
+
 /*
  * This file is part of Hydroangeas.
  *
@@ -18,13 +22,21 @@ package net.samagames.hydroangeas.utils;
  */
 public class JsonModMessage {
     protected String sender;
+    protected ModChannel modChannel;
     protected ChatColor senderPrefix;
     protected String message;
 
-    public JsonModMessage(String sender, ChatColor senderPrefix, String message) {
+    public JsonModMessage(String sender, ModChannel modChannel, ChatColor senderPrefix, String message) {
         this.sender = sender;
+        this.modChannel = modChannel;
         this.senderPrefix = senderPrefix;
         this.message = message;
+    }
+
+    public void send() {
+        Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getJedisPool().getResource();
+        jedis.publish("moderationchan", new Gson().toJson(this));
+        jedis.close();
     }
 
     public String getSender() {
