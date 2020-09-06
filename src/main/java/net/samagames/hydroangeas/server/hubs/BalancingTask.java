@@ -30,7 +30,7 @@ public class BalancingTask extends Thread {
 
     public BalancingTask(HubBalancer hubBalancer) {
         this.hubBalancer = hubBalancer;
-        coolDown = 10; //Wait 10s to load balance hub
+        coolDown = 40; //Wait 40s to load balance hub
     }
 
     @SuppressWarnings({"InfiniteLoopStatement"})
