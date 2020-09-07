@@ -78,7 +78,7 @@ public class ServerManager {
         ExecutorService service = Executors.newCachedThreadPool();
         for (MinecraftServerC server : servers)
             service.submit(() -> {
-                server.stopServer();
+                server.stopServer(true);
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException e) {

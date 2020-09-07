@@ -179,7 +179,11 @@ public class MinecraftServerC extends MinecraftServer {
     }
 
     public void stopServer() {
-        instance.getServerManager().onServerStop(this, true);
+        this.stopServer(false);
+    }
+
+    public void stopServer(boolean skipPacket) {
+        instance.getServerManager().onServerStop(this, skipPacket);
         if (server != null) {
             this.instance.getPanelManager().getUserPanel().setPower(this.instance.getPanelManager().getUserPanel().retrieveServerByIdentifier(server.getIdentifier()).execute(), PowerAction.STOP).execute();
             try {
