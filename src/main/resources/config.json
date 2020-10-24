@@ -14,5 +14,9 @@
   "nexus-user": "",
   "nexus-password": "",
   "max-weight": "1000",
-  "slack": "https://hooks.slack.com/"
+  "slack": "https://hooks.slack.com/",
+  "proxy-min-port": 0,
+  "proxy-max-port": 0,
+  "server-min-port": 0,
+  "server-max-port": 0
 }

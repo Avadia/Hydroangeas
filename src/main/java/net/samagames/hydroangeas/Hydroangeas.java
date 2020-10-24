@@ -44,6 +44,9 @@ public abstract class Hydroangeas {
     protected RedisSubscriber redisSubscriber;
     protected CommandManager commandManager;
 
+    public static final String version = "1.0.0.0";
+    public static final boolean production = false;
+
     public Hydroangeas() throws IOException {
         instance = this;
         uuid = UUID.randomUUID();
@@ -54,7 +57,7 @@ public abstract class Hydroangeas {
 
         logger = new HydroLogger(this);
 
-        logger.info("Hydroangeas version 1.0.0");
+        logger.info("Hydroangeas (V" + version + ") (Prod: " + production + ")");
         logger.info("----------------------------------------");
 
         this.scheduler = Executors.newScheduledThreadPool(16);

@@ -14,7 +14,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public class PanelManager {
-    private final List<Allocation> allocations = new ArrayList<>();
+    private final List<Allocation> proxyAllocations = new ArrayList<>();
+    private final List<Allocation> serverAllocations = new ArrayList<>();
     public HydroangeasClient instance;
     private PteroApplication adminPanel;
     private PteroClient userPanel;
@@ -37,9 +38,15 @@ public class PanelManager {
         List<Allocation> allocations = adminPanel.retrieveAllocationsByNode(node).execute();
         for (Allocation allocation : allocations) {
             if (!allocation.isAssigned()) {
-                if (!registeredIps.contains(allocation.getIP()))
-                    instance.getDatabaseConnector().getJedisPool().getResource().sadd("proxys", allocation.getIP());
-                this.allocations.add(allocation);
+                if (allocation.getPortLong() > Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("proxy-min-port").getAsLong()
+                        && allocation.getPortLong() < Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("proxy-max-port").getAsLong()) {
+                    this.proxyAllocations.add(allocation);
+                } else if (allocation.getPortLong() > Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("server-min-port").getAsLong()
+                        && allocation.getPortLong() < Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("server-max-port").getAsLong()) {
+                    if (!registeredIps.contains(allocation.getIP()))
+                        instance.getDatabaseConnector().getJedisPool().getResource().sadd("proxys", allocation.getIP());
+                    this.serverAllocations.add(allocation);
+                }
             }
         }
     }
@@ -52,7 +59,11 @@ public class PanelManager {
         return userPanel;
     }
 
-    public List<Allocation> getAllocations() {
-        return allocations;
+    public List<Allocation> getProxyAllocations() {
+        return proxyAllocations;
+    }
+
+    public List<Allocation> getServerAllocations() {
+        return serverAllocations;
     }
 }

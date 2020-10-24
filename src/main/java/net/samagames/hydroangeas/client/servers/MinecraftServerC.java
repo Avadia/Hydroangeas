@@ -66,22 +66,19 @@ public class MinecraftServerC extends MinecraftServer {
     }
 
     public boolean makeServer() {
-        if (this.instance.getPanelManager().getAllocations().isEmpty()) {
+        if (this.instance.getPanelManager().getServerAllocations().isEmpty()) {
             Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "! No allocation available!");
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
             return false;
         }
-        allocation = this.instance.getPanelManager().getAllocations().remove(0);
+        allocation = this.instance.getPanelManager().getServerAllocations().remove(0);
 
         Location location = this.instance.getPanelManager().getAdminPanel().retrieveLocationById("1").execute();
-        Nest nest = this.instance.getPanelManager().getAdminPanel().retrieveNestById("8").execute();
-        Egg egg = this.instance.getPanelManager().getAdminPanel().retrieveEggById(nest, "18").execute();
-        User owner = this.instance.getPanelManager().getAdminPanel().retrieveUserById("11").execute();
+        Nest nest = this.instance.getPanelManager().getAdminPanel().retrieveNestById("5").execute();
+        Egg egg = this.instance.getPanelManager().getAdminPanel().retrieveEggById(nest, "15").execute();
+        User owner = this.instance.getPanelManager().getAdminPanel().retrieveUserById("8").execute();
         Map<String, String> variables = new HashMap<>();
-        variables.put("PAPER_JARFILE", "paper.jar");
-        variables.put("UPDATER_JARFILE", "updater.jar");
-        variables.put("BUILD_NUMBER", "latest");
-        variables.put("MINECRAFT_VERSION", "1.12.2");
+        variables.put("PRODUCTION", Hydroangeas.production + "");
         Set<String> portRange = new HashSet<>();
         portRange.add(allocation.getPort());
         StringBuilder startupCommand = new StringBuilder(egg.getStartupCommand());
@@ -115,7 +112,7 @@ public class MinecraftServerC extends MinecraftServer {
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
         createServerAction.setName("Minecraft - " + this.getServerName())
-                .setCPU(800L)
+                .setCPU(400L)
                 .setMemory(startupOptions.get("RAM").getAsLong(), DataType.MB)
                 .setSwap(startupOptions.get("swap").getAsLong(), DataType.MB)
                 .setDescription("Created on " + Instant.now().toString())
@@ -131,17 +128,13 @@ public class MinecraftServerC extends MinecraftServer {
                 .startOnCompletion(true)
                 .setEnvironment(variables)
                 .setStartupCommand(startupCommand.toString());
-        if (variables.get("MINECRAFT_VERSION").equals("1.12.2")) {
-            createServerAction.setPack(5);
-            createServerAction.skipScripts(true);
-        }
         try {
             server = createServerAction.build().execute();
             return true;
         } catch (Exception e) {
             Hydroangeas.getLogger().log(Level.SEVERE, "Can't make the server " + getServerName() + "!", e);
             instance.getConnectionManager().sendPacket(new MinecraftServerIssuePacket(this.instance.getClientUUID(), this.getServerName(), MinecraftServerIssuePacket.Type.MAKE));
-            this.instance.getPanelManager().getAllocations().add(allocation);
+            this.instance.getPanelManager().getServerAllocations().add(allocation);
             return false;
         }
     }
@@ -199,7 +192,7 @@ public class MinecraftServerC extends MinecraftServer {
             try {
                 server.getController().delete(false).execute();
                 if (allocation != null)
-                    this.instance.getPanelManager().getAllocations().add(allocation);
+                    this.instance.getPanelManager().getServerAllocations().add(allocation);
             } catch (Exception e) {
                 Hydroangeas.getLogger().log(Level.SEVERE, "Can't stop the server " + getServerName() + "!", e);
             }
