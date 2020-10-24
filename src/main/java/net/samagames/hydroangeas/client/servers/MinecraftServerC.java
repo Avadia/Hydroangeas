@@ -111,10 +111,15 @@ public class MinecraftServerC extends MinecraftServer {
                 .append("¤").append(Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("slack").getAsString());
 
         ServerAction createServerAction = this.instance.getPanelManager().getAdminPanel().createServer();
-        createServerAction.setName("Minecraft - " + this.getServerName())
+        StringBuilder name = new StringBuilder("Avadia - Minecraft - ");
+        if (Hydroangeas.production)
+            name.append("PROD - ");
+        name.append(this.getServerName());
+        createServerAction.setName(name.toString())
                 .setCPU(400L)
                 .setMemory(startupOptions.get("RAM").getAsLong(), DataType.MB)
                 .setSwap(startupOptions.get("swap").getAsLong(), DataType.MB)
+                .setIO(600L)
                 .setDescription("Created on " + Instant.now().toString())
                 .setOwner(owner)
                 .setEgg(egg)
