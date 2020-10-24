@@ -85,9 +85,14 @@ public class MinecraftServerC extends MinecraftServer {
         Set<String> portRange = new HashSet<>();
         portRange.add(allocation.getPort());
         StringBuilder startupCommand = new StringBuilder(egg.getStartupCommand());
+        startupCommand.append(" auth:").append(Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("nexus-user").getAsString())
+                .append("¤").append(Hydroangeas.getInstance().getConfiguration().getJsonConfiguration().get("nexus-password").getAsString());
         JsonObject startupOptions = this.getStartupOptions().getAsJsonObject();
-        for (String plugin : startupOptions.get("plugins").getAsString().split(";"))
-            startupCommand.append(" plugin:").append(plugin);
+        for (String plugin : startupOptions.get("plugins").getAsString().split(";")) {
+            String[] tempPlugin = plugin.split(":");
+            startupCommand.append(" plugin:").append(tempPlugin[0])
+                    .append("¤").append(tempPlugin[1]);
+        }
         startupCommand.append(" config:").append(startupOptions.get("configs").getAsString());
         startupCommand.append(" data:").append(Hydroangeas.getInstance().getConfiguration().redisIp)
                 .append("¤").append(Hydroangeas.getInstance().getConfiguration().redisPort)
