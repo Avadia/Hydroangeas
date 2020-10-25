@@ -33,6 +33,8 @@ import java.util.logging.Logger;
  * along with Hydroangeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class Hydroangeas {
+    public static final String version = "1.0.0.0";
+    public static final boolean production = false;
     protected static Logger logger;
     private static Hydroangeas instance;
     protected final ScheduledExecutorService scheduler;
@@ -43,9 +45,6 @@ public abstract class Hydroangeas {
     protected DatabaseConnector databaseConnector;
     protected RedisSubscriber redisSubscriber;
     protected CommandManager commandManager;
-
-    public static final String version = "1.0.0.0";
-    public static final boolean production = false;
 
     public Hydroangeas() throws IOException {
         instance = this;

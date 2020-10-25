@@ -34,7 +34,7 @@ public class PanelManager {
             e.printStackTrace();
         }
         Set<String> registeredIps = instance.getDatabaseConnector().getJedisPool().getResource().smembers("proxys");
-        Node node = adminPanel.retrieveNodeById(instance.getConfiguration().getJsonConfiguration().get("panel-node-id").getAsByte()).execute();
+        Node node = adminPanel.retrieveNodeById(instance.getConfiguration().getJsonConfiguration().get("panel-node-id").getAsLong()).execute();
         List<Allocation> allocations = adminPanel.retrieveAllocationsByNode(node).execute();
         for (Allocation allocation : allocations) {
             if (!allocation.isAssigned()) {
