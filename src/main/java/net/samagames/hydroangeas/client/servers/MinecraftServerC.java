@@ -6,6 +6,7 @@ import com.mattmalec.pterodactyl4j.DataType;
 import com.mattmalec.pterodactyl4j.PowerAction;
 import com.mattmalec.pterodactyl4j.application.entities.*;
 import com.mattmalec.pterodactyl4j.application.managers.ServerAction;
+import com.mattmalec.pterodactyl4j.client.entities.ClientServer;
 import net.samagames.hydroangeas.Hydroangeas;
 import net.samagames.hydroangeas.client.HydroangeasClient;
 import net.samagames.hydroangeas.common.data.MinecraftServer;
@@ -165,6 +166,22 @@ public class MinecraftServerC extends MinecraftServer {
 //                            "-Dcom.sun.management.jmxremote.ssl=false",
 
         getLogger().info("Starting server " + getServerName());
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        while (!server.getContainer().isInstalled()) {
+            server = this.instance.getPanelManager().getAdminPanel().retrieveServerById(server.getId()).execute();
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        ClientServer clientServer = this.instance.getPanelManager().getUserPanel().retrieveServerByIdentifier(server.getIdentifier()).execute();
+        this.instance.getPanelManager().getUserPanel().setPower(clientServer, PowerAction.START).execute();
+
         Jedis jedis = Hydroangeas.getInstance().getDatabaseConnector().getResource();
         jedis.hset("servers", getServerName(), allocation.getIP() + ":" + allocation.getPort());
         jedis.close();
