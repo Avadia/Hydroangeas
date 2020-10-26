@@ -128,7 +128,8 @@ public class MinecraftServerC extends MinecraftServer {
                 .setDockerImage(egg.getDockerImage())
                 .setDedicatedIP(false)
                 .setPortRange(portRange)
-                .startOnCompletion(true)
+                //TODO After bug is fixed enable this
+                .startOnCompletion(false)
                 .setEnvironment(variables)
                 .setStartupCommand(startupCommand.toString());
         try {
@@ -166,6 +167,7 @@ public class MinecraftServerC extends MinecraftServer {
 //                            "-Dcom.sun.management.jmxremote.ssl=false",
 
         getLogger().info("Starting server " + getServerName());
+        //TODO After bug is fixed disable this
         try {
             TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
