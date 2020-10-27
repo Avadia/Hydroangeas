@@ -124,6 +124,7 @@ public class MinecraftServerC extends MinecraftServer {
                 .setLocations(Collections.singleton(location))
                 .setAllocations(0L)
                 .setDatabases(0L)
+                .setBackups(0L)
                 .setDisk(startupOptions.get("disk").getAsLong(), DataType.MB)
                 .setDockerImage(egg.getDockerImage())
                 .setDedicatedIP(false)
