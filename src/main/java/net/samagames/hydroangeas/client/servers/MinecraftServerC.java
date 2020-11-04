@@ -14,7 +14,7 @@ import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerIssuePa
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPacket;
 import redis.clients.jedis.Jedis;
 
-import java.time.Instant;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -113,12 +113,18 @@ public class MinecraftServerC extends MinecraftServer {
         if (Hydroangeas.production)
             name.append("PROD - ");
         name.append(this.getServerName());
+
+        String pattern = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+        String date = simpleDateFormat.format(new Date());
+
         createServerAction.setName(name.toString())
                 .setCPU(400L)
                 .setMemory(startupOptions.get("RAM").getAsLong(), DataType.MB)
                 .setSwap(startupOptions.get("swap").getAsLong(), DataType.MB)
                 .setIO(600L)
-                .setDescription("Created on " + Instant.now().toString())
+                .setDescription("Created on " + date)
                 .setOwner(owner)
                 .setEgg(egg)
                 .setLocations(Collections.singleton(location))
