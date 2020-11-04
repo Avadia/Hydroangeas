@@ -7,7 +7,6 @@ import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerSyncPac
 import net.samagames.hydroangeas.common.protocol.intranet.MinecraftServerUpdatePacket;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -77,9 +76,8 @@ public class ServerManager {
 
     public void stopAll() {
         ExecutorService service = Executors.newCachedThreadPool();
-        //fix java.util.ConcurrentModificationException
-        for (Iterator<MinecraftServerC> it = servers.iterator(); it.hasNext(); ) {
-            MinecraftServerC server = it.next();
+        final List<MinecraftServerC> tempServers = new ArrayList<>(servers);
+        for (MinecraftServerC server : tempServers) {
             service.submit(() -> {
                 server.stopServer(true);
                 try {
