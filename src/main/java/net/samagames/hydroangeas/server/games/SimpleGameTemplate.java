@@ -33,7 +33,7 @@ public class SimpleGameTemplate implements AbstractGameTemplate {
         DEFAULT_STARTUP_OPTIONS.addProperty("RAM", 1024L);
         DEFAULT_STARTUP_OPTIONS.addProperty("swap", 1024L);
         DEFAULT_STARTUP_OPTIONS.addProperty("disk", 500L);
-        DEFAULT_STARTUP_OPTIONS.addProperty("plugins", "samagamesapi;api;ViaVersion;ViaBackwards;ViaRewind");
+        DEFAULT_STARTUP_OPTIONS.addProperty("plugins", "net.samagames:samagamescore;fr.farmvivi:api-spigot;ViaVersion;ViaBackwards;ViaRewind");
         DEFAULT_STARTUP_OPTIONS.addProperty("configs", "default");
     }
 
@@ -69,7 +69,7 @@ public class SimpleGameTemplate implements AbstractGameTemplate {
             }
         }
         for (Map.Entry<String, JsonElement> entry : DEFAULT_STARTUP_OPTIONS.entrySet()) {
-            if (startupOptions.get(entry.getKey()) == null) {
+            if (!startupOptions.has(entry.getKey())) {
                 startupOptions.addProperty(entry.getKey(), entry.getValue().getAsString());
             }
         }
