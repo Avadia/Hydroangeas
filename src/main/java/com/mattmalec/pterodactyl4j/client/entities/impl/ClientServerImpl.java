@@ -9,49 +9,49 @@ import org.json.JSONObject;
 
 public class ClientServerImpl implements ClientServer {
 
-	private final JSONObject json;
+    private final JSONObject json;
 
-	public ClientServerImpl(JSONObject json) {
-		this.json = json.getJSONObject("attributes");
-	}
+    public ClientServerImpl(JSONObject json) {
+        this.json = json.getJSONObject("attributes");
+    }
 
-	@Override
-	public boolean isServerOwner() {
-		return json.getBoolean("server_owner");
-	}
+    @Override
+    public boolean isServerOwner() {
+        return json.getBoolean("server_owner");
+    }
 
-	@Override
-	public String getUUID() {
-		return json.getString("uuid");
-	}
+    @Override
+    public String getUUID() {
+        return json.getString("uuid");
+    }
 
-	@Override
-	public String getIdentifier() {
-		return json.getString("identifier");
-	}
+    @Override
+    public String getIdentifier() {
+        return json.getString("identifier");
+    }
 
-	@Override
-	public String getName() {
-		return json.getString("name");
-	}
+    @Override
+    public String getName() {
+        return json.getString("name");
+    }
 
-	@Override
-	public String getDescription() {
-		return json.getString("description");
-	}
+    @Override
+    public String getDescription() {
+        return json.getString("description");
+    }
 
-	@Override
-	public Limit getLimits() {
-		return new LimitImpl(json.getJSONObject("limits"));
-	}
+    @Override
+    public Limit getLimits() {
+        return new LimitImpl(json.getJSONObject("limits"));
+    }
 
-	@Override
-	public FeatureLimit getFeatureLimits() {
-		return new FeatureLimitImpl(json.getJSONObject("feature_limits"));
-	}
+    @Override
+    public FeatureLimit getFeatureLimits() {
+        return new FeatureLimitImpl(json.getJSONObject("feature_limits"));
+    }
 
-	@Override
-	public String toString() {
-		return json.toString(4);
-	}
+    @Override
+    public String toString() {
+        return json.toString(4);
+    }
 }
