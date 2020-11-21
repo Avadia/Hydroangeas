@@ -77,7 +77,7 @@ public class MinecraftServerC extends MinecraftServer {
         Location location = this.instance.getPanelManager().getAdminPanel().retrieveLocationById("1").execute();
         Nest nest = this.instance.getPanelManager().getAdminPanel().retrieveNestById("5").execute();
         Egg egg = this.instance.getPanelManager().getAdminPanel().retrieveEggById(nest, "15").execute();
-        User owner = this.instance.getPanelManager().getAdminPanel().retrieveUserById("8").execute();
+        ApplicationUser owner = this.instance.getPanelManager().getAdminPanel().retrieveUserById("8").execute();
         Map<String, String> variables = new HashMap<>();
         variables.put("PRODUCTION", Hydroangeas.production + "");
         Set<String> portRange = new HashSet<>();
@@ -130,7 +130,6 @@ public class MinecraftServerC extends MinecraftServer {
                 .setLocations(Collections.singleton(location))
                 .setAllocations(0L)
                 .setDatabases(0L)
-                .setBackups(0L)
                 .setDisk(startupOptions.get("disk").getAsLong(), DataType.MB)
                 .setDockerImage(egg.getDockerImage())
                 .setDedicatedIP(false)

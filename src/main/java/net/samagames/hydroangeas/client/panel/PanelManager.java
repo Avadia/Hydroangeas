@@ -26,8 +26,8 @@ public class PanelManager {
         Hydroangeas.getLogger().log(Level.INFO, "Connecting to panel...");
         try {
             String panelUrl = instance.getConfiguration().getJsonConfiguration().get("panel-url").getAsString();
-            this.adminPanel = new PteroBuilder().setApplicationUrl(panelUrl).setToken(instance.getConfiguration().getJsonConfiguration().get("panel-admin-token").getAsString()).build().asApplication();
-            this.userPanel = new PteroBuilder().setApplicationUrl(panelUrl).setToken(instance.getConfiguration().getJsonConfiguration().get("panel-user-token").getAsString()).build().asClient();
+            this.adminPanel = new PteroBuilder().setApplicationUrl(panelUrl).setToken(instance.getConfiguration().getJsonConfiguration().get("panel-admin-token").getAsString()).buildApplication();
+            this.userPanel = new PteroBuilder().setApplicationUrl(panelUrl).setToken(instance.getConfiguration().getJsonConfiguration().get("panel-user-token").getAsString()).buildClient();
             Hydroangeas.getLogger().log(Level.INFO, "Connected to panel.");
         } catch (Exception e) {
             Hydroangeas.getLogger().log(Level.SEVERE, "Can't connect to panel!");
